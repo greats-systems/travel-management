@@ -69,6 +69,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // email field
               MyTextField(
+                textInputType: TextInputType.text,
                 controller: _emailController,
                 hintText: 'Email',
                 obscureText: false,
@@ -77,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // password field
               MyTextField(
+                textInputType: TextInputType.text,
                 controller: _passwordController,
                 hintText: 'Password',
                 obscureText: true,

@@ -22,6 +22,7 @@ class FlightController {
     late List<Flight> flights;
 
     try {
+      log('params: $params');
       await dio.get(getFlightPricesURL, data: params).then((response) {
         log(
           'searchForMorePrices data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
@@ -42,8 +43,8 @@ class FlightController {
   Future<List<Flight>> getFlightPrices() async {
     const getFlightPricesURL = 'http://10.0.2.2:5000/prices';
     const params = {
-      "origin": "HRE",
-      "destination": "JFK",
+      "origin": "JNB",
+      "destination": "YQY",
       "departureDate": "2025-04-10",
       "adults": 1,
     };

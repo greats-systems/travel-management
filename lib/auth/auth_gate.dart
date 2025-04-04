@@ -12,6 +12,7 @@ if not authenticated => LoginPage
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/pages/home.dart';
+import 'package:travel_management_app_2/pages/landing_page.dart';
 import 'package:travel_management_app_2/pages/login.dart';
 import 'package:travel_management_app_2/screens/flights/views/available_flights.dart';
 import 'package:travel_management_app_2/screens/flights/views/search_flights.dart';
@@ -21,25 +22,6 @@ class AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*
-    return BlocBuilder(builder: (context, state) {
-      if (state is AuthInitialState) {
-        return Scaffold(
-            body: Center(
-          child: CircularProgressIndicator(),
-        ));
-      } else if (state is AuthenticatedState) {
-        return APINavigationPage();
-      } else {
-        return Scaffold(
-          body: Center(
-            child: Text('Unknown state'),
-          ),
-        );
-      }
-    });
-    */
-
     return StreamBuilder(
       // listen to auth state changes
       stream: Supabase.instance.client.auth.onAuthStateChange,
@@ -55,7 +37,7 @@ class AuthGate extends StatelessWidget {
         // check for valid session
         final session = snapshot.hasData ? snapshot.data!.session : null;
         if (session != null) {
-          return SearchFlights();
+          return LandingPage();
         } else {
           return LoginPage();
         }

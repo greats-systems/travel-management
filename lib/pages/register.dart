@@ -102,6 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // first name
               MyTextField(
+                textInputType: TextInputType.text,
                 controller: _firstNameController,
                 hintText: 'First Name',
                 obscureText: false,
@@ -110,6 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // last name
               MyTextField(
+                textInputType: TextInputType.text,
                 controller: _lastNameController,
                 hintText: 'Last name',
                 obscureText: false,
@@ -118,6 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // phone number field
               MyTextField(
+                textInputType: TextInputType.text,
                 controller: _phoneNumberController,
                 hintText: 'Phone',
                 obscureText: false,
@@ -126,6 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // email field
               MyTextField(
+                textInputType: TextInputType.text,
                 controller: _emailController,
                 hintText: 'Email',
                 obscureText: false,
@@ -134,6 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // Password field
               MyTextField(
+                textInputType: TextInputType.text,
                 controller: _passwordController,
                 hintText: 'Password',
                 obscureText: true,
@@ -142,6 +147,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // confirm PIN field
               MyTextField(
+                textInputType: TextInputType.text,
                 controller: _confirmPasswordController,
                 hintText: 'Confirm Password',
                 obscureText: true,
