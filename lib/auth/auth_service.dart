@@ -18,16 +18,16 @@ class AuthService {
   Future<AuthResponse> signUpWithEmailAndPassword(
     String email,
     String password,
-    String first_name,
-    String last_name,
+    String firstName,
+    String lastName,
     String phone,
   ) async {
     return await _supabase.auth.signUp(
       email: email,
       password: password,
       data: {
-        'first_name': first_name,
-        'last_name': last_name,
+        'first_name': firstName,
+        'last_name': lastName,
         'phone': phone,
         'email': email,
       },

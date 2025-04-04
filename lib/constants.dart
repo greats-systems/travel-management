@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:intl/intl.dart';
-import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 
 // Airline logo mapping
 String? returnCarrierLogo(String carrierCode) {
@@ -79,7 +78,7 @@ String returnAirportCode(String location) {
     "Lilongwe": "LLW",
     "Addis Ababa": "ADD",
     "Amsterdam": "AMS",
-    "London Heathrow": "LHR",
+    "London": "LHR",
     "Singapore": "SIN",
     "Cape Town": "CPT",
     "Atlanta": "ATL",
@@ -92,6 +91,8 @@ String returnAirportCode(String location) {
     "Manzini": "SHO",
     "Gaborone": "GBE",
     "Maputo": "MPM",
+    "Hong Kong": "HKG",
+    "Ho Chi Minh City": "SGN",
   };
   return locationMap[location] ?? location;
 }
@@ -113,7 +114,7 @@ String returnLocation(String airportCode) {
     "LLW": "Lilongwe",
     "ADD": "Addis Ababa",
     "AMS": "Amsterdam",
-    "LHR": "London Heathrow",
+    "LHR": "London",
     "SIN": "Singapore",
     "CPT": "Cape Town",
     "ATL": "Atlanta",
@@ -126,6 +127,8 @@ String returnLocation(String airportCode) {
     "SHO": "Manzini",
     "GBE": "Gaborone",
     "MPM": "Maputo",
+    "HKG": "Hong Kong",
+    "SGN": "Ho Chi Minh City",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }

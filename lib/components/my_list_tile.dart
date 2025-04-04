@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
@@ -8,7 +7,7 @@ class MyListTile extends StatelessWidget {
   final List<Flight>? flights;
   // final String assetRoot = 'assets/logos/airlines';
 
-  MyListTile({super.key, required this.flights});
+  const MyListTile({super.key, required this.flights});
 
   // Build ListTile for any flight (regardless of layovers)
   Widget buildFlightTile(Flight flight, BuildContext context) {
@@ -88,11 +87,7 @@ class MyListTile extends StatelessWidget {
             itemCount: flights?.length ?? 0,
             itemBuilder: (context, index) {
               final flight = flights![index];
-              return ListTile(
-                title: buildFlightTile(flight, context),
-                // margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                // child: buildFlightTile(flight, context),
-              );
+              return ListTile(title: buildFlightTile(flight, context));
             },
           ),
         ),

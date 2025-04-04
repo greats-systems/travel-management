@@ -7,26 +7,38 @@ class FlightController {
   Dio dio = Dio();
 
   Future<List<Flight>> searchForMorePrices(
-    // String origin,
-    String destination,
+    destination,
     departureDate,
+    returnDate,
     adults,
   ) async {
     const getFlightPricesURL = 'http://10.0.2.2:5000/prices';
-    var params = {
-      "origin": "HRE",
-      "destination": destination,
-      "departureDate": departureDate,
-      "adults": adults,
-    };
+    Map<String, dynamic> params;
+    if (returnDate != null) {
+      params = {
+        "origin": "HRE",
+        "destination": destination,
+        "departureDate": departureDate,
+        "returnDate": returnDate,
+        "adults": adults,
+      };
+    } else {
+      params = {
+        "origin": "HRE",
+        "destination": destination,
+        "departureDate": departureDate,
+        "returnDate": null,
+        "adults": adults,
+      };
+    }
     late List<Flight> flights;
 
     try {
       log('params: $params');
       await dio.get(getFlightPricesURL, data: params).then((response) {
-        log(
-          'searchForMorePrices data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
-        );
+        // log(
+        //   'searchForMorePrices data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
+        // );
         final List<dynamic> json = response.data;
         flights = json.map((item) => Flight.fromMap(item)).toList();
       });

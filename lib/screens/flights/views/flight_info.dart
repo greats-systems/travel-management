@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 
@@ -20,7 +18,7 @@ class FlightInfo extends StatelessWidget {
     final carrierCode = segment['carrierCode'];
     final flightNumber = segment['number'];
     final aircraft = segment['aircraft']?['code'] ?? 'Unknown';
-    log('segment: $segment');
+    // log('segment: $segment');
 
     return Column(
       children: [
@@ -35,7 +33,7 @@ class FlightInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${carrierCode}${flightNumber}',
+                      '$carrierCode$flightNumber',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Chip(
@@ -100,7 +98,7 @@ class FlightInfo extends StatelessWidget {
   }
 
   Widget _buildPricingInfo() {
-    log('_buildPricingInfo ${flight.itineraries}');
+    // log('_buildPricingInfo ${flight.itineraries}');
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -130,9 +128,8 @@ class FlightInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firstItinerary =
-        flight.itineraries?.isNotEmpty == true ? flight.itineraries![0] : null;
-    final segments = firstItinerary?['segments'] as List<dynamic>? ?? [];
+    final itineraries = flight.itineraries ?? [];
+    final isRoundTrip = itineraries.length > 1;
 
     return Scaffold(
       appBar: AppBar(title: Text('Flight Details')),
@@ -140,20 +137,45 @@ class FlightInfo extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            if (segments.isNotEmpty) ...[
+            // Outbound Flight
+            if (itineraries.isNotEmpty) ...[
               Text(
-                'Flight Itinerary',
+                'Outbound Flight',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               SizedBox(height: 12),
-              ...segments.asMap().entries.map((entry) {
+              ...itineraries[0]['segments'].asMap().entries.map((entry) {
                 final index = entry.key;
-                return _buildFlightSegment(entry.value, index, segments.length);
+                return _buildFlightSegment(
+                  entry.value,
+                  index,
+                  itineraries[0]['segments'].length,
+                );
               }),
               SizedBox(height: 20),
             ],
+
+            // Return Flight (if round trip)
+            if (isRoundTrip && itineraries.length > 1) ...[
+              Text(
+                'Return Flight',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              SizedBox(height: 12),
+              ...itineraries[1]['segments'].asMap().entries.map((entry) {
+                final index = entry.key;
+                return _buildFlightSegment(
+                  entry.value,
+                  index,
+                  itineraries[1]['segments'].length,
+                );
+              }),
+              SizedBox(height: 20),
+            ],
+
             _buildPricingInfo(),
             SizedBox(height: 20),
+
             if (flight.Id != null)
               ListTile(
                 contentPadding: EdgeInsets.zero,

@@ -5,8 +5,6 @@ import 'package:travel_management_app_2/pages/home.dart';
 import 'package:travel_management_app_2/pages/landing_page.dart';
 import 'package:travel_management_app_2/pages/login.dart';
 import 'package:travel_management_app_2/pages/register.dart';
-import 'package:travel_management_app_2/screens/flights/views/available_flights.dart';
-import 'package:travel_management_app_2/screens/flights/views/flight_info.dart';
 import 'auth/auth_gate.dart';
 
 void main() async {

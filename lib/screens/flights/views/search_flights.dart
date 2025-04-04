@@ -1,9 +1,11 @@
-import 'dart:developer';
+import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/screens/flights/views/available_flights.dart';
+
+enum TripType { oneWay, roundTrip }
 
 class SearchFlights extends StatefulWidget {
   const SearchFlights({super.key});
@@ -15,47 +17,38 @@ class SearchFlights extends StatefulWidget {
 class _SearchFlightsState extends State<SearchFlights> {
   final _destinationController = TextEditingController();
   final _departureDateController = TextEditingController();
+  final _returnDateController = TextEditingController();
   final _adultsController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 1),
-      helpText: 'Departure date',
-      cancelText: 'Cancel',
-      confirmText: 'OK',
-      fieldHintText: 'Month/Day/Year',
-      fieldLabelText: 'Select departure date',
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        _selectedDate = pickedDate;
-        _departureDateController.text = pickedDate.toString().substring(0, 10);
-        log(pickedDate.toString().substring(0, 10));
-      });
-    }
-  }
+  TripType _tripType = TripType.oneWay;
+  final DateTime _selectedDate = DateTime.now();
 
   void search() {
-    log(
-      '${constants.returnAirportCode(_destinationController.text)}\n${_departureDateController.text}\n${_adultsController.text}',
-    );
-
+    // log(
+    //   'search\n${constants.returnAirportCode(_destinationController.text)}\n${_departureDateController.text}\n${_returnDateController.text}\n${_adultsController.text}',
+    // );
     Navigator.push(
       context,
       MaterialPageRoute(
         builder:
-            (context) => AvailableFlights(
-              origin: 'HRE',
-              destination: constants.returnAirportCode(
-                _destinationController.text,
-              ),
-              departureDate: _departureDateController.text,
-              adults: int.parse(_adultsController.text),
-            ),
+            _tripType == TripType.oneWay
+                ? (context) => AvailableFlights(
+                  origin: 'HRE',
+                  destination: constants.returnAirportCode(
+                    _destinationController.text,
+                  ),
+                  departureDate: _departureDateController.text,
+                  returnDate: null,
+                  adults: int.parse(_adultsController.text),
+                )
+                : (context) => AvailableFlights(
+                  origin: 'HRE',
+                  destination: constants.returnAirportCode(
+                    _destinationController.text,
+                  ),
+                  departureDate: _departureDateController.text,
+                  returnDate: _returnDateController.text,
+                  adults: int.parse(_adultsController.text),
+                ),
       ),
     );
   }
@@ -80,21 +73,51 @@ class _SearchFlightsState extends State<SearchFlights> {
                 obscureText: false,
               ),
               const SizedBox(height: 20),
-              TextFormField(
+              MyDatePicker(
                 controller: _departureDateController,
-                decoration: InputDecoration(
-                  labelText: 'Departure Date',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.calendar_today),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () => _selectDate(context),
-                  ),
-                ),
-                readOnly: true,
-                onTap: () => _selectDate(context),
+                helpText: 'Departure date',
+                fieldLabelText: 'Select departure date',
+                labelText: 'Departure date',
               ),
               const SizedBox(height: 20),
+              Row(
+                children: [
+                  Radio<TripType>(
+                    value: TripType.oneWay,
+                    groupValue: _tripType,
+                    onChanged: (TripType? value) {
+                      setState(() {
+                        _tripType = value!;
+                      });
+                    },
+                  ),
+                  const Text('One Way'),
+                  Radio<TripType>(
+                    value: TripType.roundTrip,
+                    groupValue: _tripType,
+                    onChanged: (TripType? value) {
+                      setState(() {
+                        _tripType = value!;
+                      });
+                    },
+                  ),
+                  const Text('Round trip'),
+                ],
+              ),
+              const SizedBox(height: 20),
+              _tripType == TripType.roundTrip
+                  ? Column(
+                    children: [
+                      MyDatePicker(
+                        helpText: 'Return date',
+                        fieldLabelText: 'Select return date',
+                        labelText: 'Return date',
+                        controller: _returnDateController,
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  )
+                  : const SizedBox(height: 20),
               MyTextField(
                 textInputType: TextInputType.number,
                 controller: _adultsController,

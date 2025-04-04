@@ -1,5 +1,4 @@
 // @collection
-import 'dart:convert';
 import 'dart:developer';
 
 class Flight {
@@ -34,10 +33,10 @@ class Flight {
         currency: json['price']['currency'],
       );
       // if (json['itineraries'] != null) {}
-      log('Flight.fromMap():\n$flight');
+      // log('Flight.fromMap():\n$flight');
       return flight;
     } catch (e) {
-      log('Error parsing flights: $e');
+      // log('Error parsing flights: $e');
       // return Flight;
       return Flight();
     }
