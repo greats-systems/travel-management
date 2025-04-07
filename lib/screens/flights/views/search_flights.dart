@@ -1,4 +1,5 @@
 import 'package:travel_management_app_2/components/my_date_picker.dart';
+import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
@@ -15,12 +16,13 @@ class SearchFlights extends StatefulWidget {
 }
 
 class _SearchFlightsState extends State<SearchFlights> {
+  final _originController = TextEditingController();
   final _destinationController = TextEditingController();
   final _departureDateController = TextEditingController();
   final _returnDateController = TextEditingController();
   final _adultsController = TextEditingController();
   TripType _tripType = TripType.oneWay;
-  final DateTime _selectedDate = DateTime.now();
+  // final DateTime _selectedDate = DateTime.now();
 
   void search() {
     // log(
@@ -32,7 +34,7 @@ class _SearchFlightsState extends State<SearchFlights> {
         builder:
             _tripType == TripType.oneWay
                 ? (context) => AvailableFlights(
-                  origin: 'HRE',
+                  origin: constants.returnAirportCode(_originController.text),
                   destination: constants.returnAirportCode(
                     _destinationController.text,
                   ),
@@ -41,7 +43,7 @@ class _SearchFlightsState extends State<SearchFlights> {
                   adults: int.parse(_adultsController.text),
                 )
                 : (context) => AvailableFlights(
-                  origin: 'HRE',
+                  origin: constants.returnAirportCode(_originController.text),
                   destination: constants.returnAirportCode(
                     _destinationController.text,
                   ),
@@ -60,12 +62,26 @@ class _SearchFlightsState extends State<SearchFlights> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.width / 2,
+            top: MediaQuery.of(context).size.width / 5,
             left: MediaQuery.of(context).size.width / 10,
             right: MediaQuery.of(context).size.width / 10,
           ),
           child: ListView(
             children: [
+              Center(
+                child: Text(
+                  'Look for a flight',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
+              SizedBox(height: 20),
+              MyTextField(
+                textInputType: TextInputType.text,
+                controller: _originController,
+                hintText: 'Origin',
+                obscureText: false,
+              ),
+              MySizedBox(),
               MyTextField(
                 textInputType: TextInputType.text,
                 controller: _destinationController,
@@ -78,6 +94,8 @@ class _SearchFlightsState extends State<SearchFlights> {
                 helpText: 'Departure date',
                 fieldLabelText: 'Select departure date',
                 labelText: 'Departure date',
+                firstDate: DateTime.now(),
+                lastDate: DateTime(DateTime.now().year + 1),
               ),
               const SizedBox(height: 20),
               Row(
@@ -113,6 +131,8 @@ class _SearchFlightsState extends State<SearchFlights> {
                         fieldLabelText: 'Select return date',
                         labelText: 'Return date',
                         controller: _returnDateController,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(DateTime.now().year + 1),
                       ),
                       const SizedBox(height: 20),
                     ],

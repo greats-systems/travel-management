@@ -2,21 +2,24 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
+import 'package:travel_management_app_2/constants.dart' as constants;
 
 class FlightController {
   Dio dio = Dio();
+  // static const root = 'http://10.0.2.2:5000';
 
-  Future<List<Flight>> searchForMorePrices(
+  Future<List<Flight>> getFlightPrices(
+    origin,
     destination,
     departureDate,
     returnDate,
     adults,
   ) async {
-    const getFlightPricesURL = 'http://10.0.2.2:5000/prices';
+    const getFlightPricesURL = '${constants.apiRoot}/flight/prices';
     Map<String, dynamic> params;
     if (returnDate != null) {
       params = {
-        "origin": "HRE",
+        "origin": origin,
         "destination": destination,
         "departureDate": departureDate,
         "returnDate": returnDate,
@@ -24,7 +27,7 @@ class FlightController {
       };
     } else {
       params = {
-        "origin": "HRE",
+        "origin": origin,
         "destination": destination,
         "departureDate": departureDate,
         "returnDate": null,
@@ -52,30 +55,61 @@ class FlightController {
     return flights;
   }
 
-  Future<List<Flight>> getFlightPrices() async {
-    const getFlightPricesURL = 'http://10.0.2.2:5000/prices';
-    const params = {
-      "origin": "JNB",
-      "destination": "YQY",
-      "departureDate": "2025-04-10",
-      "adults": 1,
+  void bookFlight(
+    String origin,
+    String destination,
+    String departureDate,
+    String? returnDate,
+    int adults,
+    String dob,
+    String firstname,
+    String lastname,
+    String gender,
+    String phone,
+    String email,
+    Flight flight,
+  ) async {
+    const flightBookingURL = '${constants.apiRoot}/flight/book';
+    var params = {
+      "origin": origin,
+      "destination": destination,
+      "departureDate": departureDate,
+      "adults": adults,
+      "flightId": "${flight.Id}",
+      "passengers": {
+        "id": "1",
+        "dateOfBirth": dob,
+        "name": {
+          "firstName": firstname.toUpperCase(),
+          "lastName": lastname.toUpperCase(),
+        },
+        "gender": gender.toUpperCase(),
+        "contact": {
+          "emailAddress": email,
+          "phones": [
+            {
+              "deviceType": "MOBILE",
+              "countryCallingCode": "263",
+              "number": phone,
+            },
+          ],
+        },
+      },
     };
-    late List<Flight> flights;
+    log('Params: ${JsonEncoder.withIndent(' ').convert(params)}');
     try {
-      await dio.get(getFlightPricesURL, data: params).then((response) {
+      await dio.post(flightBookingURL, data: params).then((response) {
         log(
-          'getFlightPrices data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
+          'bookFlight data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
         );
-        final List<dynamic> json = response.data;
-        flights = json.map((item) => Flight.fromMap(item)).toList();
       });
-    } catch (e) {
-      if (e is DioException) {
-        log('getFlightPrices DioException: $e');
+    } catch (error) {
+      if (error is DioException) {
+        log('bookFlight DioException: ${error.response}');
       } else {
-        log('getFlightPrices error: $e');
+        log('bookFlight error: $error');
       }
     }
-    return flights;
+    return;
   }
 }

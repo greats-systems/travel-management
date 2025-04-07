@@ -1,63 +1,45 @@
 import 'package:flutter/material.dart';
 
-class MyDropdown extends StatefulWidget {
-  const MyDropdown({super.key});
+class MyDropdown<T> extends StatelessWidget {
+  final String label;
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+  final String? hint;
+  final IconData? prefixIcon;
+  final bool isRequired;
+  final String? Function(T?)? validator;
 
-  @override
-  State<MyDropdown> createState() => _MyDropdownState();
-}
-
-class _MyDropdownState extends State<MyDropdown> {
-  static const List<String> _merchantList = [
-    'Food Lovers',
-    'Spar',
-    'OK',
-    'Pick n Pay',
-    'Choppies'
-  ];
-  static const Map<String, String> _merchants = {
-    'Food Lovers': 'assets/merchants/food_lovers.png',
-    'Spar': 'assets/merchants/spar.png',
-    'OK': 'assets/merchants/ok.png',
-    'Pick n Pay': 'assets/merchants/pnp.png',
-    'Choppies': 'assets/merchants/choppies.webp',
-  };
-  String? _merchant;
+  const MyDropdown({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    this.hint,
+    this.prefixIcon,
+    this.isRequired = false,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
+    return DropdownButtonFormField<T>(
+      value: value,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+      ),
+      hint: hint != null ? Text(hint!) : null,
+      items: items,
+      validator: validator ?? (isRequired ? _defaultValidator : null),
+      onChanged: onChanged,
       isExpanded: true,
-      hint: Text('Merchant'),
-      items: _merchantList.map((name) {
-        return DropdownMenuItem(
-          value: name,
-          child: Row(
-            children: [
-              Image.asset(
-                _merchants[name]!,
-                width: 40,
-                height: 40,
-              ),
-              SizedBox(width: 10),
-              Text(name),
-            ],
-          ),
-        );
-      }).toList(),
-      value: _merchant,
-      onChanged: (newValue) => setDropdownValue(newValue),
     );
   }
 
-  String? getMerchant() {
-    return _merchant;
-  }
-
-  void setDropdownValue(value) {
-    setState(() {
-      _merchant = value;
-      print(_merchant);
-    });
+  String? _defaultValidator(T? value) {
+    return value == null ? 'Please select $label' : null;
   }
 }

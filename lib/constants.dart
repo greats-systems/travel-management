@@ -2,34 +2,76 @@ import 'dart:developer';
 
 import 'package:intl/intl.dart';
 
+// Logo
+const wildEncounterLogoURL = 'assets/logos/companies/wild_encounter.png';
+
+// Backend URL
+const apiRoot = 'http://10.0.2.2:5000';
+
 // Airline logo mapping
 String? returnCarrierLogo(String carrierCode) {
-  final String assetRoot = 'assets/logos/airlines';
+  final String airlineAssetsRoot = 'assets/logos/airlines';
   final Map<String, String> assetURLMap = {
-    "KQ": "$assetRoot/kenya_airways.png",
-    "ET": "$assetRoot/ethiopian.png",
-    "UR": "$assetRoot/uganda_airlines.png",
-    "WB": "$assetRoot/rwandair.png",
-    "EK": "$assetRoot/emirates.png",
-    "QR": "$assetRoot/qatar.png",
-    "SA": "$assetRoot/saa.png",
-    "4Z": "$assetRoot/airlink.png",
-    "AF": "$assetRoot/air_france.png",
-    "KL": "$assetRoot/KLM.png",
-    "LX": "$assetRoot/swiss.png",
-    "LH": "$assetRoot/lufthansa.png",
-    "SN": "$assetRoot/brussels.png",
-    "VS": "$assetRoot/virgin.png",
-    "AC": "$assetRoot/air_canada.png",
-    "KU": "$assetRoot/kuwait_airlines.png",
-    "UA": "$assetRoot/united.png",
-    "MS": "$assetRoot/egyptair.png",
-    "5Z": "$assetRoot/cemair.png",
-    "X1": "$assetRoot/hahn_air.png",
-    "BP": "$assetRoot/air_botswana.png",
-    "TM": "$assetRoot/air_mozambique.png",
+    "KQ": "$airlineAssetsRoot/kenya_airways.png",
+    "ET": "$airlineAssetsRoot/ethiopian.png",
+    "UR": "$airlineAssetsRoot/uganda_airlines.png",
+    "WB": "$airlineAssetsRoot/rwandair.png",
+    "EK": "$airlineAssetsRoot/emirates.png",
+    "QR": "$airlineAssetsRoot/qatar.png",
+    "SA": "$airlineAssetsRoot/saa.png",
+    "4Z": "$airlineAssetsRoot/airlink.png",
+    "AF": "$airlineAssetsRoot/air_france.png",
+    "KL": "$airlineAssetsRoot/KLM.png",
+    "LX": "$airlineAssetsRoot/swiss.png",
+    "LH": "$airlineAssetsRoot/lufthansa.png",
+    "SN": "$airlineAssetsRoot/brussels.png",
+    "VS": "$airlineAssetsRoot/virgin.png",
+    "AC": "$airlineAssetsRoot/air_canada.png",
+    "KU": "$airlineAssetsRoot/kuwait_airlines.png",
+    "UA": "$airlineAssetsRoot/united.png",
+    "MS": "$airlineAssetsRoot/egyptair.png",
+    "5Z": "$airlineAssetsRoot/cemair.png",
+    "X1": "$airlineAssetsRoot/hahn_air.png",
+    "BP": "$airlineAssetsRoot/air_botswana.png",
+    "TM": "$airlineAssetsRoot/air_mozambique.png",
+    "SQ": "$airlineAssetsRoot/singapore_airlines.png",
+    "CX": "$airlineAssetsRoot/cathay_pacific.png",
+    "GK": "$airlineAssetsRoot/jetstar.png",
+    "JL": "$airlineAssetsRoot/japan_airlines.png",
+    "TG": "$airlineAssetsRoot/thai.png",
+    "NH": "$airlineAssetsRoot/ana.png",
+    "OZ": "$airlineAssetsRoot/asiana.png",
+    "OS": "$airlineAssetsRoot/austrian.png",
+    "AZ": "$airlineAssetsRoot/alitalia.png",
+    "FN": "$airlineAssetsRoot/fastjet.png",
+    "TK": "$airlineAssetsRoot/turkish.png",
+    "FA": "$airlineAssetsRoot/flysafair.png",
+    "H1": "$airlineAssetsRoot/hahn_air.png",
+    "TC": "$airlineAssetsRoot/air_tanzania.png",
+    "RN": "$airlineAssetsRoot/royal_eswatini.png",
+    "B6": "$airlineAssetsRoot/jetblue.png",
+    "AI": "$airlineAssetsRoot/air_india.png",
+    "KE": "$airlineAssetsRoot/korean.png",
+    "F9": "$airlineAssetsRoot/frontier.png",
+    "LY": "$airlineAssetsRoot/el_al.png",
+    "SV": "$airlineAssetsRoot/saudi_arabian_airlines.png",
+    "FI": "$airlineAssetsRoot/icelandair.png",
+    "SK": "$airlineAssetsRoot/sas.png",
+    "AS": "$airlineAssetsRoot/alaska_airlines.png",
+    "IB": "$airlineAssetsRoot/iberia.png",
+    "AY": "$airlineAssetsRoot/finnair.png",
+    "EI": "$airlineAssetsRoot/aer_lingus.png",
+    "LO": "$airlineAssetsRoot/polish.png",
+    "LA": "$airlineAssetsRoot/latam.png",
+    "TP": "$airlineAssetsRoot/tap_portugal.png",
+    "AT": "$airlineAssetsRoot/royal_air_maroc.png",
+    "WS": "$airlineAssetsRoot/westjet.png",
+    "HA": "$airlineAssetsRoot/hawaiian.png",
+    "PD": "$airlineAssetsRoot/porter.png",
+    "TS": "$airlineAssetsRoot/air_transat.png",
+    "nologo": "$airlineAssetsRoot/no_logo.png",
   };
-  return assetURLMap[carrierCode] ?? assetURLMap['KQ'];
+  return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
 }
 
 // Airline name mapping
@@ -57,11 +99,46 @@ String returnCarrierName(String carrierCode) {
     "X1": "Hahn Air Technologies GmbH",
     "BP": "Air Botswana",
     "TM": "Linhas Aereas de Mocambique",
+    "SQ": "Singapore Airlines",
+    "GK": "Jetstar Japan",
+    "CX": "Cathay Pacific",
+    "JL": "Japan Airlines",
+    "TG": "Thai Airways",
+    "NH": "All Nippon Airways",
+    "OZ": "Asiana Airlines",
+    "OS": "Austrian Airlines",
+    "AZ": "Alitalia",
+    "FN": "Fastjet",
+    "TK": "Turkish Airlines",
+    "FA": "Fly Safair",
+    "H1": "Hahn Air Systems",
+    "TC": "Air Tanzania",
+    "RN": "Royal Eswatini",
+    "B6": "Jetblue",
+    "AI": "Air India",
+    "KE": "Korean Airlines",
+    "F9": "Frontier Airlines",
+    "LY": "EL AL Israel Airlines",
+    "SV": "Saudi Arabian Airlines",
+    "FI": "Icelandair",
+    "SK": "Scandinavian Air Systems",
+    "AS": "Alaska Airlines",
+    "IB": "Iberia Lineas Aereas de Espana",
+    "AY": "Finnair",
+    "LO": "Polish Airlines",
+    "EI": "Aer Lingus",
+    "LA": "LATAM Airlines",
+    "TP": "TAP Portugal",
+    "AT": "Royal Air Maroc",
+    "WS": "Westjet",
+    "HA": "Hawaiian Airlines",
+    "PD": "Porter Airlines Canada",
+    "TS": "Air Transat",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
 
-// Airport name mapping
+// Airport code mapping
 String returnAirportCode(String location) {
   const Map<String, String> locationMap = {
     "Harare": "HRE",
@@ -72,6 +149,7 @@ String returnAirportCode(String location) {
     "Kigali": "KGL",
     "Johannesburg": "JNB",
     // "Jo'burg Lanseria": "HLA",
+    "Durban": "DUR",
     "Lusaka": "LUN",
     "Doha": "DOH",
     "New York": "JFK",
@@ -93,11 +171,87 @@ String returnAirportCode(String location) {
     "Maputo": "MPM",
     "Hong Kong": "HKG",
     "Ho Chi Minh City": "SGN",
+    "Tokyo": "TYO",
+    "Narita": "NRT",
+    "Haneda": "HND",
+    "Shanghai": "PVG",
+    "Paris": "CDG",
+    "Lyon": "LYS",
+    "Milan": "BGY",
+    "Beijing": "PKX",
+    "Los Angeles": "LAX",
+    "Washington": "IAX",
+    "Chicago": "ORD",
+    "Vancouver": "YVR",
+    "Mumbai": "BOM",
+    "Bangkok": "BKK",
+    "Keflavik International": "KEF",
+    "Abbotsford Intl": "YXX",
   };
   return locationMap[location] ?? location;
 }
 
 // Airport name mapping
+String returnAirportName(String airportCode) {
+  const Map<String, String> airportNameMap = {
+    "HRE": "R.G. Mugabe Intl.",
+    "BUQ": "Joshua M. Nkomo Intl",
+    "NBO": "Jomo Kenyatta Intl",
+    "DXB": "Dubai Intl.",
+    "EBB": "Entebbe Intl.",
+    "KGL": "Kigali Intl.",
+    "JNB": "Johannesburg OR Tambo",
+    "HLA": "Johannesburg Lanseria",
+    "DUR": "King Shaka Intl.",
+    "LUN": "Lusaka Intl.",
+    "DOH": "Hamad International",
+    "JFK": "John F Kennedy Intl",
+    "LLW": "Kamuzu Intl",
+    "ADD": "Bole Intl",
+    "MGQ": "Aden Adde Intl",
+    "AMS": "Schiphol Airport",
+    "AMW": "Ames Municipal",
+    "AME": "Alto Molocue Airport",
+    "AMC": "Am Timan Airport",
+    "LHR": "London Heathrow",
+    "LGW": "London Gatwick",
+    "SIN": "Changi",
+    "CPT": "Cape Town Intl.",
+    "ATL": "Hartsfield-Jackson Int",
+    "YQY": "J.A. Douglas McCurdy",
+    "YUL": "Pierre E.Trudeau Intl",
+    "GRU": "Guarulhos Intl",
+    "YYZ": "Lester B. Pearson Intl",
+    "ZRH": "Zurich Airport",
+    "CAI": "Cairo",
+    "SHO": "Manzini",
+    "GBE": "Gaborone",
+    "MPM": "Maputo",
+    "HKG": "Hong Kong",
+    "SGN": "Ho Chi Minh City",
+    "TYO": "Tokyo",
+    "NRT": "Narita",
+    "HND": "Haneda",
+    "PVG": "Shanghai",
+    "CDG": "Paris",
+    "LYS": "Lyon",
+    "BGY": "Milan",
+    "PKX": "Beijing",
+    "PEK": "Beijing Capital Intl.",
+    "LAX": "Los Angeles",
+    "IAD": "Washington Dulles",
+    "EWR": "New York Newark",
+    "ORD": "Chicago O'Hare",
+    "YVR": "Vancouver",
+    "BOM": "Mumbai",
+    "BKK": "Bangkok",
+    "KEF": "Keflavik International",
+    "YXX": "Abbotsford Intl.",
+  };
+  return airportNameMap[airportCode] ?? airportCode;
+}
+
+// City mapping
 String returnLocation(String airportCode) {
   const Map<String, String> airportCodeMap = {
     "HRE": "Harare",
@@ -106,8 +260,9 @@ String returnLocation(String airportCode) {
     "DXB": "Dubai",
     "EBB": "Entebbe",
     "KGL": "Kigali",
-    "JNB": "Jo'burg OR Tambo",
+    "JNB": "Johannesburg",
     "HLA": "Jo'burg Lanseria",
+    "DUR": "Durban",
     "LUN": "Lusaka",
     "DOH": "Doha",
     "JFK": "New York",
@@ -129,14 +284,34 @@ String returnLocation(String airportCode) {
     "MPM": "Maputo",
     "HKG": "Hong Kong",
     "SGN": "Ho Chi Minh City",
+    "TYO": "Tokyo",
+    "NRT": "Narita",
+    "HND": "Haneda",
+    "PVG": "Shanghai",
+    "CDG": "Paris",
+    "LYS": "Lyon",
+    "BGY": "Milan",
+    "PKX": "Beijing",
+    "PEK": "Beijing Capital Intl.",
+    "LAX": "Los Angeles",
+    "IAD": "Washington Dulles",
+    "EWR": "New York Newark",
+    "ORD": "Chicago O'Hare",
+    "YVR": "Vancouver",
+    "BOM": "Mumbai",
+    "BKK": "Bangkok",
+    "FRA": "Frankfurt",
+    "KEF": "Reykyavik",
+    "YXX": "Vancouver",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }
 
 String formatDateTime(String isoString) {
   try {
+    // log(isoString);
     final dateTime = DateTime.parse(isoString);
-    return DateFormat('d MMM yyyy, hh:mm').format(dateTime);
+    return DateFormat('d MMM yyyy, HH:mm').format(dateTime);
   } catch (e) {
     return isoString;
   }

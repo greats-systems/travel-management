@@ -1,12 +1,52 @@
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
+import 'package:travel_management_app_2/screens/flights/views/book_flight.dart';
 
-class FlightInfo extends StatelessWidget {
+class FlightInfo extends StatefulWidget {
   final Flight flight;
+  final String origin;
+  final String destination;
+  final String departureDate;
+  final String? returnDate;
+  final int adults;
 
-  const FlightInfo({super.key, required this.flight});
+  const FlightInfo({
+    super.key,
+    required this.flight,
+    required this.origin,
+    required this.destination,
+    required this.departureDate,
+    required this.returnDate,
+    required this.adults,
+  });
+
+  @override
+  State<FlightInfo> createState() => _FlightInfoState();
+}
+
+class _FlightInfoState extends State<FlightInfo> {
+  void bookThisFlight() async {
+    log('Flight:\n${JsonEncoder.withIndent(' ').convert(widget.flight)}');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => BookFlight(
+              flight: widget.flight,
+              origin: widget.origin,
+              destination: widget.destination,
+              departureDate: widget.departureDate,
+              returnDate: widget.returnDate,
+              adults: widget.adults,
+            ),
+      ),
+    );
+  }
 
   Widget _buildFlightSegment(
     Map<String, dynamic> segment,
@@ -87,7 +127,7 @@ class FlightInfo extends StatelessWidget {
                 Icon(Icons.airline_seat_individual_suite_rounded, size: 16),
                 SizedBox(width: 8),
                 Text(
-                  'Layover at ${constants.returnLocation(arrival['iataCode'])}',
+                  'Layover in ${constants.returnLocation(arrival['iataCode'])}',
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
               ],
@@ -115,7 +155,7 @@ class FlightInfo extends StatelessWidget {
               children: [
                 Text('Total Price:'),
                 Text(
-                  '€${flight.price?.toStringAsFixed(2)}',
+                  '\$${widget.flight.price?.toStringAsFixed(2)}',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -128,7 +168,7 @@ class FlightInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itineraries = flight.itineraries ?? [];
+    final itineraries = widget.flight.itineraries ?? [];
     final isRoundTrip = itineraries.length > 1;
 
     return Scaffold(
@@ -176,13 +216,19 @@ class FlightInfo extends StatelessWidget {
             _buildPricingInfo(),
             SizedBox(height: 20),
 
-            if (flight.Id != null)
+            if (widget.flight.Id != null)
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(Icons.confirmation_number),
                 title: Text('Booking Reference'),
-                subtitle: Text(flight.Id!),
+                subtitle: Text(widget.flight.Id!),
               ),
+            SizedBox(height: 20),
+            MyButton(
+              onTap: bookThisFlight,
+              text: 'Book this flight',
+              color: Colors.blue.shade400,
+            ),
           ],
         ),
       ),

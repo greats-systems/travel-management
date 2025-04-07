@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'package:dio/dio.dart';
+import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
+  static const createProfileURL = '${constants.apiRoot}/profile/create';
   final SupabaseClient _supabase = Supabase.instance.client;
+  final dio = Dio();
 
   // Sign in with email and password
   Future<AuthResponse> signInWithEmailAndPassword(
@@ -15,23 +21,36 @@ class AuthService {
   }
 
   // Sign up with email and password
-  Future<AuthResponse> signUpWithEmailAndPassword(
+  Future<void> signUpWithEmailAndPassword(
     String email,
     String password,
     String firstName,
     String lastName,
     String phone,
   ) async {
-    return await _supabase.auth.signUp(
+    var signupData = await _supabase.auth.signUp(
       email: email,
+      // phone: phone,
       password: password,
       data: {
         'first_name': firstName,
         'last_name': lastName,
-        'phone': phone,
         'email': email,
+        'phone': phone,
+        'role': 'tourist',
       },
     );
+    log('signup_data user: ${signupData.user}');
+    var params = {
+      'id': signupData.user!.id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'phone': phone,
+      'role': 'tourist',
+    };
+    var profileData = await dio.post(createProfileURL, data: params);
+    log('Profile data: ${JsonEncoder.withIndent(' ').convert(profileData)}');
   }
 
   // Sign out
@@ -44,6 +63,13 @@ class AuthService {
     final session = _supabase.auth.currentSession;
     final user = session?.user;
     return user?.email;
+  }
+
+  // Get user's ID
+  String? getCurrentUserID() {
+    final session = _supabase.auth.currentSession;
+    final user = session?.user;
+    return user?.id;
   }
 
   // Get user's metadata (useful when fetching an account number)

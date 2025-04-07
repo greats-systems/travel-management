@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
+import 'package:travel_management_app_2/constants.dart' as constants;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -27,12 +28,12 @@ class _RegisterPageState extends State<RegisterPage> {
     final email = _emailController.text;
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
-    final args = {
-      "first_name": firstName,
-      "last_name": lastName,
-      "phone": phone,
-      "email": email,
-    };
+    // final args = {
+    //   "first_name": firstName,
+    //   "last_name": lastName,
+    //   "phone": phone,
+    //   "email": email,
+    // };
 
     if (password == confirmPassword) {
       try {
@@ -85,12 +86,14 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.width / 2,
+            top: MediaQuery.of(context).size.width / 4,
             left: MediaQuery.of(context).size.width / 10,
             right: MediaQuery.of(context).size.width / 10,
           ),
           child: ListView(
             children: [
+              // logo
+              Center(child: Image.asset(constants.wildEncounterLogoURL)),
               // title
               Center(
                 child: Text(

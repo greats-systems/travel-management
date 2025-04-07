@@ -7,6 +7,8 @@ class MyDatePicker extends StatelessWidget {
   String helpText;
   String labelText;
   String fieldLabelText;
+  DateTime firstDate;
+  DateTime lastDate;
   TextEditingController controller = TextEditingController();
   DateTime _selectedDate = DateTime.now();
 
@@ -17,13 +19,15 @@ class MyDatePicker extends StatelessWidget {
     required this.fieldLabelText,
     required this.labelText,
     required this.controller,
+    required this.firstDate,
+    required this.lastDate,
   });
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 1),
+      firstDate: firstDate,
+      lastDate: lastDate,
       helpText: helpText,
       cancelText: 'Cancel',
       confirmText: 'OK',

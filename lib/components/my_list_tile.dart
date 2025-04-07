@@ -6,8 +6,21 @@ import 'package:travel_management_app_2/screens/flights/views/flight_info.dart';
 class MyListTile extends StatelessWidget {
   final List<Flight>? flights;
   // final String assetRoot = 'assets/logos/airlines';
+  final String origin;
+  final String destination;
+  final String departureDate;
+  final String? returnDate;
+  final int adults;
 
-  const MyListTile({super.key, required this.flights});
+  const MyListTile({
+    super.key,
+    required this.flights,
+    required this.origin,
+    required this.destination,
+    required this.departureDate,
+    required this.returnDate,
+    required this.adults,
+  });
 
   // Build ListTile for any flight (regardless of layovers)
   Widget buildFlightTile(Flight flight, BuildContext context) {
@@ -50,7 +63,7 @@ class MyListTile extends StatelessWidget {
           Text(airlineName),
           if (isMultiAirline)
             Text(
-              'Operated by ${airlines.join(' and ')}',
+              'Operated by ${airlines.map((code) => constants.returnCarrierName(code)).join(' and ')}',
               style: TextStyle(fontSize: 12),
             ),
         ],
@@ -59,7 +72,7 @@ class MyListTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            '€${flight.price!.toStringAsFixed(2)}',
+            '\$${flight.price!.toStringAsFixed(2)}',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           if (segments.length > 1)
@@ -72,7 +85,17 @@ class MyListTile extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => FlightInfo(flight: flight)),
+          MaterialPageRoute(
+            builder:
+                (context) => FlightInfo(
+                  flight: flight,
+                  origin: origin,
+                  destination: destination,
+                  departureDate: departureDate,
+                  returnDate: returnDate,
+                  adults: adults,
+                ),
+          ),
         );
       },
     );

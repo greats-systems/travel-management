@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_list_tile.dart';
-// import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/screens/flights/controllers/flight_controller.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 
@@ -12,6 +11,7 @@ class AvailableFlights extends StatefulWidget {
   final String departureDate;
   final String? returnDate;
   final int adults;
+
   const AvailableFlights({
     super.key,
     required this.origin,
@@ -27,8 +27,8 @@ class AvailableFlights extends StatefulWidget {
 
 class _AvailableFlightsState extends State<AvailableFlights> {
   final FlightController flightController = FlightController();
-  List<Flight>? _flights = [];
-  bool _isloading = false;
+  List<Flight>? _flights;
+  bool _isLoading = true; // Start with true to show loading initially
 
   @override
   void initState() {
@@ -37,29 +37,55 @@ class _AvailableFlightsState extends State<AvailableFlights> {
   }
 
   Future<void> _fetchData() async {
+    if (mounted) {
+      setState(() => _isLoading = true);
+    }
+
     try {
-      final flights = await flightController.searchForMorePrices(
+      final flights = await flightController.getFlightPrices(
+        widget.origin,
         widget.destination,
         widget.departureDate,
         widget.returnDate,
         widget.adults,
       );
+
       if (mounted) {
         setState(() {
           _flights = flights;
-          _isloading = false;
+          _isLoading = false;
         });
       }
     } catch (e) {
-      log('Error on initialization $e');
-      if (mounted) setState(() => _isloading = false);
+      log('Error fetching flights: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _flights = null; // Clear previous data on error
+        });
+      }
     }
   }
 
   Widget _buildBody() {
-    return _isloading != true
-        ? SafeArea(child: MyListTile(flights: _flights))
-        : Center(child: CircularProgressIndicator());
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_flights == null || _flights!.isEmpty) {
+      return const Center(child: Text('No flights available'));
+    }
+
+    return SafeArea(
+      child: MyListTile(
+        flights: _flights!,
+        origin: widget.origin,
+        destination: widget.destination,
+        departureDate: widget.departureDate,
+        returnDate: widget.returnDate,
+        adults: widget.adults,
+      ),
+    );
   }
 
   @override
@@ -69,7 +95,9 @@ class _AvailableFlightsState extends State<AvailableFlights> {
         title: Text(
           '${constants.returnLocation(widget.origin)} \u2192 ${constants.returnLocation(widget.destination)}',
         ),
-        actions: [IconButton(onPressed: _fetchData, icon: Icon(Icons.refresh))],
+        actions: [
+          IconButton(onPressed: _fetchData, icon: const Icon(Icons.refresh)),
+        ],
       ),
       body: _buildBody(),
     );

@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
+import 'package:travel_management_app_2/constants.dart' as constants;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,9 +26,9 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       if (mounted) {
         if (e.runtimeType == AuthApiException) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Incorrect username or password")),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(e.toString())));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -52,20 +53,22 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.width / 2,
+            top: MediaQuery.of(context).size.width / 5,
             left: MediaQuery.of(context).size.width / 10,
             right: MediaQuery.of(context).size.width / 10,
           ),
           child: ListView(
             children: [
+              // logo
+              Center(child: Image.asset(constants.wildEncounterLogoURL)),
               // title
-              // Center(
-              //   child: Text(
-              //     'Login',
-              //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              //   ),
-              // ),
-              // SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Login',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(height: 20),
 
               // email field
               MyTextField(

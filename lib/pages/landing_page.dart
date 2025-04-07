@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_management_app_2/pages/help.dart';
 import 'package:travel_management_app_2/pages/home.dart';
 import 'package:travel_management_app_2/screens/flights/views/search_flights.dart';
 
@@ -13,7 +14,7 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         body: SafeArea(
           child: Column(
@@ -26,10 +27,13 @@ class _LandingPageState extends State<LandingPage> {
                   //   text: 'Available flights',
                   // ),
                   Tab(icon: Icon(Icons.search), text: 'Look for a flight'),
+                  Tab(icon: Icon(Icons.help), text: 'Help'),
                 ],
               ),
               Expanded(
-                child: TabBarView(children: [HomePage(), SearchFlights()]),
+                child: TabBarView(
+                  children: [HomePage(), SearchFlights(), HelpPage()],
+                ),
               ),
             ],
           ),
