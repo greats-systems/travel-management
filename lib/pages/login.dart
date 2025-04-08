@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
+import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 
@@ -13,6 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final wildEncounterLogoURL = 'assets/logos/companies/wild_encounter.png';
   final authService = AuthService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -60,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
           child: ListView(
             children: [
               // logo
-              Center(child: Image.asset(constants.wildEncounterLogoURL)),
+              Center(child: Image.asset(wildEncounterLogoURL)),
               // title
               Center(
                 child: Text(
@@ -68,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // email field
               MyTextField(
@@ -77,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                 hintText: 'Email',
                 obscureText: false,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // password field
               MyTextField(
@@ -86,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                 hintText: 'Password',
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // login button
               MyButton(
@@ -94,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                 text: 'Login',
                 color: Colors.blue.shade700,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // sign up hyperlink
               Center(

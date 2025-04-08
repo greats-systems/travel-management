@@ -28,29 +28,40 @@ class AuthService {
     String lastName,
     String phone,
   ) async {
-    var signupData = await _supabase.auth.signUp(
-      email: email,
-      // phone: phone,
-      password: password,
-      data: {
-        'first_name': firstName,
-        'last_name': lastName,
+    try {
+      var signupData = await _supabase.auth.signUp(
+        email: email,
+        // phone: phone,
+        password: password,
+        data: {
+          'first_name': firstName,
+          'last_name': lastName,
+          'email': email,
+          'phone': phone,
+          'role': 'tourist',
+        },
+      );
+      log(
+        'signup_data user: ${JsonEncoder.withIndent(' ').convert(signupData.user)}',
+      );
+      final id = signupData.user!.id;
+
+      var params = {
+        'id': id.toString(),
+        'firstName': firstName,
+        'lastName': lastName,
         'email': email,
         'phone': phone,
         'role': 'tourist',
-      },
-    );
-    log('signup_data user: ${signupData.user}');
-    var params = {
-      'id': signupData.user!.id,
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'phone': phone,
-      'role': 'tourist',
-    };
-    var profileData = await dio.post(createProfileURL, data: params);
-    log('Profile data: ${JsonEncoder.withIndent(' ').convert(profileData)}');
+      };
+      await dio.post(createProfileURL, data: params).then((response) {
+        log(
+          'Profile data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
+        );
+      });
+    } catch (e) {
+      log('Error creating user: $e');
+    }
   }
 
   // Sign out

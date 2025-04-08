@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
+import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:travel_management_app_2/screens/flights/views/book_flight.dart';
@@ -82,7 +83,7 @@ class _FlightInfoState extends State<FlightInfo> {
                     ),
                   ],
                 ),
-                SizedBox(height: 12),
+                MySizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -109,7 +110,7 @@ class _FlightInfoState extends State<FlightInfo> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                MySizedBox(height: 8),
                 Text(
                   'Duration: ${constants.calculateDuration(departure['at'], arrival['at'])}',
                 ),
@@ -123,9 +124,9 @@ class _FlightInfoState extends State<FlightInfo> {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: Row(
               children: [
-                SizedBox(width: 16),
+                MySizedBox(width: 16),
                 Icon(Icons.airline_seat_individual_suite_rounded, size: 16),
-                SizedBox(width: 8),
+                MySizedBox(width: 8),
                 Text(
                   'Layover in ${constants.returnLocation(arrival['iataCode'])}',
                   style: TextStyle(fontStyle: FontStyle.italic),
@@ -149,7 +150,7 @@ class _FlightInfoState extends State<FlightInfo> {
               'Pricing Information',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            SizedBox(height: 8),
+            MySizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -183,7 +184,7 @@ class _FlightInfoState extends State<FlightInfo> {
                 'Outbound Flight',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
-              SizedBox(height: 12),
+              MySizedBox(height: 12),
               ...itineraries[0]['segments'].asMap().entries.map((entry) {
                 final index = entry.key;
                 return _buildFlightSegment(
@@ -192,7 +193,7 @@ class _FlightInfoState extends State<FlightInfo> {
                   itineraries[0]['segments'].length,
                 );
               }),
-              SizedBox(height: 20),
+              MySizedBox(),
             ],
 
             // Return Flight (if round trip)
@@ -201,7 +202,7 @@ class _FlightInfoState extends State<FlightInfo> {
                 'Return Flight',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
-              SizedBox(height: 12),
+              MySizedBox(height: 12),
               ...itineraries[1]['segments'].asMap().entries.map((entry) {
                 final index = entry.key;
                 return _buildFlightSegment(
@@ -210,11 +211,11 @@ class _FlightInfoState extends State<FlightInfo> {
                   itineraries[1]['segments'].length,
                 );
               }),
-              SizedBox(height: 20),
+              MySizedBox(),
             ],
 
             _buildPricingInfo(),
-            SizedBox(height: 20),
+            MySizedBox(),
 
             if (widget.flight.Id != null)
               ListTile(
@@ -223,7 +224,7 @@ class _FlightInfoState extends State<FlightInfo> {
                 title: Text('Booking Reference'),
                 subtitle: Text(widget.flight.Id!),
               ),
-            SizedBox(height: 20),
+            MySizedBox(),
             MyButton(
               onTap: bookThisFlight,
               text: 'Book this flight',

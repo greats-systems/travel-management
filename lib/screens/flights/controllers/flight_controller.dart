@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
+import 'package:travel_management_app_2/screens/flights/models/passenger.dart';
 
 class FlightController {
   Dio dio = Dio();
-  // static const root = 'http://10.0.2.2:5000';
 
   Future<List<Flight>> getFlightPrices(
     origin,
@@ -39,15 +39,12 @@ class FlightController {
     try {
       log('params: $params');
       await dio.get(getFlightPricesURL, data: params).then((response) {
-        // log(
-        //   'searchForMorePrices data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
-        // );
         final List<dynamic> json = response.data;
         flights = json.map((item) => Flight.fromMap(item)).toList();
       });
     } catch (e) {
       if (e is DioException) {
-        log('searchForMorePrices DioException: $e');
+        log('searchForMorePrices DioException: ${e.message}');
       } else {
         log('searchForMorePrices error: $e');
       }
@@ -55,61 +52,92 @@ class FlightController {
     return flights;
   }
 
-  void bookFlight(
+  void createBookingInSupabase(amadeusResponse, id) async {
+    final bookingURL = '${constants.apiRoot}/flight/booking/create';
+    var params = {
+      'amadeusID': amadeusResponse['id'],
+      'userID': id,
+      'queueingOfficeId': amadeusResponse['queuingOfficeId'],
+      'itineraries': amadeusResponse['flightOffers'][0]['itineraries'],
+      'travelers': amadeusResponse['travelers'],
+      'price': amadeusResponse['flightOffers'][0]['price'],
+    };
+
+    await dio.post(bookingURL, data: params).then((response) {
+      log('createBookingInSupabase data: ${response.data}');
+    });
+  }
+
+  Future<Map<String, dynamic>> bookFlight(
+    String id,
     String origin,
     String destination,
     String departureDate,
     String? returnDate,
-    int adults,
-    String dob,
-    String firstname,
-    String lastname,
-    String gender,
-    String phone,
-    String email,
+    int adults, // Keep adults count for validation
+    List<Passenger> passengers,
     Flight flight,
   ) async {
     const flightBookingURL = '${constants.apiRoot}/flight/book';
-    var params = {
+
+    // Validate passenger count matches adults count
+    if (passengers.length != adults) {
+      throw Exception(
+        'Passenger count ${passengers.length} must match adults count ($adults)',
+      );
+    }
+
+    // Convert passengers to SDK format
+    final sdkPassengers =
+        passengers.asMap().entries.map((entry) {
+          final index = entry.key + 1; // 1-based ID
+          final p = entry.value;
+          return {
+            "id": "$index",
+            "dateOfBirth": p.dateOfBirth,
+            "name": {
+              "firstName": p.firstName!.toUpperCase(),
+              "lastName": p.lastName!.toUpperCase(),
+            },
+            "gender": p.gender!.toUpperCase(),
+            "contact": {
+              "emailAddress": p.email,
+              "phones": [
+                {
+                  "deviceType": "MOBILE",
+                  "countryCallingCode": "263", // Zimbabwe code
+                  "number": p.phoneNumber,
+                },
+              ],
+            },
+          };
+        }).toList();
+
+    final params = {
       "origin": origin,
       "destination": destination,
       "departureDate": departureDate,
       "adults": adults,
       "flightId": "${flight.Id}",
-      "passengers": {
-        "id": "1",
-        "dateOfBirth": dob,
-        "name": {
-          "firstName": firstname.toUpperCase(),
-          "lastName": lastname.toUpperCase(),
-        },
-        "gender": gender.toUpperCase(),
-        "contact": {
-          "emailAddress": email,
-          "phones": [
-            {
-              "deviceType": "MOBILE",
-              "countryCallingCode": "263",
-              "number": phone,
-            },
-          ],
-        },
-      },
+      "passengers": sdkPassengers, // Direct array of passengers
     };
-    log('Params: ${JsonEncoder.withIndent(' ').convert(params)}');
-    try {
-      await dio.post(flightBookingURL, data: params).then((response) {
-        log(
-          'bookFlight data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
-        );
-      });
-    } catch (error) {
-      if (error is DioException) {
-        log('bookFlight DioException: ${error.response}');
-      } else {
-        log('bookFlight error: $error');
-      }
+
+    if (returnDate != null) {
+      params["returnDate"] = returnDate;
     }
-    return;
+
+    log('Booking Request: ${JsonEncoder.withIndent('  ').convert(params)}');
+
+    try {
+      final response = await dio.post(flightBookingURL, data: params);
+      final json = response.data;
+      log('Booking Success: ${JsonEncoder.withIndent(' ').convert(json)}');
+      // return response.data;
+      createBookingInSupabase(json, id);
+      return json;
+    } on DioException catch (e) {
+      log('Booking Failed: ${e.response?.data ?? e.message}');
+      rethrow;
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
@@ -19,7 +21,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getUserID() async {
-    await authService.getCurrentUserID();
+    setState(() {
+      id = authService.getCurrentUserID();
+      log('User ID from home: $id');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserID();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   /*

@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
+import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 
@@ -62,8 +65,10 @@ class _RegisterPageState extends State<RegisterPage> {
             );
             return;
           } else {
+            log(e.toString());
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
+                duration: Duration(seconds: 20),
                 content: Text("${e.toString()}\n${e.runtimeType.toString()}"),
               ),
             );
@@ -101,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // first name
               MyTextField(
@@ -110,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 hintText: 'First Name',
                 obscureText: false,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // last name
               MyTextField(
@@ -119,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 hintText: 'Last name',
                 obscureText: false,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // phone number field
               MyTextField(
@@ -128,7 +133,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 hintText: 'Phone',
                 obscureText: false,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // email field
               MyTextField(
@@ -137,7 +142,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 hintText: 'Email',
                 obscureText: false,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // Password field
               MyTextField(
@@ -146,7 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 hintText: 'Password',
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // confirm PIN field
               MyTextField(
@@ -155,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 hintText: 'Confirm Password',
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // login button
               MyButton(
@@ -163,7 +168,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 text: 'Sign Up',
                 color: Colors.blue.shade700,
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
 
               // sign up hyperlink
               Center(

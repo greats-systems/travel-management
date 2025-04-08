@@ -69,6 +69,15 @@ String? returnCarrierLogo(String carrierCode) {
     "HA": "$airlineAssetsRoot/hawaiian.png",
     "PD": "$airlineAssetsRoot/porter.png",
     "TS": "$airlineAssetsRoot/air_transat.png",
+    "VF": "$airlineAssetsRoot/ajet.png",
+    "ME": "$airlineAssetsRoot/mea.png",
+    "GF": "$airlineAssetsRoot/gulf_air.png",
+    "KM": "$airlineAssetsRoot/malta_airlines.png",
+    "VY": "$airlineAssetsRoot/vueling.png",
+    "A3": "$airlineAssetsRoot/aegean.png",
+    "P6": "$airlineAssetsRoot/privilege.png",
+    "CZ": "$airlineAssetsRoot/china_southern.png",
+    "MU": "$airlineAssetsRoot/china_eastern.png",
     "nologo": "$airlineAssetsRoot/no_logo.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -134,6 +143,15 @@ String returnCarrierName(String carrierCode) {
     "HA": "Hawaiian Airlines",
     "PD": "Porter Airlines Canada",
     "TS": "Air Transat",
+    "VF": "AJet Hava Tasimaciligi Anonim Sirketi dba Ajet",
+    "ME": "Middle Eastern Airlines",
+    "GF": "Gulf Air",
+    "KM": "KM Malta Airlines Limited",
+    "VY": "Vueling Airline SA",
+    "A3": "Aegean Airlines",
+    "P6": "Privilege Style",
+    "CZ": "China Southern",
+    "MU": "China Eastern",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -187,6 +205,7 @@ String returnAirportCode(String location) {
     "Bangkok": "BKK",
     "Keflavik International": "KEF",
     "Abbotsford Intl": "YXX",
+    "Munich": "MUC",
   };
   return locationMap[location] ?? location;
 }
@@ -247,6 +266,8 @@ String returnAirportName(String airportCode) {
     "BKK": "Bangkok",
     "KEF": "Keflavik International",
     "YXX": "Abbotsford Intl.",
+    "MUC": "Munich Intl.",
+    "BCN": "Josep Tarradellas Barcelona",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
@@ -303,6 +324,8 @@ String returnLocation(String airportCode) {
     "FRA": "Frankfurt",
     "KEF": "Reykyavik",
     "YXX": "Vancouver",
+    "MUC": "Munich",
+    "BCN": "Barcelona",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }

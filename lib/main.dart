@@ -11,8 +11,8 @@ void main() async {
   await dotenv.load(fileName: '.env');
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: dotenv.get('GREATS_SYSTEMS_VPS_URL'),
-    anonKey: dotenv.get('GREATS_SYSTEMS_VPS_ROLE_KEY'),
+    url: dotenv.get('LOCAL_SUPABASE_URL'),
+    anonKey: dotenv.get('LOCAL_SUPABASE_SERVICE_ROLE_KEY'),
   );
   runApp(const MyApp());
 }

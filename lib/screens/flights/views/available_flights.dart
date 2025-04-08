@@ -36,6 +36,11 @@ class _AvailableFlightsState extends State<AvailableFlights> {
     _fetchData();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> _fetchData() async {
     if (mounted) {
       setState(() => _isLoading = true);

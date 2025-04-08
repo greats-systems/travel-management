@@ -1,9 +1,13 @@
+import 'dart:developer';
+
+import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
+import 'package:travel_management_app_2/screens/flights/controllers/search_interest_controller.dart';
 import 'package:travel_management_app_2/screens/flights/views/available_flights.dart';
 
 enum TripType { oneWay, roundTrip }
@@ -21,38 +25,77 @@ class _SearchFlightsState extends State<SearchFlights> {
   final _departureDateController = TextEditingController();
   final _returnDateController = TextEditingController();
   final _adultsController = TextEditingController();
+  final AuthService authService = AuthService();
   TripType _tripType = TripType.oneWay;
-  // final DateTime _selectedDate = DateTime.now();
+  String? id;
+  final SearchInterestController searchInterestController =
+      SearchInterestController();
+
+  void getUserID() async {
+    setState(() {
+      id = authService.getCurrentUserID();
+      log('User ID from search_flights: $id');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserID();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   void search() {
-    // log(
-    //   'search\n${constants.returnAirportCode(_destinationController.text)}\n${_departureDateController.text}\n${_returnDateController.text}\n${_adultsController.text}',
-    // );
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            _tripType == TripType.oneWay
-                ? (context) => AvailableFlights(
-                  origin: constants.returnAirportCode(_originController.text),
-                  destination: constants.returnAirportCode(
-                    _destinationController.text,
+    try {
+      _tripType == TripType.oneWay
+          ? searchInterestController.createSearchInterest(
+            _originController.text,
+            _destinationController.text,
+            _departureDateController.text,
+            true,
+            null,
+            int.parse(_adultsController.text),
+            id,
+          )
+          : searchInterestController.createSearchInterest(
+            _originController.text,
+            _destinationController.text,
+            _departureDateController.text,
+            false,
+            _returnDateController.text,
+            int.parse(_adultsController.text),
+            id,
+          );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              _tripType == TripType.oneWay
+                  ? (context) => AvailableFlights(
+                    origin: constants.returnAirportCode(_originController.text),
+                    destination: constants.returnAirportCode(
+                      _destinationController.text,
+                    ),
+                    departureDate: _departureDateController.text,
+                    returnDate: null,
+                    adults: int.parse(_adultsController.text),
+                  )
+                  : (context) => AvailableFlights(
+                    origin: constants.returnAirportCode(_originController.text),
+                    destination: constants.returnAirportCode(
+                      _destinationController.text,
+                    ),
+                    departureDate: _departureDateController.text,
+                    returnDate: _returnDateController.text,
+                    adults: int.parse(_adultsController.text),
                   ),
-                  departureDate: _departureDateController.text,
-                  returnDate: null,
-                  adults: int.parse(_adultsController.text),
-                )
-                : (context) => AvailableFlights(
-                  origin: constants.returnAirportCode(_originController.text),
-                  destination: constants.returnAirportCode(
-                    _destinationController.text,
-                  ),
-                  departureDate: _departureDateController.text,
-                  returnDate: _returnDateController.text,
-                  adults: int.parse(_adultsController.text),
-                ),
-      ),
-    );
+        ),
+      );
+    } catch (e) {}
   }
 
   @override
@@ -74,7 +117,7 @@ class _SearchFlightsState extends State<SearchFlights> {
                   style: TextStyle(fontSize: 24),
                 ),
               ),
-              SizedBox(height: 20),
+              MySizedBox(),
               MyTextField(
                 textInputType: TextInputType.text,
                 controller: _originController,
@@ -88,7 +131,7 @@ class _SearchFlightsState extends State<SearchFlights> {
                 hintText: 'Destination',
                 obscureText: false,
               ),
-              const SizedBox(height: 20),
+              MySizedBox(),
               MyDatePicker(
                 controller: _departureDateController,
                 helpText: 'Departure date',
@@ -97,7 +140,7 @@ class _SearchFlightsState extends State<SearchFlights> {
                 firstDate: DateTime.now(),
                 lastDate: DateTime(DateTime.now().year + 1),
               ),
-              const SizedBox(height: 20),
+              MySizedBox(),
               Row(
                 children: [
                   Radio<TripType>(
@@ -122,7 +165,7 @@ class _SearchFlightsState extends State<SearchFlights> {
                   const Text('Round trip'),
                 ],
               ),
-              const SizedBox(height: 20),
+              MySizedBox(),
               _tripType == TripType.roundTrip
                   ? Column(
                     children: [
@@ -134,17 +177,17 @@ class _SearchFlightsState extends State<SearchFlights> {
                         firstDate: DateTime.now(),
                         lastDate: DateTime(DateTime.now().year + 1),
                       ),
-                      const SizedBox(height: 20),
+                      MySizedBox(),
                     ],
                   )
-                  : const SizedBox(height: 20),
+                  : MySizedBox(),
               MyTextField(
                 textInputType: TextInputType.number,
                 controller: _adultsController,
                 hintText: 'Number of adults',
                 obscureText: false,
               ),
-              const SizedBox(height: 20),
+              MySizedBox(),
               MyButton(
                 onTap: search,
                 text: 'Search',
