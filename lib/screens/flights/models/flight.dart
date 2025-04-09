@@ -1,5 +1,4 @@
 // @collection
-import 'dart:developer';
 
 class Flight {
   String? Id;

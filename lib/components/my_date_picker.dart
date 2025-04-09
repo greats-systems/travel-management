@@ -1,9 +1,10 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
 class MyDatePicker extends StatelessWidget {
-  // DateTime? pickedDate;
   String helpText;
   String labelText;
   String fieldLabelText;
@@ -14,7 +15,6 @@ class MyDatePicker extends StatelessWidget {
 
   MyDatePicker({
     super.key,
-    // required this.pickedDate,
     required this.helpText,
     required this.fieldLabelText,
     required this.labelText,

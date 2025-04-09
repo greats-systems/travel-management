@@ -78,6 +78,10 @@ String? returnCarrierLogo(String carrierCode) {
     "P6": "$airlineAssetsRoot/privilege.png",
     "CZ": "$airlineAssetsRoot/china_southern.png",
     "MU": "$airlineAssetsRoot/china_eastern.png",
+    "EY": "$airlineAssetsRoot/etihad.png",
+    "UL": "$airlineAssetsRoot/srilankan.png",
+    "WY": "$airlineAssetsRoot/omanair.png",
+    "BR": "$airlineAssetsRoot/eva_air.png",
     "nologo": "$airlineAssetsRoot/no_logo.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -152,6 +156,10 @@ String returnCarrierName(String carrierCode) {
     "P6": "Privilege Style",
     "CZ": "China Southern",
     "MU": "China Eastern",
+    "EY": "Etihad Airways",
+    "UL": "SriLankan Airlines",
+    "WY": "Oman Air",
+    "BR": "Eva Air",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -206,6 +214,10 @@ String returnAirportCode(String location) {
     "Keflavik International": "KEF",
     "Abbotsford Intl": "YXX",
     "Munich": "MUC",
+    "Abu Dhabi": "AUH",
+    "Colombo": "CMB",
+    "Muscat": "MCT",
+    "Taipei": "TPE",
   };
   return locationMap[location] ?? location;
 }
@@ -268,6 +280,10 @@ String returnAirportName(String airportCode) {
     "YXX": "Abbotsford Intl.",
     "MUC": "Munich Intl.",
     "BCN": "Josep Tarradellas Barcelona",
+    "AUH": "Zayed Intl.",
+    "CMB": "Bandaranaike Intl",
+    "MCT": "Muscat Intl.",
+    "TPE": "Taiwan Taoyuan Intl.",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
@@ -326,6 +342,10 @@ String returnLocation(String airportCode) {
     "YXX": "Vancouver",
     "MUC": "Munich",
     "BCN": "Barcelona",
+    "AUH": "Abu Dhabi",
+    "CMB": "Colombo",
+    "MCT": "Muscat",
+    "TPE": "Taipei",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }
