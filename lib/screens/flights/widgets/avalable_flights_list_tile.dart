@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/screens/flights/views/available_flights/flight_info.dart';
 
-class MyListTile extends StatelessWidget {
+class AvailableFlightsListTile extends StatelessWidget {
   final List<Flight>? flights;
   // final String assetRoot = 'assets/logos/airlines';
   final String origin;
@@ -12,7 +12,7 @@ class MyListTile extends StatelessWidget {
   final String? returnDate;
   final int adults;
 
-  const MyListTile({
+  const AvailableFlightsListTile({
     super.key,
     required this.flights,
     required this.origin,

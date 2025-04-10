@@ -6,7 +6,8 @@ import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
-import 'package:travel_management_app_2/screens/flights/views/book_flight.dart';
+import 'package:travel_management_app_2/screens/flights/views/available_flights/book_flight.dart';
+// import 'package:travel_management_app_2/screens/flights/views/book_flight.dart';
 
 class FlightInfo extends StatefulWidget {
   final Flight flight;
@@ -59,7 +60,6 @@ class _FlightInfoState extends State<FlightInfo> {
     final carrierCode = segment['carrierCode'];
     final flightNumber = segment['number'];
     final aircraft = segment['aircraft']?['code'] ?? 'Unknown';
-    // log('segment: $segment');
 
     return Column(
       children: [
@@ -139,7 +139,6 @@ class _FlightInfoState extends State<FlightInfo> {
   }
 
   Widget _buildPricingInfo() {
-    // log('_buildPricingInfo ${flight.itineraries}');
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -184,7 +183,7 @@ class _FlightInfoState extends State<FlightInfo> {
                 'Outbound Flight',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
-              MySizedBox(height: 12),
+              MySizedBox(),
               ...itineraries[0]['segments'].asMap().entries.map((entry) {
                 final index = entry.key;
                 return _buildFlightSegment(
@@ -202,7 +201,7 @@ class _FlightInfoState extends State<FlightInfo> {
                 'Return Flight',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
-              MySizedBox(height: 12),
+              MySizedBox(),
               ...itineraries[1]['segments'].asMap().entries.map((entry) {
                 final index = entry.key;
                 return _buildFlightSegment(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_list_tile.dart';
 import 'package:travel_management_app_2/screens/flights/controllers/flight_controller.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
+import 'package:travel_management_app_2/screens/flights/widgets/avalable_flights_list_tile.dart';
 
 class AvailableFlights extends StatefulWidget {
   final String origin;
@@ -82,7 +83,7 @@ class _AvailableFlightsState extends State<AvailableFlights> {
     }
 
     return SafeArea(
-      child: MyListTile(
+      child: AvailableFlightsListTile(
         flights: _flights!,
         origin: widget.origin,
         destination: widget.destination,
@@ -100,9 +101,9 @@ class _AvailableFlightsState extends State<AvailableFlights> {
         title: Text(
           '${constants.returnLocation(widget.origin)} \u2192 ${constants.returnLocation(widget.destination)}',
         ),
-        actions: [
-          IconButton(onPressed: _fetchData, icon: const Icon(Icons.refresh)),
-        ],
+        // actions: [
+        //   IconButton(onPressed: _fetchData, icon: const Icon(Icons.refresh)),
+        // ],
       ),
       body: _buildBody(),
     );

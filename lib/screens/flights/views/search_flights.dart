@@ -2,13 +2,14 @@ import 'dart:developer';
 
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
+import 'package:travel_management_app_2/components/my_dropdown.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/screens/flights/controllers/search_interest_controller.dart';
-import 'package:travel_management_app_2/screens/flights/views/available_flights.dart';
+import 'package:travel_management_app_2/screens/flights/views/available_flights/available_flights.dart';
 
 enum TripType { oneWay, roundTrip }
 
@@ -25,6 +26,7 @@ class _SearchFlightsState extends State<SearchFlights> {
   final _departureDateController = TextEditingController();
   final _returnDateController = TextEditingController();
   final _adultsController = TextEditingController();
+  double _currentSliderValue = 1;
   final AuthService authService = AuthService();
   TripType _tripType = TripType.oneWay;
   String? id;
@@ -58,7 +60,7 @@ class _SearchFlightsState extends State<SearchFlights> {
             _departureDateController.text,
             true,
             null,
-            int.parse(_adultsController.text),
+            int.parse(_currentSliderValue.round().toString()),
             id,
           )
           : searchInterestController.createSearchInterest(
@@ -67,7 +69,7 @@ class _SearchFlightsState extends State<SearchFlights> {
             _departureDateController.text,
             false,
             _returnDateController.text,
-            int.parse(_adultsController.text),
+            int.parse(_currentSliderValue.round().toString()),
             id,
           );
       Navigator.push(
@@ -82,7 +84,7 @@ class _SearchFlightsState extends State<SearchFlights> {
                     ),
                     departureDate: _departureDateController.text,
                     returnDate: null,
-                    adults: int.parse(_adultsController.text),
+                    adults: int.parse(_currentSliderValue.round().toString()),
                   )
                   : (context) => AvailableFlights(
                     origin: constants.returnAirportCode(_originController.text),
@@ -91,11 +93,13 @@ class _SearchFlightsState extends State<SearchFlights> {
                     ),
                     departureDate: _departureDateController.text,
                     returnDate: _returnDateController.text,
-                    adults: int.parse(_adultsController.text),
+                    adults: int.parse(_currentSliderValue.round().toString()),
                   ),
         ),
       );
-    } catch (e) {}
+    } catch (e, s) {
+      log('Error performing search: $e $s');
+    }
   }
 
   @override
@@ -111,13 +115,6 @@ class _SearchFlightsState extends State<SearchFlights> {
           ),
           child: ListView(
             children: [
-              Center(
-                child: Text(
-                  'Look for a flight',
-                  style: TextStyle(fontSize: 24),
-                ),
-              ),
-              MySizedBox(),
               MyTextField(
                 textInputType: TextInputType.text,
                 controller: _originController,
@@ -181,11 +178,24 @@ class _SearchFlightsState extends State<SearchFlights> {
                     ],
                   )
                   : MySizedBox(),
-              MyTextField(
-                textInputType: TextInputType.number,
-                controller: _adultsController,
-                hintText: 'Number of adults',
-                obscureText: false,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Adults'),
+                  Slider(
+                    value: _currentSliderValue,
+                    min: 1,
+                    max: 9,
+                    divisions: 8,
+                    label: _currentSliderValue.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        _currentSliderValue = value;
+                        log(value.round().toString());
+                      });
+                    },
+                  ),
+                ],
               ),
               MySizedBox(),
               MyButton(

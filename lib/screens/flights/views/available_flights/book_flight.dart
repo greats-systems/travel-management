@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
@@ -53,7 +54,7 @@ class _BookFlightState extends State<BookFlight> {
     });
   }
 
-  void bookFlight() {
+  void bookFlight() async {
     log('Passing flight info to controller');
     setState(() => _isLoading = true);
 
@@ -73,7 +74,7 @@ class _BookFlightState extends State<BookFlight> {
               )
               .toList();
 
-      controller.bookFlight(
+      await controller.bookFlight(
         id!,
         widget.origin,
         widget.destination,
@@ -84,6 +85,10 @@ class _BookFlightState extends State<BookFlight> {
         widget.flight,
       );
       if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Booking successful!'),
@@ -93,12 +98,21 @@ class _BookFlightState extends State<BookFlight> {
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (e is DioException && e.response?.statusCode == 404) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('This flight is full'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -193,11 +207,13 @@ class _BookFlightState extends State<BookFlight> {
                 (index) => buildPassengerForm(index),
               ),
               MySizedBox(),
-              MyButton(
-                onTap: bookFlight,
-                text: 'Book',
-                color: Colors.blue.shade400,
-              ),
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : MyButton(
+                    onTap: bookFlight,
+                    text: 'Book',
+                    color: Colors.blue.shade400,
+                  ),
             ],
           ),
         ),

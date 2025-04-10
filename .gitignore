@@ -46,3 +46,4 @@ app.*.map.json
 
 .env
 script.sh
+test.*

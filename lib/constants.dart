@@ -82,6 +82,9 @@ String? returnCarrierLogo(String carrierCode) {
     "UL": "$airlineAssetsRoot/srilankan.png",
     "WY": "$airlineAssetsRoot/omanair.png",
     "BR": "$airlineAssetsRoot/eva_air.png",
+    "CI": "$airlineAssetsRoot/china_airlines.png",
+    "PR": "$airlineAssetsRoot/philippine_airlines.png",
+    "HX": "$airlineAssetsRoot/hongkong_airlines.png",
     "nologo": "$airlineAssetsRoot/no_logo.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -160,6 +163,9 @@ String returnCarrierName(String carrierCode) {
     "UL": "SriLankan Airlines",
     "WY": "Oman Air",
     "BR": "Eva Air",
+    "CI": "China Airlines",
+    "PR": "Philippine Airlines",
+    "HX": "Hong Kong Airlines",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -174,7 +180,7 @@ String returnAirportCode(String location) {
     "Entebbe": "EBB",
     "Kigali": "KGL",
     "Johannesburg": "JNB",
-    // "Jo'burg Lanseria": "HLA",
+    "Jo'burg Lanseria": "HLA",
     "Durban": "DUR",
     "Lusaka": "LUN",
     "Doha": "DOH",
@@ -218,6 +224,8 @@ String returnAirportCode(String location) {
     "Colombo": "CMB",
     "Muscat": "MCT",
     "Taipei": "TPE",
+    "Incheon International": "ICN",
+    "Ninoy Aquino Intl": "MNL",
   };
   return locationMap[location] ?? location;
 }
@@ -231,7 +239,8 @@ String returnAirportName(String airportCode) {
     "DXB": "Dubai Intl.",
     "EBB": "Entebbe Intl.",
     "KGL": "Kigali Intl.",
-    "JNB": "Johannesburg OR Tambo",
+    "JNB": "Johannesburg",
+    // "JNB": "Johannesburg OR Tambo",
     "HLA": "Johannesburg Lanseria",
     "DUR": "King Shaka Intl.",
     "LUN": "Lusaka Intl.",
@@ -284,6 +293,8 @@ String returnAirportName(String airportCode) {
     "CMB": "Bandaranaike Intl",
     "MCT": "Muscat Intl.",
     "TPE": "Taiwan Taoyuan Intl.",
+    "ICN": "Incheon International",
+    "MNL": "Ninoy Aquino Intl",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
@@ -346,6 +357,8 @@ String returnLocation(String airportCode) {
     "CMB": "Colombo",
     "MCT": "Muscat",
     "TPE": "Taipei",
+    "ICN": "Seoul",
+    "MNL": "Manila",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }
@@ -374,6 +387,21 @@ String calculateDuration(String departure, String arrival) {
 // Format time string
 String formatTime(String isoTime) {
   return isoTime.substring(11, 16); // Extracts HH:MM
+}
+
+String getItineraryRouteSummary(List<dynamic> itineraries) {
+  // log('${itineraries}');
+  final originCode = itineraries[0]['segments'][0]['departure']['iataCode'];
+  final destinationCode = itineraries[0]['segments'][1]['arrival']['iataCode'];
+  final origin = returnLocation(originCode);
+  final destination = returnLocation(destinationCode);
+  return '$origin → $destination';
+  // log('Origin: $origin\nDestination: $destination');
+  // final origin = itineraries['segments'];
+
+  // final origin = returnLocation(lastSegment);
+
+  // final origin = returnLocation(firstSegment);
 }
 
 String getOriginDestinationSummary(List<dynamic> segments) {

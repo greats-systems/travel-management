@@ -24,10 +24,11 @@ class MyTextField extends StatelessWidget {
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(15)),
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: Colors.black12, width: 2.5),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(color: Colors.black12, width: 4.5),
         ),
         fillColor: Colors.white,
         filled: true,

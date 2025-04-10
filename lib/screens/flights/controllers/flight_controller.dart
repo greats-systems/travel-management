@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:travel_management_app_2/screens/flights/models/booking.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:travel_management_app_2/screens/flights/models/passenger.dart';
@@ -38,10 +39,19 @@ class FlightController {
 
     try {
       log('params: $params');
-      await dio.get(getFlightPricesURL, data: params).then((response) {
-        final List<dynamic> json = response.data;
-        flights = json.map((item) => Flight.fromMap(item)).toList();
-      });
+      await dio
+          .get(getFlightPricesURL, data: params)
+          .then((response) {
+            final List<dynamic> json = response.data;
+            log('getFlightPrices response: ${response.data}');
+            flights = json.map((item) => Flight.fromMap(item)).toList();
+          })
+          // ignore: argument_type_not_assignable_to_error_handler
+          .catchError((DioException e) {
+            if (e.response!.statusCode == 404) {
+              log(e.toString());
+            }
+          });
     } catch (e) {
       if (e is DioException) {
         log('searchForMorePrices DioException: ${e.message}');
@@ -66,6 +76,30 @@ class FlightController {
     await dio.post(bookingURL, data: params).then((response) {
       log('createBookingInSupabase data: ${response.data}');
     });
+  }
+
+  Future<List<Booking>> getBookingsFromSupabase(id) async {
+    final bookingsURL = '${constants.apiRoot}/flight/bookings';
+    List<Booking> bookings = [];
+    var params = {'userID': id};
+
+    try {
+      await dio.get(bookingsURL, data: params).then((response) {
+        // log(
+        //   'getBookingFromSupabase data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
+        // );
+        final List<dynamic> json = response.data;
+        bookings = json.map((item) => Booking.fromMap(item)).toList();
+        // log('Bookings: ${JsonEncoder.withIndent(' ').convert(bookings)}');
+      });
+    } catch (e) {
+      if (e is DioException) {
+        log('getBookingFromSupabase DioException: ${e.message}');
+      } else {
+        log('getBookingFromSupabase error: $e');
+      }
+    }
+    return bookings;
   }
 
   Future<Map<String, dynamic>> bookFlight(
