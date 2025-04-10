@@ -97,14 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: ListView(
             children: [
               // logo
-              Center(child: Image.asset(constants.wildEncounterLogoURL)),
-              // title
-              Center(
-                child: Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ),
+              Center(child: Image.asset(constants.logoURL)),
               MySizedBox(),
 
               // first name

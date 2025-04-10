@@ -275,7 +275,7 @@ class _ItinerariesInfoState extends State<ItinerariesInfo> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   MySizedBox(),
-                  ...itineraries[0]['segments'].asMap().entries.map((entry) {
+                  ...itineraries[1]['segments'].asMap().entries.map((entry) {
                     final index = entry.key;
                     return _buildBookingSegment(
                       entry.value,

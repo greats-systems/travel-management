@@ -1,9 +1,8 @@
 import 'dart:developer';
-
 import 'package:intl/intl.dart';
 
 // Logo
-const wildEncounterLogoURL = 'assets/logos/companies/wild_encounter.png';
+const logoURL = 'assets/logos/companies/lighttraveller2.png';
 
 // Backend URL
 const apiRoot = 'http://10.0.2.2:5000';
@@ -226,6 +225,7 @@ String returnAirportCode(String location) {
     "Taipei": "TPE",
     "Incheon International": "ICN",
     "Ninoy Aquino Intl": "MNL",
+    "Halifax": "YHZ",
   };
   return locationMap[location] ?? location;
 }
@@ -359,6 +359,7 @@ String returnLocation(String airportCode) {
     "TPE": "Taipei",
     "ICN": "Seoul",
     "MNL": "Manila",
+    "YHZ": "Halifax",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }
@@ -389,19 +390,19 @@ String formatTime(String isoTime) {
   return isoTime.substring(11, 16); // Extracts HH:MM
 }
 
-String getItineraryRouteSummary(List<dynamic> itineraries) {
-  // log('${itineraries}');
-  final originCode = itineraries[0]['segments'][0]['departure']['iataCode'];
-  final destinationCode = itineraries[0]['segments'][1]['arrival']['iataCode'];
+String getItineraryRouteSummary(List<dynamic> segments) {
+  if (segments.isEmpty) return 'No route information';
+
+  final firstSegment = segments.first;
+  final lastSegment = segments.last;
+
+  final originCode = firstSegment['departure']['iataCode'];
+  final destinationCode = lastSegment['arrival']['iataCode'];
+
   final origin = returnLocation(originCode);
   final destination = returnLocation(destinationCode);
+
   return '$origin → $destination';
-  // log('Origin: $origin\nDestination: $destination');
-  // final origin = itineraries['segments'];
-
-  // final origin = returnLocation(lastSegment);
-
-  // final origin = returnLocation(firstSegment);
 }
 
 String getOriginDestinationSummary(List<dynamic> segments) {

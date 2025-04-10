@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 import 'dart:developer';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
@@ -22,11 +22,10 @@ class BookedFlightsListTile extends StatelessWidget {
       airlines.add(itinerary['segments'][0]['carrierCode']);
     }
     // log('Airlines: $airlines');
-    log('origin: ${itineraries[0]['segments'][0]['departure']}');
-    log('1st stop arrival: ${itineraries[0]['segments'][0]['arrival']}');
-    log('1st stop departure: ${itineraries[0]['segments'][1]['departure']}');
-    log('destination: ${itineraries[0]['segments'][1]['arrival']}');
-    log('\n');
+    // log('origin: ${itineraries[0]['segments'][0]['departure']}');
+    // log('1st stop arrival: ${itineraries[0]['segments'][0]['arrival']}');
+    // log('1st stop departure: ${itineraries[0]['segments'][1]['departure']}');
+    // log('destination: ${itineraries[0]['segments'][1]['arrival']}');
     final isMultiAirline = airlines.length > 1;
     final dynamic firstAirlineCode;
     final dynamic logoURL;
@@ -36,7 +35,9 @@ class BookedFlightsListTile extends StatelessWidget {
 
     firstAirlineCode = airlines.first;
     logoURL = constants.returnCarrierLogo(firstAirlineCode);
-    routeSummary = constants.getItineraryRouteSummary(itineraries);
+    routeSummary = constants.getItineraryRouteSummary(
+      itineraries[0]['segments'],
+    );
     airlineName = constants.returnCarrierName(firstAirlineCode);
     price = booking.price!['total'];
     log('Booking price: ${price}');

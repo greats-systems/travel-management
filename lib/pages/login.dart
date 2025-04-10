@@ -4,7 +4,7 @@ import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
-// import 'package:travel_management_app_2/constants.dart' as constants;
+import 'package:travel_management_app_2/constants.dart' as constants;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final wildEncounterLogoURL = 'assets/logos/companies/wild_encounter.png';
+  // final wildEncounterLogoURL = 'assets/logos/companies/wild_encounter.png';
   final authService = AuthService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -61,14 +61,7 @@ class _LoginPageState extends State<LoginPage> {
           child: ListView(
             children: [
               // logo
-              Center(child: Image.asset(wildEncounterLogoURL)),
-              // title
-              Center(
-                child: Text(
-                  'Login',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ),
+              Center(child: Image.asset(constants.logoURL)),
               MySizedBox(),
 
               // email field

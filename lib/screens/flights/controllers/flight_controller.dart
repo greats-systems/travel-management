@@ -43,7 +43,7 @@ class FlightController {
           .get(getFlightPricesURL, data: params)
           .then((response) {
             final List<dynamic> json = response.data;
-            log('getFlightPrices response: ${response.data}');
+            // log('getFlightPrices response: ${response.data}');
             flights = json.map((item) => Flight.fromMap(item)).toList();
           })
           // ignore: argument_type_not_assignable_to_error_handler
@@ -165,7 +165,7 @@ class FlightController {
     try {
       final response = await dio.post(flightBookingURL, data: params);
       final json = response.data;
-      log('Booking Success: ${JsonEncoder.withIndent(' ').convert(json)}');
+      // log('Booking Success: ${JsonEncoder.withIndent(' ').convert(json)}');
       // return response.data;
       createBookingInSupabase(json, id);
       return json;

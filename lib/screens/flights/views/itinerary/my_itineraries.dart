@@ -1,6 +1,6 @@
 // ignore_for_file: unused_field
 
-import 'dart:convert';
+// import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -38,9 +38,6 @@ class _MyItinerariesState extends State<MyItineraries> {
         setState(() {
           _bookings = bookings;
           _isLoading = false;
-          // log(
-          //   '_bookings from MyItineraries: ${JsonEncoder.withIndent(' ').convert(_bookings)}',
-          // );
         });
       }
     } catch (e) {
@@ -68,7 +65,12 @@ class _MyItinerariesState extends State<MyItineraries> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: BookedFlightsListTile(bookings: _bookings!, id: userId!),
+      child:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _bookings == null || _bookings!.isEmpty
+              ? const Center(child: Text('No itineraries yet'))
+              : BookedFlightsListTile(bookings: _bookings!, id: userId!),
     );
   }
 }
