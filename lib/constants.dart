@@ -7,6 +7,17 @@ const logoURL = 'assets/logos/companies/lighttraveller2.png';
 // Backend URL
 const apiRoot = 'http://10.0.2.2:5000';
 
+// Shuttle logo mapping
+String? returnShuttleCompanyLogo(String companyName) {
+  final String shuttleCompanyAssetsRoot =
+      'assets/logos/companies/shuttle_services';
+  final Map<String, String> assetURLMap = {
+    "Galaxy Coaches": "$shuttleCompanyAssetsRoot/galaxy_coaches.jpg",
+    "No Logo": "$shuttleCompanyAssetsRoot/not_found.png",
+  };
+  return assetURLMap[companyName] ?? assetURLMap["No Logo"];
+}
+
 // Airline logo mapping
 String? returnCarrierLogo(String carrierCode) {
   final String airlineAssetsRoot = 'assets/logos/airlines';
@@ -84,7 +95,13 @@ String? returnCarrierLogo(String carrierCode) {
     "CI": "$airlineAssetsRoot/china_airlines.png",
     "PR": "$airlineAssetsRoot/philippine_airlines.png",
     "HX": "$airlineAssetsRoot/hongkong_airlines.png",
-    "nologo": "$airlineAssetsRoot/no_logo.png",
+    "MK": "$airlineAssetsRoot/air_mauritius.png",
+    "CA": "$airlineAssetsRoot/air_china.png",
+    "MF": "$airlineAssetsRoot/shanghai_airlines.png",
+    "MH": "$airlineAssetsRoot/malaysia_airlines.png",
+    "FM": "$airlineAssetsRoot/xiamen_air.png",
+    "UO": "$airlineAssetsRoot/hk_express.png",
+    "nologo": "$airlineAssetsRoot/not_found.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
 }
@@ -165,6 +182,12 @@ String returnCarrierName(String carrierCode) {
     "CI": "China Airlines",
     "PR": "Philippine Airlines",
     "HX": "Hong Kong Airlines",
+    "MK": "Air Mauritius",
+    "CA": "Air China",
+    "MF": "Shanghai Airlines",
+    "MH": "Malaysia Airlines",
+    "FM": "Xiamen Air",
+    "UO": "Hong Kong Express",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -195,6 +218,7 @@ String returnAirportCode(String location) {
     "Montreal": "YUL",
     "S\u00E3o Paulo": "GRU",
     "Toronto": "YYZ",
+    "Toronto Billy Bishop City": "YTZ",
     "Zurich": "ZRH",
     "Cairo": "CAI",
     "Manzini": "SHO",
@@ -216,16 +240,23 @@ String returnAirportCode(String location) {
     "Vancouver": "YVR",
     "Mumbai": "BOM",
     "Bangkok": "BKK",
-    "Keflavik International": "KEF",
+    "Reykjavik": "KEF",
     "Abbotsford Intl": "YXX",
     "Munich": "MUC",
     "Abu Dhabi": "AUH",
     "Colombo": "CMB",
     "Muscat": "MCT",
     "Taipei": "TPE",
-    "Incheon International": "ICN",
-    "Ninoy Aquino Intl": "MNL",
+    "Seoul": "ICN",
+    "Manila": "MNL",
     "Halifax": "YHZ",
+    "Mauritius": "MRU",
+    "Chengdu": "TFU",
+    "Shenzhen": "SZX",
+    "Kuala Lumpur ": "KUL",
+    "Buenos Aires": "BAI",
+    "Warsaw": "WAW",
+    "Guangzhou": "CAN",
   };
   return locationMap[location] ?? location;
 }
@@ -295,6 +326,12 @@ String returnAirportName(String airportCode) {
     "TPE": "Taiwan Taoyuan Intl.",
     "ICN": "Incheon International",
     "MNL": "Ninoy Aquino Intl",
+    "MRU": "Sir S. Ramgoolam Intl",
+    "TFU": "Tianfu International",
+    "SZX": "Bao'an Intl",
+    "KUL": "Kuala Lumpur",
+    "WAW": "Frederic Chopin",
+    "CAN": "Baiyun Intl",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
@@ -325,6 +362,7 @@ String returnLocation(String airportCode) {
     "YUL": "Montreal",
     "GRU": "S\u00E3o Paulo",
     "YYZ": "Toronto",
+    "YTZ": "Toronto Billy Bishop City",
     "ZRH": "Zurich",
     "CAI": "Cairo",
     "SHO": "Manzini",
@@ -360,6 +398,13 @@ String returnLocation(String airportCode) {
     "ICN": "Seoul",
     "MNL": "Manila",
     "YHZ": "Halifax",
+    "MRU": "Mauritius",
+    "TFU": "Chengdu",
+    "SZX": "Shenzhen",
+    "KUL": "Kuala Lumpur",
+    "BAI": "Buenos Aires",
+    "WAW": "Warsaw",
+    "CAN": "Guangzhou",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }

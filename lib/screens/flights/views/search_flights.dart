@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
-import 'package:travel_management_app_2/components/my_dropdown.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
@@ -25,7 +24,6 @@ class _SearchFlightsState extends State<SearchFlights> {
   final _destinationController = TextEditingController();
   final _departureDateController = TextEditingController();
   final _returnDateController = TextEditingController();
-  final _adultsController = TextEditingController();
   double _currentSliderValue = 1;
   final AuthService authService = AuthService();
   TripType _tripType = TripType.oneWay;
@@ -181,7 +179,10 @@ class _SearchFlightsState extends State<SearchFlights> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Adults'),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: const Text('Adults'),
+                  ),
                   Slider(
                     value: _currentSliderValue,
                     min: 1,

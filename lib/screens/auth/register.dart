@@ -1,6 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
@@ -16,6 +16,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final FocusNode focusNode = FocusNode();
   final authService = AuthService();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -24,19 +25,16 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  // Add this variable to store the complete phone number
+  String _completePhoneNumber = '';
+
   void signUp() async {
     final firstName = _firstNameController.text;
     final lastName = _lastNameController.text;
-    final phone = _phoneNumberController.text;
+    final phone = _completePhoneNumber; // Use the stored complete number
     final email = _emailController.text;
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
-    // final args = {
-    //   "first_name": firstName,
-    //   "last_name": lastName,
-    //   "phone": phone,
-    //   "email": email,
-    // };
 
     if (password == confirmPassword) {
       try {
@@ -45,42 +43,42 @@ class _RegisterPageState extends State<RegisterPage> {
           password,
           firstName,
           lastName,
-          phone,
+          phone, // Now includes country code
         );
-        Navigator.pushNamed(context, '/auth-gate');
+        if (mounted) {
+          Navigator.pushNamed(context, '/auth-gate');
+        }
       } catch (e) {
         if (mounted) {
           if (e.runtimeType == AuthApiException) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(e.toString())));
-            return;
           } else if (e.runtimeType == AuthWeakPasswordException) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text(
                   'Your password should have at least 6 characters',
                 ),
               ),
             );
-            return;
           } else {
-            log(e.toString());
+            debugPrint(e.toString());
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                duration: Duration(seconds: 20),
+                duration: const Duration(seconds: 20),
                 content: Text("${e.toString()}\n${e.runtimeType.toString()}"),
               ),
             );
-            return;
           }
         }
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User with that phone number already exists')),
-      );
-      return;
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      }
     }
   }
 
@@ -118,18 +116,31 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               MySizedBox(),
 
-              // phone number field
-              MyTextField(
-                textInputType: TextInputType.text,
+              // phone number field - Modified to capture complete number
+              IntlPhoneField(
                 controller: _phoneNumberController,
-                hintText: 'Phone',
-                obscureText: false,
+                focusNode: focusNode,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  ),
+                ),
+                initialCountryCode: 'US',
+                onChanged: (PhoneNumber phone) {
+                  // Store the complete international number
+                  _completePhoneNumber = phone.completeNumber;
+                  debugPrint('Complete phone number: $_completePhoneNumber');
+                },
+                onCountryChanged: (country) {
+                  debugPrint('Country changed to ${country.name}');
+                },
               ),
               MySizedBox(),
 
               // email field
               MyTextField(
-                textInputType: TextInputType.text,
+                textInputType: TextInputType.emailAddress,
                 controller: _emailController,
                 hintText: 'Email',
                 obscureText: false,
@@ -145,7 +156,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               MySizedBox(),
 
-              // confirm PIN field
+              // confirm password field
               MyTextField(
                 textInputType: TextInputType.text,
                 controller: _confirmPasswordController,
@@ -154,7 +165,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               MySizedBox(),
 
-              // login button
+              // sign up button
               MyButton(
                 onTap: signUp,
                 text: 'Sign Up',
@@ -162,15 +173,17 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               MySizedBox(),
 
-              // sign up hyperlink
+              // login link
               Center(
                 child: GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    // Navigator.popUntil(context, (route) => route.isFirst);
                     Navigator.pushNamed(context, '/auth-gate');
                   },
-                  child: Text('Log In', style: TextStyle(color: Colors.blue)),
+                  child: const Text(
+                    'Log In',
+                    style: TextStyle(color: Colors.blue),
+                  ),
                 ),
               ),
             ],

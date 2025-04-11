@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:travel_management_app_2/pages/home.dart';
+// import 'package:travel_management_app_2/pages/home.dart';
 import 'package:travel_management_app_2/screens/flights/views/itinerary/my_itineraries.dart';
 import 'package:travel_management_app_2/screens/flights/views/search_flights.dart';
-import 'package:travel_management_app_2/constants.dart' as constants;
+// import 'package:travel_management_app_2/constants.dart' as constants;
+import 'package:travel_management_app_2/screens/home/home.dart';
+import 'package:travel_management_app_2/screens/shuttles/views/available_shuttle_services.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -18,6 +20,7 @@ class _LandingPageState extends State<LandingPage> {
     const HomePage(),
     const SearchFlights(),
     const MyItineraries(),
+    const AvailableShuttleServices(),
   ];
 
   @override
@@ -45,10 +48,12 @@ class _LandingPageState extends State<LandingPage> {
             icon: Icon(Icons.airplane_ticket),
             label: 'My Itineraries',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_bus),
+            label: 'Book a shuttle',
+          ),
         ],
         // Optional customization:
-        selectedItemColor: Colors.blue, // Color for selected item
-        unselectedItemColor: Colors.grey, // Color for unselected items
         showUnselectedLabels: true, // Always show labels
         type: BottomNavigationBarType.fixed, // For more than 3 items
       ),

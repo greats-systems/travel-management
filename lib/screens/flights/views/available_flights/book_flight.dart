@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
@@ -40,6 +42,11 @@ class _BookFlightState extends State<BookFlight> {
   final AuthService authService = AuthService();
   String? id;
 
+  FocusNode focusNode = FocusNode();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  String _completePhoneNumber = '';
+  String _countryCode = '';
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +62,7 @@ class _BookFlightState extends State<BookFlight> {
   }
 
   void bookFlight() async {
-    log('Passing flight info to controller');
+    log(_completePhoneNumber.toString().substring(1, 4));
     setState(() => _isLoading = true);
 
     try {
@@ -83,6 +90,7 @@ class _BookFlightState extends State<BookFlight> {
         widget.adults,
         passengerList,
         widget.flight,
+        _countryCode,
       );
       if (!mounted) return;
       setState(() {
@@ -101,7 +109,7 @@ class _BookFlightState extends State<BookFlight> {
       if (e is DioException && e.response?.statusCode == 404) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('This flight is full'),
+            content: Text(e.response.toString()),
             backgroundColor: Colors.red,
           ),
         );
@@ -166,11 +174,26 @@ class _BookFlightState extends State<BookFlight> {
           isRequired: true,
         ),
         MySizedBox(),
-        MyTextField(
-          controller: formData.phoneNumberController,
-          hintText: 'Phone number',
-          obscureText: false,
-          textInputType: TextInputType.number,
+        IntlPhoneField(
+          controller: _phoneNumberController,
+          focusNode: focusNode,
+          decoration: const InputDecoration(
+            labelText: 'Phone Number',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+            ),
+          ),
+          initialCountryCode: 'US',
+          onChanged: (PhoneNumber phone) {
+            // Store the complete international number
+            _completePhoneNumber = phone.completeNumber;
+            _countryCode = phone.countryCode;
+            log(_countryCode.substring(1));
+            debugPrint('Complete phone number: $_completePhoneNumber');
+          },
+          onCountryChanged: (country) {
+            debugPrint('Country changed to ${country.name}');
+          },
         ),
         MySizedBox(),
         MyTextField(

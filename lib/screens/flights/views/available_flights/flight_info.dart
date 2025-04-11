@@ -32,6 +32,11 @@ class FlightInfo extends StatefulWidget {
 }
 
 class _FlightInfoState extends State<FlightInfo> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void bookThisFlight() async {
     log('Flight:\n${JsonEncoder.withIndent(' ').convert(widget.flight)}');
     Navigator.push(
@@ -154,10 +159,32 @@ class _FlightInfoState extends State<FlightInfo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Total Price:'),
-                Text(
-                  '\$${widget.flight.price?.toStringAsFixed(2)}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text('\$${widget.flight.price?.toStringAsFixed(2)}'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBookableSeats() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Capacity',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            MySizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Available seats:'),
+                Text('${widget.flight.bookableSeats}'),
               ],
             ),
           ],
@@ -215,6 +242,7 @@ class _FlightInfoState extends State<FlightInfo> {
 
             _buildPricingInfo(),
             MySizedBox(),
+            _buildBookableSeats(),
 
             if (widget.flight.Id != null)
               ListTile(

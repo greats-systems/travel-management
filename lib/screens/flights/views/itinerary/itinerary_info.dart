@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
@@ -209,20 +207,14 @@ class _ItinerariesInfoState extends State<ItinerariesInfo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Amount Paid:'),
-                Text(
-                  '\$${booking.price!['total']}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text('\$${booking.price!['total']}'),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Date of Payment:'),
-                Text(
-                  constants.formatDateTime(booking.createdAt!),
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text(constants.formatDateTime(booking.createdAt!)),
               ],
             ),
           ],
@@ -234,7 +226,12 @@ class _ItinerariesInfoState extends State<ItinerariesInfo> {
   @override
   void initState() {
     super.initState();
-    log(JsonEncoder.withIndent(' ').convert(widget.booking));
+    // log(JsonEncoder.withIndent(' ').convert(widget.booking));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

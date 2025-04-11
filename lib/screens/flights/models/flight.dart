@@ -6,13 +6,22 @@ class Flight {
   List<dynamic>? itineraries;
   double? price;
   String? currency;
+  int? bookableSeats;
 
-  Flight({this.Id, this.oneWay, this.price, this.currency, this.itineraries});
+  Flight({
+    this.Id,
+    this.oneWay,
+    this.price,
+    this.currency,
+    this.itineraries,
+    this.bookableSeats,
+  });
 
   factory Flight.fromMap(Map<String, dynamic> json) {
     try {
       Flight flight = Flight(
         Id: json['id'],
+        bookableSeats: json['numberOfBookableSeats'],
         oneWay: json['oneWay'],
         itineraries: json['itineraries'],
         price: double.parse(json['price']['total']),
@@ -20,7 +29,7 @@ class Flight {
       );
       return flight;
     } catch (e) {
-      return Flight();
+      return Flight(bookableSeats: 0);
     }
   }
 

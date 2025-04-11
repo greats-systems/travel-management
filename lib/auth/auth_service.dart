@@ -28,6 +28,8 @@ class AuthService {
     String lastName,
     String phone,
   ) async {
+    log('Email: $email\t Phone:$phone');
+
     try {
       var signupData = await _supabase.auth.signUp(
         email: email,
