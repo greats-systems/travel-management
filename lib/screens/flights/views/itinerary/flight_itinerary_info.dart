@@ -5,17 +5,17 @@ import 'package:travel_management_app_2/extensions/string_extensions.dart';
 import 'package:travel_management_app_2/screens/flights/models/booking.dart';
 // import
 
-class ItinerariesInfo extends StatefulWidget {
-  final Booking booking;
+class FlightItinerariesInfo extends StatefulWidget {
+  final FlightBooking flightBooking;
   // final String id;
 
-  const ItinerariesInfo({super.key, required this.booking});
+  const FlightItinerariesInfo({super.key, required this.flightBooking});
 
   @override
-  State<ItinerariesInfo> createState() => _ItinerariesInfoState();
+  State<FlightItinerariesInfo> createState() => _FlightItinerariesInfoState();
 }
 
-class _ItinerariesInfoState extends State<ItinerariesInfo> {
+class _FlightItinerariesInfoState extends State<FlightItinerariesInfo> {
   Widget _buildPassengerSegment(List<dynamic> travelers) {
     return Column(
       children: [
@@ -191,7 +191,7 @@ class _ItinerariesInfoState extends State<ItinerariesInfo> {
     );
   }
 
-  Widget _buildPricingInfo(Booking booking) {
+  Widget _buildPricingInfo(FlightBooking booking) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -236,7 +236,7 @@ class _ItinerariesInfoState extends State<ItinerariesInfo> {
 
   @override
   Widget build(BuildContext context) {
-    final itineraries = widget.booking.itineraries ?? [];
+    final itineraries = widget.flightBooking.itineraries ?? [];
     final isRoundTrip = itineraries.length > 1;
 
     return Scaffold(
@@ -288,9 +288,10 @@ class _ItinerariesInfoState extends State<ItinerariesInfo> {
               'Passengers',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            _buildPassengerSegment(widget.booking.travelers!),
             MySizedBox(),
-            _buildPricingInfo(widget.booking),
+            _buildPassengerSegment(widget.flightBooking.travelers!),
+            MySizedBox(),
+            _buildPricingInfo(widget.flightBooking),
           ],
         ),
       ),

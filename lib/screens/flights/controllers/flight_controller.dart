@@ -80,9 +80,9 @@ class FlightController {
     });
   }
 
-  Future<List<Booking>> getBookingsFromSupabase(id) async {
+  Future<List<FlightBooking>> getBookingsFromSupabase(id) async {
     final bookingsURL = '${constants.apiRoot}/flight/bookings';
-    List<Booking> bookings = [];
+    List<FlightBooking> bookings = [];
     var params = {'userID': id};
 
     try {
@@ -91,7 +91,7 @@ class FlightController {
         //   'getBookingFromSupabase data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
         // );
         final List<dynamic> json = response.data;
-        bookings = json.map((item) => Booking.fromMap(item)).toList();
+        bookings = json.map((item) => FlightBooking.fromMap(item)).toList();
         // log('Bookings: ${JsonEncoder.withIndent(' ').convert(bookings)}');
       });
     } catch (e) {
@@ -206,77 +206,4 @@ class FlightController {
 
     return digitsOnly;
   }
-
-  // Future<Map<String, dynamic>> bookFlight(
-  //   String id,
-  //   String origin,
-  //   String destination,
-  //   String departureDate,
-  //   String? returnDate,
-  //   int adults, // Keep adults count for validation
-  //   List<Passenger> passengers,
-  //   Flight flight,
-  //   String callingCode,
-  // ) async {
-  //   const flightBookingURL = '${constants.apiRoot}/flight/book';
-
-  //   // Validate passenger count matches adults count
-  //   if (passengers.length != adults) {
-  //     throw Exception(
-  //       'Passenger count ${passengers.length} must match adults count ($adults)',
-  //     );
-  //   }
-
-  //   // Convert passengers to SDK format
-  //   final sdkPassengers =
-  //       passengers.asMap().entries.map((entry) {
-  //         final index = entry.key + 1; // 1-based ID
-  //         final p = entry.value;
-  //         return {
-  //           "id": "$index",
-  //           "dateOfBirth": p.dateOfBirth,
-  //           "name": {
-  //             "firstName": p.firstName!.toUpperCase(),
-  //             "lastName": p.lastName!.toUpperCase(),
-  //           },
-  //           "gender": p.gender!.toUpperCase(),
-  //           "contact": {
-  //             "emailAddress": p.email,
-  //             "phones": [
-  //               {
-  //                 "deviceType": "MOBILE",
-  //                 "countryCallingCode": callingCode, // Zimbabwe code
-  //                 "number": p.phoneNumber,
-  //               },
-  //             ],
-  //           },
-  //         };
-  //       }).toList();
-
-  //   final params = {
-  //     "origin": origin,
-  //     "destination": destination,
-  //     "departureDate": departureDate,
-  //     "adults": adults,
-  //     "flightId": "${flight.Id}",
-  //     "passengers": sdkPassengers, // Direct array of passengers
-  //   };
-
-  //   if (returnDate != null) {
-  //     params["returnDate"] = returnDate;
-  //   }
-
-  //   log('Booking Request: ${JsonEncoder.withIndent('  ').convert(params)}');
-
-  //   try {
-  //     final response = await dio.post(flightBookingURL, data: params);
-  //     final json = response.data;
-  //     // log('Booking Success: ${JsonEncoder.withIndent(' ').convert(json)}');
-  //     // return response.data;
-  //     createBookingInSupabase(json, id);
-  //     return json;
-  //   } on DioException catch (e) {
-  //     log('Booking Failed: ${e.response?.data ?? e.message}');
-  //     rethrow;
-  //   }
 }

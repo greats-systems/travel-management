@@ -43,7 +43,6 @@ class _BookFlightState extends State<BookFlight> {
   String? id;
 
   FocusNode focusNode = FocusNode();
-  final TextEditingController _phoneNumberController = TextEditingController();
   String _completePhoneNumber = '';
   String _countryCode = '';
 
@@ -175,7 +174,7 @@ class _BookFlightState extends State<BookFlight> {
         ),
         MySizedBox(),
         IntlPhoneField(
-          controller: _phoneNumberController,
+          controller: formData.phoneNumberController,
           focusNode: focusNode,
           decoration: const InputDecoration(
             labelText: 'Phone Number',

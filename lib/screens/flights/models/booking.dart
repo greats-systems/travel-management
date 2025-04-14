@@ -1,7 +1,7 @@
 // @collection
 import 'dart:developer';
 
-class Booking {
+class FlightBooking {
   String? bookingID;
   String? createdAt;
   String? amadeusID;
@@ -11,7 +11,7 @@ class Booking {
   List<dynamic>? travelers;
   Map<String, dynamic>? price;
 
-  Booking({
+  FlightBooking({
     this.bookingID,
     this.createdAt,
     this.amadeusID,
@@ -22,9 +22,9 @@ class Booking {
     this.price,
   });
 
-  factory Booking.fromMap(Map<String, dynamic> json) {
+  factory FlightBooking.fromMap(Map<String, dynamic> json) {
     try {
-      Booking booking = Booking(
+      FlightBooking flightBooking = FlightBooking(
         bookingID: json['booking_id'],
         createdAt: json['created_at'],
         amadeusID: json['amadeus_id'],
@@ -33,10 +33,10 @@ class Booking {
         travelers: json['travelers'],
         price: json['price'],
       );
-      return booking;
+      return flightBooking;
     } catch (e) {
       log('Booking.fromMap error: $e');
-      return Booking();
+      return FlightBooking();
     }
   }
 

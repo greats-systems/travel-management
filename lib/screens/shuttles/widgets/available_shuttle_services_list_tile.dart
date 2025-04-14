@@ -1,29 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:travel_management_app_2/screens/shuttles/models/shuttle.dart';
+// import 'package:travel_management_app_2/screens/shuttles/models/shuttle.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
-import 'package:travel_management_app_2/screens/shuttles/views/shuttle_services_info/shuttle_services_info.dart';
+import 'package:travel_management_app_2/screens/shuttles/models/shuttle_route.dart';
+import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/shuttle_services_info.dart';
 
 class AvailableShuttleServicesListTile extends StatelessWidget {
-  final List<Shuttle>? shuttles;
+  // final String companyId;
+  final String departureDate;
+  final List<ShuttleRoute>? shuttleRoutes;
 
-  const AvailableShuttleServicesListTile({super.key, this.shuttles});
+  const AvailableShuttleServicesListTile({
+    super.key,
+    // required this.companyId,
+    required this.shuttleRoutes,
+    required this.departureDate,
+  });
 
-  Widget _buildShuttleServiceListTile(Shuttle shuttle, BuildContext context) {
+  Widget _buildShuttleServiceListTile(
+    ShuttleRoute shuttleRoute,
+    BuildContext context,
+  ) {
     final String logoURL =
-        constants.returnShuttleCompanyLogo(shuttle.companyName!)!;
+        constants.returnShuttleCompanyLogo(
+          shuttleRoute.shuttleServiceCompany!['name'],
+        )!;
     return ListTile(
       leading: Image.asset(logoURL, width: 40, height: 40),
-      title: Text(
-        shuttle.companyName!,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(shuttle.address!),
+      title: Text(shuttleRoute.shuttleServiceCompany!['name']),
+      subtitle: Text('${shuttleRoute.origin} to ${shuttleRoute.destination}'),
       onTap:
           () => {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ShuttleServicesInfo(shuttle: shuttle),
+                builder:
+                    (context) => ShuttleServicesInfo(
+                      // companyId: shuttleRoute.companyID,
+                      shuttleRoute: shuttleRoute,
+                      departureDate: departureDate,
+                    ),
               ),
             ),
           },
@@ -36,9 +51,9 @@ class AvailableShuttleServicesListTile extends StatelessWidget {
       children: [
         Expanded(
           child: ListView.builder(
-            itemCount: shuttles?.length ?? 0,
+            itemCount: shuttleRoutes?.length ?? 0,
             itemBuilder: ((context, index) {
-              final shuttle = shuttles![index];
+              final shuttle = shuttleRoutes![index];
               return ListTile(
                 title: _buildShuttleServiceListTile(shuttle, context),
               );

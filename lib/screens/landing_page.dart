@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:travel_management_app_2/pages/home.dart';
-import 'package:travel_management_app_2/screens/flights/views/itinerary/my_itineraries.dart';
 import 'package:travel_management_app_2/screens/flights/views/search_flights.dart';
-// import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:travel_management_app_2/screens/home/home.dart';
-import 'package:travel_management_app_2/screens/shuttles/views/available_shuttle_services.dart';
+import 'package:travel_management_app_2/screens/my_itineraries.dart';
+import 'package:travel_management_app_2/screens/shuttles/views/search_shuttles.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -19,8 +17,8 @@ class _LandingPageState extends State<LandingPage> {
   final List<Widget> _pages = [
     const HomePage(),
     const SearchFlights(),
+    const SearchShuttles(),
     const MyItineraries(),
-    const AvailableShuttleServices(),
   ];
 
   @override
@@ -41,16 +39,16 @@ class _LandingPageState extends State<LandingPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Look for a flight',
+            icon: Icon(Icons.travel_explore),
+            label: 'Search Flights',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.airplane_ticket),
+            icon: Icon(Icons.train),
+            label: 'Search Shuttles',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.luggage),
             label: 'My Itineraries',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_bus),
-            label: 'Book a shuttle',
           ),
         ],
         // Optional customization:

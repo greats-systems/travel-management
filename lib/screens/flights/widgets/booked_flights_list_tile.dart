@@ -1,31 +1,24 @@
-// import 'dart:convert';
-import 'dart:developer';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/screens/flights/models/booking.dart';
-import 'package:travel_management_app_2/screens/flights/views/itinerary/itinerary_info.dart';
+import 'package:travel_management_app_2/screens/flights/views/itinerary/flight_itinerary_info.dart';
 
 class BookedFlightsListTile extends StatelessWidget {
-  final List<Booking> bookings;
+  final List<FlightBooking> flightBookings;
   final String id;
   const BookedFlightsListTile({
     super.key,
-    required this.bookings,
+    required this.flightBookings,
     required this.id,
   });
 
-  Widget buildBookingsTile(Booking booking, BuildContext context) {
-    final itineraries = booking.itineraries!;
+  Widget buildBookingsTile(FlightBooking flightBooking, BuildContext context) {
+    final itineraries = flightBooking.itineraries!;
     final airlines = <String>{};
 
     for (final itinerary in itineraries) {
       airlines.add(itinerary['segments'][0]['carrierCode']);
     }
-    // log('Airlines: $airlines');
-    // log('origin: ${itineraries[0]['segments'][0]['departure']}');
-    // log('1st stop arrival: ${itineraries[0]['segments'][0]['arrival']}');
-    // log('1st stop departure: ${itineraries[0]['segments'][1]['departure']}');
-    // log('destination: ${itineraries[0]['segments'][1]['arrival']}');
     final isMultiAirline = airlines.length > 1;
     final dynamic firstAirlineCode;
     final dynamic logoURL;
@@ -39,17 +32,15 @@ class BookedFlightsListTile extends StatelessWidget {
       itineraries[0]['segments'],
     );
     airlineName = constants.returnCarrierName(firstAirlineCode);
-    price = booking.price!['total'];
-    log('Booking price: ${price}');
-    // routeSummary = constants.getOriginDestinationSummary(itineraries);
-    // final carrierCode = booking.itineraries![0]['segments'][0]['carrierCode'];
-    // final
+    price = flightBooking.price!['total'];
     return ListTile(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ItinerariesInfo(booking: booking),
+            builder:
+                (context) =>
+                    FlightItinerariesInfo(flightBooking: flightBooking),
           ),
         );
       },
@@ -87,13 +78,12 @@ class BookedFlightsListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Text('Itineraries'),
         Expanded(
           child: ListView.builder(
-            itemCount: bookings.length,
+            itemCount: flightBookings.length,
             itemBuilder: (context, index) {
-              final booking = bookings[index];
-              return ListTile(title: buildBookingsTile(booking, context));
+              final flightBooking = flightBookings[index];
+              return ListTile(title: buildBookingsTile(flightBooking, context));
             },
           ),
         ),

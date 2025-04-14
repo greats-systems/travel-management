@@ -1,13 +1,18 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
-import 'package:travel_management_app_2/screens/shuttles/models/shuttle.dart';
+import 'package:travel_management_app_2/screens/shuttles/models/shuttle_route.dart';
 import 'package:travel_management_app_2/screens/shuttles/widgets/available_shuttle_services_list_tile.dart';
 
 class AvailableShuttleServices extends StatefulWidget {
-  const AvailableShuttleServices({super.key});
+  final String origin;
+  final String destination;
+  final String departureDate;
+  const AvailableShuttleServices({
+    super.key,
+    required this.origin,
+    required this.destination,
+    required this.departureDate,
+  });
 
   @override
   State<AvailableShuttleServices> createState() =>
@@ -16,7 +21,7 @@ class AvailableShuttleServices extends StatefulWidget {
 
 class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
   bool _isloading = true;
-  List<Shuttle>? _shuttles;
+  List<ShuttleRoute>? _shuttleRoutes;
   final ShuttleController shuttleController = ShuttleController();
 
   @override
@@ -30,14 +35,14 @@ class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
       setState(() {
         _isloading = true;
       });
-      await shuttleController.getShuttleCompanies().then((data) {
-        // log('Shuttles: ${JsonEncoder.withIndent(' ').convert(_shuttles)}');
-        setState(() {
-          _shuttles = data;
-          _isloading = false;
-        });
-        log('Shuttles: ${JsonEncoder.withIndent(' ').convert(_shuttles)}');
-      });
+      await shuttleController
+          .getShuttleRoutes(widget.origin, widget.destination)
+          .then((data) {
+            setState(() {
+              _shuttleRoutes = data;
+              _isloading = false;
+            });
+          });
     }
   }
 
@@ -50,16 +55,22 @@ class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
     if (_isloading) {
       return Center(child: CircularProgressIndicator());
     }
-    if (_shuttles!.isEmpty || _shuttles == null) {
+    if (_shuttleRoutes!.isEmpty || _shuttleRoutes == null) {
       return Center(child: Text('No shuttles available'));
     }
     return SafeArea(
-      child: AvailableShuttleServicesListTile(shuttles: _shuttles),
+      child: AvailableShuttleServicesListTile(
+        shuttleRoutes: _shuttleRoutes,
+        departureDate: widget.departureDate,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _buildBody());
+    return Scaffold(
+      appBar: AppBar(title: Text('Available Routes')),
+      body: _buildBody(),
+    );
   }
 }

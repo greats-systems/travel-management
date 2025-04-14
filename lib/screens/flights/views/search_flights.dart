@@ -34,8 +34,8 @@ class _SearchFlightsState extends State<SearchFlights> {
   void getUserID() async {
     setState(() {
       id = authService.getCurrentUserID();
-      log('User ID from search_flights: $id');
     });
+    log('User ID from search_flights: $id');
   }
 
   @override
@@ -113,6 +113,13 @@ class _SearchFlightsState extends State<SearchFlights> {
           ),
           child: ListView(
             children: [
+              Center(
+                child: Text(
+                  'Look for a flight',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              MySizedBox(),
               MyTextField(
                 textInputType: TextInputType.text,
                 controller: _originController,

@@ -50,7 +50,9 @@ class MyDatePicker extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
-        border: OutlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        ),
         prefixIcon: Icon(Icons.calendar_today),
         suffixIcon: IconButton(
           icon: Icon(Icons.edit),

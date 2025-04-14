@@ -9,20 +9,14 @@ class SearchInterestController {
     String origin,
     String destination,
     String departureDate,
-    bool oneWay,
-    String? returnDate,
-    int adults,
-    String? userID,
+    String userID,
   ) async {
     const createSearchInterestURL =
-        '${constants.apiRoot}/profile/flight-interest/create';
+        '${constants.apiRoot}/profile/shuttle-interest/create';
     var params = {
       'origin': origin,
       'destination': destination,
       'departureDate': departureDate,
-      'oneWay': oneWay,
-      'returnDate': returnDate,
-      'adults': adults,
       'userID': userID,
     };
     await dio
@@ -30,11 +24,9 @@ class SearchInterestController {
         .then((response) {
           log('createSearchInterest data: ${response.data}');
         })
-        .catchError((e) {
-          if (e is DioException) {
-            log('createSearchInterest DioException: ${e.message}');
-          } else {
-            log('createSearchInterest error: $e');
+        .catchError((error) {
+          if (error is DioException) {
+            log('createSearchInterest DioException: ${error.response}');
           }
         });
   }

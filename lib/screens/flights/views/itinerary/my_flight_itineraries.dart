@@ -1,28 +1,21 @@
-// ignore_for_file: unused_field
-
-// import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/screens/flights/controllers/flight_controller.dart';
 import 'package:travel_management_app_2/screens/flights/models/booking.dart';
-// import 'package:travel_management_app_2/screens/flights/widgets/avalable_flights_list_tile.dart';
 import 'package:travel_management_app_2/screens/flights/widgets/booked_flights_list_tile.dart';
 
-class MyItineraries extends StatefulWidget {
-  const MyItineraries({super.key});
+class MyFlightItineraries extends StatefulWidget {
+  final String userId;
+  const MyFlightItineraries({super.key, required this.userId});
 
   @override
-  State<MyItineraries> createState() => _MyItinerariesState();
+  State<MyFlightItineraries> createState() => _MyFlightItinerariesState();
 }
 
-class _MyItinerariesState extends State<MyItineraries> {
-  List<Booking>? _bookings = [];
-  String? userId;
+class _MyFlightItinerariesState extends State<MyFlightItineraries> {
+  List<FlightBooking>? _flightBookings = [];
   bool _isLoading = true;
   final FlightController flightController = FlightController();
-  final AuthService authService = AuthService();
 
   Future<void> _fetchData() async {
     if (mounted) {
@@ -31,12 +24,12 @@ class _MyItinerariesState extends State<MyItineraries> {
       });
     }
     try {
-      userId = authService.getCurrentUserID();
-      log('userId from MyItineraries: $userId');
-      final bookings = await flightController.getBookingsFromSupabase(userId);
+      final bookings = await flightController.getBookingsFromSupabase(
+        widget.userId,
+      );
       if (mounted) {
         setState(() {
-          _bookings = bookings;
+          _flightBookings = bookings;
           _isLoading = false;
         });
       }
@@ -45,7 +38,7 @@ class _MyItinerariesState extends State<MyItineraries> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          // _bookings = null;
+          _flightBookings = null;
         });
       }
     }
@@ -68,9 +61,12 @@ class _MyItinerariesState extends State<MyItineraries> {
       child:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _bookings == null || _bookings!.isEmpty
+              : _flightBookings == null || _flightBookings!.isEmpty
               ? const Center(child: Text('No itineraries yet'))
-              : BookedFlightsListTile(bookings: _bookings!, id: userId!),
+              : BookedFlightsListTile(
+                flightBookings: _flightBookings!,
+                id: widget.userId,
+              ),
     );
   }
 }

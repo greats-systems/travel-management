@@ -20,5 +20,6 @@
   ],
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
-  }
+  },
+  "cmake.sourceDirectory": "C:/Users/Ngqabutho Moyo/Documents/Greats Systems/Projects/External/Travel Management App/Apps/travel_management_app_2/linux"
 }

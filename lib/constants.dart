@@ -257,6 +257,7 @@ String returnAirportCode(String location) {
     "Buenos Aires": "BAI",
     "Warsaw": "WAW",
     "Guangzhou": "CAN",
+    "Casablanca": "CMN",
   };
   return locationMap[location] ?? location;
 }
@@ -332,6 +333,7 @@ String returnAirportName(String airportCode) {
     "KUL": "Kuala Lumpur",
     "WAW": "Frederic Chopin",
     "CAN": "Baiyun Intl",
+    "CMN": "Mohammed V",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
@@ -405,6 +407,7 @@ String returnLocation(String airportCode) {
     "BAI": "Buenos Aires",
     "WAW": "Warsaw",
     "CAN": "Guangzhou",
+    "CMN": "Casablanca",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }
@@ -414,6 +417,16 @@ String formatDateTime(String isoString) {
     // log(isoString);
     final dateTime = DateTime.parse(isoString);
     return DateFormat('d MMM yyyy, HH:mm').format(dateTime);
+  } catch (e) {
+    return isoString;
+  }
+}
+
+String formatDate(String isoString) {
+  try {
+    // log(isoString);
+    final dateTime = DateTime.parse(isoString);
+    return DateFormat('d MMM yyyy').format(dateTime);
   } catch (e) {
     return isoString;
   }
