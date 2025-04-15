@@ -1,10 +1,8 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
-import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';

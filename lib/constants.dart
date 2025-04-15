@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:intl/intl.dart';
 
@@ -16,6 +17,11 @@ String? returnShuttleCompanyLogo(String companyName) {
     "No Logo": "$shuttleCompanyAssetsRoot/not_found.png",
   };
   return assetURLMap[companyName] ?? assetURLMap["No Logo"];
+}
+
+// JSON formatter
+String formatJson(Map<String, dynamic> json) {
+  return JsonEncoder.withIndent('indent').convert(json);
 }
 
 // Airline logo mapping
@@ -338,6 +344,75 @@ String returnAirportName(String airportCode) {
   return airportNameMap[airportCode] ?? airportCode;
 }
 
+// City list (for autocomplete suggestion)
+List<String> cities = [
+  "Harare",
+  "Bulawayo",
+  "Nairobi",
+  "Dubai",
+  "Entebbe",
+  "Kigali",
+  "Johannesburg",
+  "Jo'burg Lanseria",
+  "Durban",
+  "Lusaka",
+  "Doha",
+  "New York",
+  "Lilongwe",
+  "Addis Ababa",
+  "Amsterdam",
+  "London",
+  "Singapore",
+  "Cape Town",
+  "Atlanta",
+  "Sydney",
+  "Montreal",
+  "Sao Paulo",
+  "Toronto",
+  "Toronto Billy Bishop City",
+  "Zurich",
+  "Cairo",
+  "Manzini",
+  "Gaborone",
+  "Maputo",
+  "Hong Kong",
+  "Ho Chi Minh City",
+  "Tokyo",
+  "Narita",
+  "Haneda",
+  "Shanghai",
+  "Paris",
+  "Lyon",
+  "Milan",
+  "Beijing",
+  "Los Angeles",
+  "Washington",
+  "Chicago",
+  "Vancouver",
+  "Mumbai",
+  "Bangkok",
+  "Frankfurt",
+  "Reykyavik",
+  "Vancouver",
+  "Munich",
+  "Barcelona",
+  "Abu Dhabi",
+  "Colombo",
+  "Muscat",
+  "Taipei",
+  "Seoul",
+  "Manila",
+  "Halifax",
+  "Mauritius",
+  "Chengdu",
+  "Shenzhen",
+  "Kuala Lumpur",
+  "Buenos Aires",
+  "Warsaw",
+  "Guangzhou",
+  "Casablanca",
+];
+
 // City mapping
 String returnLocation(String airportCode) {
   const Map<String, String> airportCodeMap = {
@@ -384,7 +459,7 @@ String returnLocation(String airportCode) {
     "LAX": "Los Angeles",
     "IAD": "Washington Dulles",
     "EWR": "New York Newark",
-    "ORD": "Chicago O'Hare",
+    "ORD": "Chicago",
     "YVR": "Vancouver",
     "BOM": "Mumbai",
     "BKK": "Bangkok",

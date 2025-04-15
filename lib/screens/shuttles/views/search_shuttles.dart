@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
+import 'package:travel_management_app_2/components/my_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
-import 'package:travel_management_app_2/components/my_text_field.dart';
-import 'package:travel_management_app_2/screens/shuttles/controllers/search_interest_controller.dart';
+import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
 import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/available_shuttle_services.dart';
 
 class SearchShuttles extends StatefulWidget {
@@ -22,9 +22,10 @@ class _SearchShuttlesState extends State<SearchShuttles> {
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _departureDateController =
       TextEditingController();
-  final SearchInterestController _searchInterestController =
-      SearchInterestController();
+  final ShuttleController _shuttleController = ShuttleController();
   String? userID;
+  String? _origin;
+  String? _destination;
 
   void getUserID() {
     setState(() {
@@ -48,7 +49,7 @@ class _SearchShuttlesState extends State<SearchShuttles> {
 
   void search() async {
     try {
-      await _searchInterestController.createSearchInterest(
+      await _shuttleController.createSearchInterest(
         _originController.text,
         _destinationController.text,
         _departureDateController.text,
@@ -91,18 +92,24 @@ class _SearchShuttlesState extends State<SearchShuttles> {
                 ),
               ),
               MySizedBox(),
-              MyTextField(
-                controller: _originController,
+              MyAutocomplete(
+                onCitySelected: (city) {
+                  setState(() {
+                    _origin = city;
+                  });
+                },
+                initialValue: _origin,
                 hintText: 'Origin',
-                obscureText: false,
-                textInputType: TextInputType.text,
               ),
               MySizedBox(),
-              MyTextField(
-                controller: _destinationController,
+              MyAutocomplete(
+                onCitySelected: (city) {
+                  setState(() {
+                    _destination = city;
+                  });
+                },
+                initialValue: _destination,
                 hintText: 'Destination',
-                obscureText: false,
-                textInputType: TextInputType.text,
               ),
               MySizedBox(),
               MyDatePicker(

@@ -56,6 +56,7 @@ class _FlightInfoState extends State<FlightInfo> {
   }
 
   Widget _buildFlightSegment(
+    String? cabinClass,
     Map<String, dynamic> segment,
     int index,
     int totalSegments,
@@ -83,7 +84,7 @@ class _FlightInfoState extends State<FlightInfo> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Chip(
-                      label: Text(segment['class'] ?? 'ECONOMY'),
+                      label: Text(cabinClass ?? 'ECONOMY'),
                       backgroundColor: Colors.blue[50],
                     ),
                   ],
@@ -196,6 +197,9 @@ class _FlightInfoState extends State<FlightInfo> {
   @override
   Widget build(BuildContext context) {
     final itineraries = widget.flight.itineraries ?? [];
+    final cabinClass =
+        widget.flight
+            .toJson()['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin'];
     final isRoundTrip = itineraries.length > 1;
 
     return Scaffold(
@@ -214,6 +218,7 @@ class _FlightInfoState extends State<FlightInfo> {
               ...itineraries[0]['segments'].asMap().entries.map((entry) {
                 final index = entry.key;
                 return _buildFlightSegment(
+                  cabinClass,
                   entry.value,
                   index,
                   itineraries[0]['segments'].length,
@@ -232,6 +237,7 @@ class _FlightInfoState extends State<FlightInfo> {
               ...itineraries[1]['segments'].asMap().entries.map((entry) {
                 final index = entry.key;
                 return _buildFlightSegment(
+                  cabinClass,
                   entry.value,
                   index,
                   itineraries[1]['segments'].length,

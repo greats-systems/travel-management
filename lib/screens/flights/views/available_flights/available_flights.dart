@@ -3,7 +3,7 @@ import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/screens/flights/controllers/flight_controller.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
-import 'package:travel_management_app_2/screens/flights/widgets/avalable_flights_list_tile.dart';
+import 'package:travel_management_app_2/screens/flights/widgets/available_flights_list_tile.dart';
 
 class AvailableFlights extends StatefulWidget {
   final String origin;

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 class ShuttleBooking {
@@ -54,9 +53,6 @@ class ShuttleBooking {
         departureTime: json['ShuttleRoutes']['departure_time'],
         arrivalTime: json['ShuttleRoutes']['arrival_time'],
         amountPaid: (json['amount_paid'] as num).toDouble(),
-      );
-      log(
-        'ShuttleBooking.fromMap data: ${JsonEncoder.withIndent(' ').convert(shuttleBooking)}',
       );
       return shuttleBooking;
     } catch (e) {

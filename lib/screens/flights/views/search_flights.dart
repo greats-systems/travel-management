@@ -1,13 +1,13 @@
 import 'dart:developer';
 
 import 'package:travel_management_app_2/auth/auth_service.dart';
+import 'package:travel_management_app_2/components/my_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
-import 'package:travel_management_app_2/components/my_text_field.dart';
-import 'package:travel_management_app_2/screens/flights/controllers/search_interest_controller.dart';
+import 'package:travel_management_app_2/screens/flights/controllers/flight_controller.dart';
 import 'package:travel_management_app_2/screens/flights/views/available_flights/available_flights.dart';
 
 enum TripType { oneWay, roundTrip }
@@ -20,16 +20,16 @@ class SearchFlights extends StatefulWidget {
 }
 
 class _SearchFlightsState extends State<SearchFlights> {
-  final _originController = TextEditingController();
-  final _destinationController = TextEditingController();
   final _departureDateController = TextEditingController();
   final _returnDateController = TextEditingController();
   double _currentSliderValue = 1;
   final AuthService authService = AuthService();
   TripType _tripType = TripType.oneWay;
   String? id;
-  final SearchInterestController searchInterestController =
-      SearchInterestController();
+  String? _origin;
+  String? _destination;
+
+  final FlightController _flightController = FlightController();
 
   void getUserID() async {
     setState(() {
@@ -52,18 +52,18 @@ class _SearchFlightsState extends State<SearchFlights> {
   void search() {
     try {
       _tripType == TripType.oneWay
-          ? searchInterestController.createSearchInterest(
-            _originController.text,
-            _destinationController.text,
+          ? _flightController.createSearchInterest(
+            _origin!,
+            _destination!,
             _departureDateController.text,
             true,
             null,
             int.parse(_currentSliderValue.round().toString()),
             id,
           )
-          : searchInterestController.createSearchInterest(
-            _originController.text,
-            _destinationController.text,
+          : _flightController.createSearchInterest(
+            _origin!,
+            _destination!,
             _departureDateController.text,
             false,
             _returnDateController.text,
@@ -76,19 +76,15 @@ class _SearchFlightsState extends State<SearchFlights> {
           builder:
               _tripType == TripType.oneWay
                   ? (context) => AvailableFlights(
-                    origin: constants.returnAirportCode(_originController.text),
-                    destination: constants.returnAirportCode(
-                      _destinationController.text,
-                    ),
+                    origin: constants.returnAirportCode(_origin!),
+                    destination: constants.returnAirportCode(_destination!),
                     departureDate: _departureDateController.text,
                     returnDate: null,
                     adults: int.parse(_currentSliderValue.round().toString()),
                   )
                   : (context) => AvailableFlights(
-                    origin: constants.returnAirportCode(_originController.text),
-                    destination: constants.returnAirportCode(
-                      _destinationController.text,
-                    ),
+                    origin: constants.returnAirportCode(_origin!),
+                    destination: constants.returnAirportCode(_destination!),
                     departureDate: _departureDateController.text,
                     returnDate: _returnDateController.text,
                     adults: int.parse(_currentSliderValue.round().toString()),
@@ -120,18 +116,30 @@ class _SearchFlightsState extends State<SearchFlights> {
                 ),
               ),
               MySizedBox(),
-              MyTextField(
-                textInputType: TextInputType.text,
-                controller: _originController,
+              MyAutocomplete(
+                onCitySelected: (city) {
+                  setState(() {
+                    _origin = city;
+                  });
+                  log(
+                    'Origin: $_origin ${constants.returnAirportCode(_origin!)}',
+                  );
+                },
+                initialValue: _origin,
                 hintText: 'Origin',
-                obscureText: false,
               ),
               MySizedBox(),
-              MyTextField(
-                textInputType: TextInputType.text,
-                controller: _destinationController,
+              MyAutocomplete(
+                onCitySelected: (city) {
+                  setState(() {
+                    _destination = city;
+                  });
+                  log(
+                    'Destination: $_destination ${constants.returnAirportCode(_destination!)}',
+                  );
+                },
+                initialValue: _destination,
                 hintText: 'Destination',
-                obscureText: false,
               ),
               MySizedBox(),
               MyDatePicker(

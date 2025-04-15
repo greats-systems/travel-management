@@ -9,6 +9,40 @@ import 'package:travel_management_app_2/screens/flights/models/passenger.dart';
 class FlightController {
   Dio dio = Dio();
 
+  Future<void> createSearchInterest(
+    String origin,
+    String destination,
+    String departureDate,
+    bool oneWay,
+    String? returnDate,
+    int adults,
+    String? userID,
+  ) async {
+    const createSearchInterestURL =
+        '${constants.apiRoot}/profile/flight-interest/create';
+    var params = {
+      'origin': origin,
+      'destination': destination,
+      'departureDate': departureDate,
+      'oneWay': oneWay,
+      'returnDate': returnDate,
+      'adults': adults,
+      'userID': userID,
+    };
+    await dio
+        .post(createSearchInterestURL, data: params)
+        .then((response) {
+          log('createSearchInterest data: ${response.data}');
+        })
+        .catchError((e) {
+          if (e is DioException) {
+            log('createSearchInterest DioException: ${e.message}');
+          } else {
+            log('createSearchInterest error: $e');
+          }
+        });
+  }
+
   Future<List<Flight>?> getFlightPrices(
     origin,
     destination,
@@ -43,14 +77,17 @@ class FlightController {
           .get(getFlightPricesURL, data: params)
           .then((response) {
             final List<dynamic> json = response.data;
-            // log('json: ${JsonEncoder.withIndent(' ').convert(json)}');
             flights = json.map((item) => Flight.fromMap(item)).toList();
-            // log('flights are ready to view');
           })
-          // ignore: argument_type_not_assignable_to_error_handler
-          .catchError((DioException e) {
-            if (e.response!.statusCode == 404) {
-              log(e.toString());
+          .catchError((e) {
+            if (e is DioException) {
+              if (e.response!.statusCode == 404) {
+                log(e.toString());
+              } else {
+                log('getFlightPrices DioException: ${e.response}');
+              }
+            } else {
+              log('getFlightPrices error: $e');
             }
           });
     } catch (e) {

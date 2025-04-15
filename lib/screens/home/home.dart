@@ -38,18 +38,9 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  /*
-  void initState() {
-    setState(() {
-      id = getUserID()
-    });
-  }
-  */
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text('Home')),
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 4),
         child: Column(
@@ -63,11 +54,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        // child: MyButton(
-        //   onTap: logout,
-        //   text: 'Logout',
-        //   color: Colors.blue.shade300,
-        // ),
       ),
     );
   }

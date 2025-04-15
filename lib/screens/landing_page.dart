@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/screens/flights/views/search_flights.dart';
 import 'package:travel_management_app_2/screens/home/home.dart';
 import 'package:travel_management_app_2/screens/my_itineraries.dart';
@@ -13,6 +14,8 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   int _currentIndex = 0;
+  String? userId;
+  final AuthService authService = AuthService();
 
   final List<Widget> _pages = [
     const HomePage(),
@@ -21,12 +24,22 @@ class _LandingPageState extends State<LandingPage> {
     const MyItineraries(),
   ];
 
+  void _fetchData() {
+    userId = authService.getCurrentUserEmail();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.person),
-        title: Text('Travel Management App'),
+        leading: GestureDetector(child: Icon(Icons.person)),
+        title: Text(userId!),
       ),
       body: SafeArea(child: _pages[_currentIndex]),
       bottomNavigationBar: BottomNavigationBar(
