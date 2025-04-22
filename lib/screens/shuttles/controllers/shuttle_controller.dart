@@ -64,6 +64,7 @@ class ShuttleController {
     String destination,
   ) async {
     var params = {'origin': origin, 'destination': destination};
+    log(params.toString());
     const shuttleRoutesURL = '${constants.apiRoot}/shuttle/routes';
     List<ShuttleRoute>? shuttleRoutes;
     try {

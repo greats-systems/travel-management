@@ -69,7 +69,7 @@ class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Available Routes')),
+      appBar: AppBar(title: Text('Available Shuttles')),
       body: _buildBody(),
     );
   }

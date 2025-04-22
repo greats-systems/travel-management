@@ -42,7 +42,7 @@ class _BookFlightState extends State<BookFlight> {
   final AuthService authService = AuthService();
   String? id;
 
-  FocusNode focusNode = FocusNode();
+  // FocusNode focusNode = FocusNode();
   String _completePhoneNumber = '';
   String _countryCode = '';
 
@@ -109,7 +109,7 @@ class _BookFlightState extends State<BookFlight> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.response.toString()),
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.orange,
           ),
         );
       } else {
@@ -175,14 +175,14 @@ class _BookFlightState extends State<BookFlight> {
         MySizedBox(),
         IntlPhoneField(
           controller: formData.phoneNumberController,
-          focusNode: focusNode,
+          focusNode: formData.focusNode,
           decoration: const InputDecoration(
             labelText: 'Phone Number',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
           ),
-          initialCountryCode: 'US',
+          initialCountryCode: 'ZW',
           onChanged: (PhoneNumber phone) {
             // Store the complete international number
             _completePhoneNumber = phone.completeNumber;
@@ -248,6 +248,7 @@ class PassengerFormData {
   final TextEditingController dobController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
+  final FocusNode focusNode = FocusNode();
   String? selectedGender;
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController emailController = TextEditingController();

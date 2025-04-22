@@ -7,7 +7,6 @@ import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:travel_management_app_2/screens/flights/views/available_flights/book_flight.dart';
-// import 'package:travel_management_app_2/screens/flights/views/book_flight.dart';
 
 class FlightInfo extends StatefulWidget {
   final Flight flight;
@@ -84,7 +83,7 @@ class _FlightInfoState extends State<FlightInfo> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Chip(
-                      label: Text(cabinClass ?? 'ECONOMY'),
+                      label: Text(cabinClass ?? ''),
                       backgroundColor: Colors.blue[50],
                     ),
                   ],
@@ -104,6 +103,7 @@ class _FlightInfoState extends State<FlightInfo> {
                       ],
                     ),
                     Icon(Icons.airplanemode_active, size: 24),
+                    // Image.asset(constants.returnCarrierLogo(carrierCode)!, width: 40, height: 40,),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [

@@ -14,6 +14,8 @@ String? returnShuttleCompanyLogo(String companyName) {
       'assets/logos/companies/shuttle_services';
   final Map<String, String> assetURLMap = {
     "Galaxy Coaches": "$shuttleCompanyAssetsRoot/galaxy_coaches.jpg",
+    "CAG Travellers Coaches": "$shuttleCompanyAssetsRoot/CAG.jpg",
+    "Inter Africa": "$shuttleCompanyAssetsRoot/inter_africa.jpg",
     "No Logo": "$shuttleCompanyAssetsRoot/not_found.png",
   };
   return assetURLMap[companyName] ?? assetURLMap["No Logo"];
@@ -107,6 +109,18 @@ String? returnCarrierLogo(String carrierCode) {
     "MH": "$airlineAssetsRoot/malaysia_airlines.png",
     "FM": "$airlineAssetsRoot/xiamen_air.png",
     "UO": "$airlineAssetsRoot/hk_express.png",
+    "TW": "$airlineAssetsRoot/tway.png",
+    "7C": "$airlineAssetsRoot/coyne.png",
+    "SC": "$airlineAssetsRoot/shadong_airlines.png",
+    "VJ": "$airlineAssetsRoot/vietjet.png",
+    "LJ": "$airlineAssetsRoot/jinair.png",
+    "HB": "$airlineAssetsRoot/greater_bay_airlines.png",
+    "NX": "$airlineAssetsRoot/air_macau.png",
+    "QF": "$airlineAssetsRoot/qantas.png",
+    "HO": "$airlineAssetsRoot/juneyao_airlines.png",
+    "VN": "$airlineAssetsRoot/vietnam_airlines.png",
+    "HU": "$airlineAssetsRoot/hainian_airlines.png",
+    "OD": "$airlineAssetsRoot/malindo_air.png",
     "nologo": "$airlineAssetsRoot/not_found.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -194,6 +208,19 @@ String returnCarrierName(String carrierCode) {
     "MH": "Malaysia Airlines",
     "FM": "Xiamen Air",
     "UO": "Hong Kong Express",
+    "TW": "T way Air",
+    "7C": "Coyne Airways",
+    "SC": "Shadong Airlines",
+    "VJ": "Vietjet",
+    "LJ": "Jin Air",
+    "HB": "Greater Bay Airlines",
+    "NX": "Air Macau",
+    "QF": "Qantas",
+    "HO": "Juneyao Airlines",
+    "VN": "Vietnam Airlines",
+    "VZ": "Air Express",
+    "HU": "Hainan Airlines",
+    "OD": "Malindo Airways",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -264,6 +291,14 @@ String returnAirportCode(String location) {
     "Warsaw": "WAW",
     "Guangzhou": "CAN",
     "Casablanca": "CMN",
+    "Osaka": "OSA",
+    "Qingdao": "TAO",
+    "Osaka Intl (Itami)": "ITM",
+    "Macau": "MFM",
+    "Kagoshima": "KOJ",
+    "Haikou": "HAK",
+    "Boston": "BOS",
+    "Orlando": "MCO",
   };
   return locationMap[location] ?? location;
 }
@@ -340,6 +375,15 @@ String returnAirportName(String airportCode) {
     "WAW": "Frederic Chopin",
     "CAN": "Baiyun Intl",
     "CMN": "Mohammed V",
+    "KIX": "Kansai International",
+    "TAO": "Qingdao",
+    "ITM": "Osaka Intl. (Itami)",
+    "MFM": "Macau",
+    "KOJ": "Kagoshima",
+    "HAK": "Haikou",
+    "BOS": "Edward L. Logan Intl Boston",
+    "LAS": "Harry Reid Intl. Las Vegas",
+    "MCO": "Orlando",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
@@ -353,7 +397,6 @@ List<String> cities = [
   "Entebbe",
   "Kigali",
   "Johannesburg",
-  "Jo'burg Lanseria",
   "Durban",
   "Lusaka",
   "Doha",
@@ -411,6 +454,13 @@ List<String> cities = [
   "Warsaw",
   "Guangzhou",
   "Casablanca",
+  "Osaka",
+  "Qingdao",
+  "Macau",
+  "Kagoshima",
+  "Boston",
+  "Las Vegas",
+  "Orlando",
 ];
 
 // City mapping
@@ -483,13 +533,23 @@ String returnLocation(String airportCode) {
     "WAW": "Warsaw",
     "CAN": "Guangzhou",
     "CMN": "Casablanca",
+    "OSA": "Osaka",
+    "KIX": "Kansai Intl.",
+    "UKB": "Kobe",
+    "TAO": "Qingdao",
+    "ITM": "Osaka Intl (Itami)",
+    "MFM": "Macau",
+    "KOJ": "Kagoshima",
+    "HAK": "Haikou",
+    "BOS": "Boston",
+    "LAS": "Las Vegas",
+    "MCO": "Orlando",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }
 
 String formatDateTime(String isoString) {
   try {
-    // log(isoString);
     final dateTime = DateTime.parse(isoString);
     return DateFormat('d MMM yyyy, HH:mm').format(dateTime);
   } catch (e) {

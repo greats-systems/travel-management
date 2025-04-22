@@ -5,7 +5,6 @@ import 'package:travel_management_app_2/screens/flights/views/available_flights/
 
 class AvailableFlightsListTile extends StatelessWidget {
   final List<Flight>? flights;
-  // final String assetRoot = 'assets/logos/airlines';
   final String origin;
   final String destination;
   final String departureDate;

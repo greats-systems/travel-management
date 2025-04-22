@@ -36,11 +36,6 @@ class _AvailableFlightsState extends State<AvailableFlights> {
     _fetchData();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> _fetchData() async {
     if (mounted) {
       setState(() => _isLoading = true);
@@ -100,9 +95,6 @@ class _AvailableFlightsState extends State<AvailableFlights> {
         title: Text(
           '${constants.returnLocation(widget.origin)} \u2192 ${constants.returnLocation(widget.destination)}',
         ),
-        // actions: [
-        //   IconButton(onPressed: _fetchData, icon: const Icon(Icons.refresh)),
-        // ],
       ),
       body: _buildBody(),
     );

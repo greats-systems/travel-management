@@ -61,8 +61,8 @@ class _SearchShuttlesState extends State<SearchShuttles> {
           MaterialPageRoute(
             builder:
                 (context) => AvailableShuttleServices(
-                  origin: _originController.text,
-                  destination: _destinationController.text,
+                  origin: _origin!,
+                  destination: _destination!,
                   departureDate: _departureDateController.text,
                 ),
           ),

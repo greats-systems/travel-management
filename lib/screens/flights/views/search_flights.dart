@@ -196,7 +196,7 @@ class _SearchFlightsState extends State<SearchFlights> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 12.0),
-                    child: const Text('Adults'),
+                    child: const Text('Number of passengers'),
                   ),
                   Slider(
                     value: _currentSliderValue,

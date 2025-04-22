@@ -35,7 +35,6 @@ class AvailableShuttleServicesListTile extends StatelessWidget {
               MaterialPageRoute(
                 builder:
                     (context) => ShuttleServicesInfo(
-                      // companyId: shuttleRoute.companyID,
                       shuttleRoute: shuttleRoute,
                       departureDate: departureDate,
                     ),

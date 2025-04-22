@@ -36,6 +36,7 @@ class ShuttleRoute {
         shuttleServiceCompany: json['ShuttleServiceCompany'],
         price: (json['price'] as num?)?.toDouble(),
       );
+      log('ShuttleRoute.fromMap data: $route');
       return route;
     } catch (e) {
       log('Route.fromMap error: $e');
