@@ -168,13 +168,13 @@ class _BookShuttleState extends State<BookShuttle> {
               ),
               MySizedBox(),
               buildPassengerForm(),
-              MySizedBox(),
+              MySizedBox(height: 15),
               _isLoading
                   ? Center(child: CircularProgressIndicator())
                   : MyButton(
                     onTap: bookShuttle,
-                    text: 'Book',
-                    color: Colors.blue.shade300,
+                    text: 'Pay',
+                    color: Colors.green.shade300,
                   ),
             ],
           ),

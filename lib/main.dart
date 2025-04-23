@@ -5,8 +5,8 @@ import 'package:travel_management_app_2/screens/home/home.dart';
 // import 'package:travel_management_app_2/pages/home.dart';
 // import 'package:travel_management_app_2/pages/login.dart';
 import 'package:travel_management_app_2/screens/landing_page.dart';
-import 'package:travel_management_app_2/screens/auth/login.dart';
-import 'package:travel_management_app_2/screens/auth/register.dart';
+import 'package:travel_management_app_2/screens/authentication/login.dart';
+import 'package:travel_management_app_2/screens/authentication/register.dart';
 import 'auth/auth_gate.dart';
 
 void main() async {
@@ -31,8 +31,6 @@ class MyApp extends StatelessWidget {
         '/auth-gate': (BuildContext context) => AuthGate(),
         '/home': (BuildContext context) => HomePage(),
         '/landing-page': (BuildContext context) => LandingPage(),
-        // '/available-flights': (BuildContext context) => AvailableFlights(),
-        // '/flight-info': (BuildContext context) => FlightInfo(),
         '/login': (BuildContext context) => LoginPage(),
         '/register': (BuildContext context) => RegisterPage(),
       },

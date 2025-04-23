@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
-import 'package:travel_management_app_2/components/my_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
+import 'package:travel_management_app_2/components/my_local_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
 import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/available_shuttle_services.dart';
@@ -92,7 +92,7 @@ class _SearchShuttlesState extends State<SearchShuttles> {
                 ),
               ),
               MySizedBox(),
-              MyAutocomplete(
+              MyLocalAutocomplete(
                 onCitySelected: (city) {
                   setState(() {
                     _origin = city;
@@ -102,7 +102,7 @@ class _SearchShuttlesState extends State<SearchShuttles> {
                 hintText: 'Origin',
               ),
               MySizedBox(),
-              MyAutocomplete(
+              MyLocalAutocomplete(
                 onCitySelected: (city) {
                   setState(() {
                     _destination = city;

@@ -286,7 +286,7 @@ String returnAirportCode(String location) {
     "Mauritius": "MRU",
     "Chengdu": "TFU",
     "Shenzhen": "SZX",
-    "Kuala Lumpur ": "KUL",
+    "Kuala Lumpur": "KUL",
     "Buenos Aires": "BAI",
     "Warsaw": "WAW",
     "Guangzhou": "CAN",
@@ -410,7 +410,7 @@ List<String> cities = [
   "Atlanta",
   "Sydney",
   "Montreal",
-  "Sao Paulo",
+  "S\u00E3o Paulo",
   "Toronto",
   "Toronto Billy Bishop City",
   "Zurich",
@@ -463,6 +463,9 @@ List<String> cities = [
   "Orlando",
 ];
 
+// Local city list (for shuttle autocomplete)
+List<String> localCities = ["Harare", "Bulawayo", "Mutare"];
+
 // City mapping
 String returnLocation(String airportCode) {
   const Map<String, String> airportCodeMap = {
@@ -507,6 +510,7 @@ String returnLocation(String airportCode) {
     "PKX": "Beijing",
     "PEK": "Beijing Capital Intl.",
     "LAX": "Los Angeles",
+    "IAX": "Washington",
     "IAD": "Washington Dulles",
     "EWR": "New York Newark",
     "ORD": "Chicago",

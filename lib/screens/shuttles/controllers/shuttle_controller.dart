@@ -111,6 +111,7 @@ class ShuttleController {
 
   Future<void> bookShuttle(ShuttleBooking shuttleBooking) async {
     const shuttleBookingURL = '${constants.apiRoot}/shuttle/booking/create';
+    const paynowURL = '${constants.apiRoot}/pay';
     var params = {
       'companyID': shuttleBooking.companyID,
       'userID': shuttleBooking.userID,
@@ -124,7 +125,28 @@ class ShuttleController {
       'departureDate': shuttleBooking.departureDate,
       'amountPaid': shuttleBooking.amountPaid,
     };
-    log('bookShuttle params.companyID: ${shuttleBooking.companyID}');
+    var paynowParams = {'busFare': shuttleBooking.amountPaid};
+
+    log('bookShuttle params.userID: ${shuttleBooking.userID}');
+
+    // Post transactions into Paynow
+    await dio
+        .post(paynowURL, data: paynowParams)
+        .then((response) {
+          log('Paynow response: ${response.data}');
+          return response;
+        })
+        .catchError((e) {
+          if (e is DioException) {
+            log('bookShuttle DioException: ${e.response}');
+            return e.response!;
+          } else {
+            log('bookShuttle error: $e');
+            return e;
+          }
+        });
+
+    // Post transaction into Supabase
     await dio
         .post(shuttleBookingURL, data: params)
         .then((response) {
@@ -137,7 +159,7 @@ class ShuttleController {
             return e.response!;
           } else {
             log('bookShuttle error: $e');
-            return e!;
+            return e;
           }
         });
   }
