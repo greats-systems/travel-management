@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/screens/flights/views/itinerary/my_flight_itineraries.dart';
+import 'package:travel_management_app_2/screens/parcels/views/itinerary/my_parcel_itineraries.dart';
 import 'package:travel_management_app_2/screens/shuttles/views/itinerary/my_shuttle_itineraries.dart';
 
 class MyItineraries extends StatefulWidget {
@@ -27,7 +28,7 @@ class _MyItinerariesState extends State<MyItineraries> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         body: SafeArea(
           child: Column(
@@ -36,6 +37,7 @@ class _MyItinerariesState extends State<MyItineraries> {
                 tabs: [
                   Tab(icon: Icon(Icons.airplanemode_active), text: 'Flights'),
                   Tab(icon: Icon(Icons.directions_bus), text: 'Shuttles'),
+                  Tab(icon: Icon(Icons.local_shipping), text: 'Parcels'),
                 ],
               ),
               Expanded(
@@ -43,6 +45,7 @@ class _MyItinerariesState extends State<MyItineraries> {
                   children: [
                     MyFlightItineraries(userId: userId!),
                     MyShuttleItineraries(userId: userId!),
+                    MyParcelItineraries(userId: userId!),
                   ],
                 ),
               ),

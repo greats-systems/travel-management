@@ -464,7 +464,16 @@ List<String> cities = [
 ];
 
 // Local city list (for shuttle autocomplete)
-List<String> localCities = ["Harare", "Bulawayo", "Mutare"];
+List<String> localCities = [
+  "Harare",
+  "Bulawayo",
+  "Mutare",
+  "Gweru",
+  "Kwekwe",
+  "Kadoma",
+  "Ruaspe",
+  "",
+];
 
 // City mapping
 String returnLocation(String airportCode) {
@@ -576,7 +585,7 @@ String calculateDuration(String departure, String arrival) {
     final start = DateTime.parse(departure);
     final end = DateTime.parse(arrival);
     final duration = end.difference(start);
-    return '${duration.inHours}h ${duration.inMinutes.remainder(60)}m';
+    return '${duration.inHours}f ${duration.inMinutes.remainder(60)}m';
   } catch (e) {
     return '';
   }

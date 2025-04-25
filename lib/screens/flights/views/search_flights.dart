@@ -99,7 +99,6 @@ class _SearchFlightsState extends State<SearchFlights> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text('Search Flights')),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
