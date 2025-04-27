@@ -87,7 +87,7 @@ flutter:
     - assets/logos/companies/
     - assets/logos/airlines/
     - assets/logos/companies/shuttle_services/
-    - assets/logos/companies/parcel_services/
+    - assets/logos/companies/couriers/
     - .env
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

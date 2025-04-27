@@ -103,7 +103,6 @@ class _FlightInfoState extends State<FlightInfo> {
                       ],
                     ),
                     Icon(Icons.airplanemode_active, size: 24),
-                    // Image.asset(constants.returnCarrierLogo(carrierCode)!, width: 40, height: 40,),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [

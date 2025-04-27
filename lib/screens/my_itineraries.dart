@@ -37,7 +37,7 @@ class _MyItinerariesState extends State<MyItineraries> {
                 tabs: [
                   Tab(icon: Icon(Icons.airplanemode_active), text: 'Flights'),
                   Tab(icon: Icon(Icons.directions_bus), text: 'Shuttles'),
-                  Tab(icon: Icon(Icons.local_shipping), text: 'Parcels'),
+                  Tab(icon: Icon(Icons.local_shipping), text: 'Cargo'),
                 ],
               ),
               Expanded(

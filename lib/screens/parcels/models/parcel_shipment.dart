@@ -2,6 +2,7 @@ import 'dart:developer';
 
 class ParcelShipment {
   String? id;
+  String? createdAt;
   String? userId;
   String? name;
   String? description;
@@ -14,7 +15,9 @@ class ParcelShipment {
   String? destination;
   String? departureDate;
   String? companyID;
+  String? courierName;
   double? shippingCost;
+  String? status;
 
   ParcelShipment({
     this.id,
@@ -30,26 +33,32 @@ class ParcelShipment {
     this.destination,
     this.departureDate,
     this.companyID,
+    this.courierName,
     this.shippingCost,
+    this.status,
+    this.createdAt,
   });
 
   factory ParcelShipment.fromMap(Map<String, dynamic> json) {
     try {
       ParcelShipment parcelShipment = ParcelShipment(
         id: json['id'],
+        createdAt: json['created_at'],
         userId: json['user_id'],
         name: json['name'],
         description: json['description'],
-        length: double.parse(json['length']),
-        width: double.parse(json['width']),
-        height: double.parse(json['height']),
-        mass: double.parse(json['mass_kg']),
-        quantity: int.parse(json['quantity']),
+        length: json['length'].toDouble(),
+        width: json['width'].toDouble(),
+        height: json['height'].toDouble(),
+        mass: json['mass_kg'].toDouble(),
+        quantity: json['quantity'],
         origin: json['origin'],
         destination: json['destination'],
         departureDate: json['departure_date'],
         companyID: json['shipping_company_id'],
-        shippingCost: double.parse(json['shipping_cost']),
+        courierName: json['courier_name'],
+        shippingCost: json['shipping_cost'],
+        status: json['status'],
       );
       return parcelShipment;
     } catch (e) {
@@ -61,6 +70,7 @@ class ParcelShipment {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'created_at': createdAt,
       'user_id': userId,
       'name': name,
       'description': description,
@@ -73,7 +83,9 @@ class ParcelShipment {
       'destination': destination,
       'departure_date': departureDate,
       'shipping_company_id': companyID,
+      'courier_name': courierName,
       'shipping_cost': shippingCost,
+      'status': status,
     };
   }
 }

@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/extensions/string_extensions.dart';
 import 'package:travel_management_app_2/screens/flights/models/booking.dart';
-// import
 
 class FlightItinerariesInfo extends StatefulWidget {
   final FlightBooking flightBooking;
-  // final String id;
 
   const FlightItinerariesInfo({super.key, required this.flightBooking});
 
@@ -102,11 +100,11 @@ class _FlightItinerariesInfoState extends State<FlightItinerariesInfo> {
   }
 
   Widget _buildBookingSegment(
+    String? cabinClass,
     Map<String, dynamic> segment,
     int index,
     int totalSegments,
   ) {
-    // log(segment.toString());
     final departure = segment['departure'];
     final arrival = segment['arrival'];
     final carrierCode = segment['carrierCode'];
@@ -130,7 +128,7 @@ class _FlightItinerariesInfoState extends State<FlightItinerariesInfo> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Chip(
-                      label: Text(segment['class'] ?? "ECONOMY"),
+                      label: Text(cabinClass ?? ""),
                       backgroundColor: Colors.blue[50],
                     ),
                   ],
@@ -237,6 +235,11 @@ class _FlightItinerariesInfoState extends State<FlightItinerariesInfo> {
   @override
   Widget build(BuildContext context) {
     final itineraries = widget.flightBooking.itineraries ?? [];
+    final cabinClass =
+        widget
+            .flightBooking
+            .itineraries![0]['segments'][0]['co2Emissions'][0]['cabin']
+            .toString();
     final isRoundTrip = itineraries.length > 1;
 
     return Scaffold(
@@ -257,6 +260,7 @@ class _FlightItinerariesInfoState extends State<FlightItinerariesInfo> {
                   ...itineraries[0]['segments'].asMap().entries.map((entry) {
                     final index = entry.key;
                     return _buildBookingSegment(
+                      cabinClass,
                       entry.value,
                       index,
                       itineraries[0]['segments'].length,
@@ -275,6 +279,7 @@ class _FlightItinerariesInfoState extends State<FlightItinerariesInfo> {
                   ...itineraries[1]['segments'].asMap().entries.map((entry) {
                     final index = entry.key;
                     return _buildBookingSegment(
+                      cabinClass,
                       entry.value,
                       index,
                       itineraries[1]['segments'].length,

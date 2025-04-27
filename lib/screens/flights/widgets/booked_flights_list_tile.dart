@@ -69,7 +69,6 @@ class BookedFlightsListTile extends StatelessWidget {
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Text('\$$price'),
           IconButton(
             onPressed: () => downloadPDF(flightBooking, context),
             icon: Icon(Icons.download),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/screens/flights/views/search_flights.dart';
-import 'package:travel_management_app_2/screens/home/home.dart';
 import 'package:travel_management_app_2/screens/my_itineraries.dart';
 import 'package:travel_management_app_2/screens/parcels/views/ship_parcels.dart';
 import 'package:travel_management_app_2/screens/shuttles/views/search_shuttles.dart';
@@ -17,11 +16,11 @@ class _LandingPageState extends State<LandingPage> {
   int _currentIndex = 0;
   String? email;
   String? userId;
-  final AuthService authService = AuthService();
+  final AuthService _authService = AuthService();
 
   void _fetchData() {
-    email = authService.getCurrentUserEmail();
-    userId = authService.getCurrentUserID();
+    email = _authService.getCurrentUserEmail();
+    userId = _authService.getCurrentUserID();
   }
 
   @override
@@ -31,7 +30,6 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   final List<Widget> _pages = [
-    const HomePage(),
     const SearchFlights(),
     const SearchShuttles(),
     const ShipParcels(),
@@ -44,6 +42,12 @@ class _LandingPageState extends State<LandingPage> {
       appBar: AppBar(
         leading: GestureDetector(child: Icon(Icons.person)),
         title: Text(email!),
+        actions: [
+          GestureDetector(
+            child: Icon(Icons.logout),
+            onTap: () => _authService.signOut(),
+          ),
+        ],
       ),
       body: SafeArea(child: _pages[_currentIndex]),
       bottomNavigationBar: BottomNavigationBar(
@@ -54,7 +58,6 @@ class _LandingPageState extends State<LandingPage> {
           });
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.travel_explore),
             label: 'Flights',
@@ -62,7 +65,7 @@ class _LandingPageState extends State<LandingPage> {
           BottomNavigationBarItem(icon: Icon(Icons.train), label: 'Shuttles'),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_shipping),
-            label: 'Parcels',
+            label: 'Cargo',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.luggage),

@@ -26,6 +26,19 @@ String formatJson(Map<String, dynamic> json) {
   return JsonEncoder.withIndent('indent').convert(json);
 }
 
+// Courier logo mapping
+String? returnCourierLogo(String courierName) {
+  final String courierAssetsRoot = 'assets/logos/companies/couriers';
+  final Map<String, String> assetURLMap = {
+    "DHL": "$courierAssetsRoot/dhl2.png",
+    "FedEx": "$courierAssetsRoot/fedex.png",
+    "UPS": "$courierAssetsRoot/ups.png",
+    "InDrive": "$courierAssetsRoot/indrive.png",
+    "No Logo": "$courierAssetsRoot/not_found.png",
+  };
+  return assetURLMap[courierName] ?? assetURLMap["No Logo"];
+}
+
 // Airline logo mapping
 String? returnCarrierLogo(String carrierCode) {
   final String airlineAssetsRoot = 'assets/logos/airlines';
@@ -121,6 +134,7 @@ String? returnCarrierLogo(String carrierCode) {
     "VN": "$airlineAssetsRoot/vietnam_airlines.png",
     "HU": "$airlineAssetsRoot/hainian_airlines.png",
     "OD": "$airlineAssetsRoot/malindo_air.png",
+    "3U": "$airlineAssetsRoot/sichuan.png",
     "nologo": "$airlineAssetsRoot/not_found.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -221,6 +235,7 @@ String returnCarrierName(String carrierCode) {
     "VZ": "Air Express",
     "HU": "Hainan Airlines",
     "OD": "Malindo Airways",
+    "3U": "Sichuan Airlines",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -472,7 +487,8 @@ List<String> localCities = [
   "Kwekwe",
   "Kadoma",
   "Ruaspe",
-  "",
+  "Masvingo",
+  "Victoria Falls",
 ];
 
 // City mapping

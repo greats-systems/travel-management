@@ -2,6 +2,7 @@ import 'dart:developer';
 
 class ShuttleBooking {
   String? bookingID;
+  String? createdAt;
   String? routeID;
   String? userID;
   String? firstName;
@@ -19,6 +20,7 @@ class ShuttleBooking {
 
   ShuttleBooking({
     this.bookingID,
+    this.createdAt,
     this.routeID,
     this.userID,
     this.firstName,
@@ -39,6 +41,7 @@ class ShuttleBooking {
     try {
       ShuttleBooking shuttleBooking = ShuttleBooking(
         bookingID: json['booking_id'],
+        createdAt: json['created_at'],
         userID: json['user_id'],
         routeID: json['route_id'],
         firstName: json['first_name'],
@@ -64,6 +67,7 @@ class ShuttleBooking {
   Map<String?, dynamic> toJson() {
     return {
       'bookingID': bookingID,
+      'created_at': createdAt,
       'userID': userID,
       'routeID': routeID,
       'firstName': firstName,
@@ -78,7 +82,6 @@ class ShuttleBooking {
       'departureTime': departureTime,
       'arrivalTime': arrivalTime,
       'amountPaid': amountPaid,
-      // 'amount_paid': amountPaid,
     };
   }
 }

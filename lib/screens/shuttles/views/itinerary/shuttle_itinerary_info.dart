@@ -87,6 +87,13 @@ class _ShuttleItineraryInfoState extends State<ShuttleItineraryInfo> {
                     Text('\$${booking.amountPaid?.toStringAsFixed(2)}'),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Receipted on:'),
+                    Text(constants.formatDateTime(booking.createdAt!)),
+                  ],
+                ),
               ],
             ),
           ),

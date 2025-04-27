@@ -1,9 +1,12 @@
 import 'dart:math';
 import 'dart:developer' as developer;
+import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
@@ -42,12 +45,16 @@ class _ShipParcelsState extends State<ShipParcels> {
   // Controllers
   final _nameController = TextEditingController();
   final _departureDateController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
 
   // Services
   final ParcelController _parcelController = ParcelController();
   final ParcelShipment _parcelShipment = ParcelShipment();
   final AuthService _authService = AuthService();
+  final FocusNode focusNode = FocusNode();
+  String _completePhoneNumber = '';
   String? _userId;
+  String? _courier;
 
   @override
   void initState() {
@@ -102,8 +109,15 @@ class _ShipParcelsState extends State<ShipParcels> {
         setState(() => _shippingCost = cost);
       }
     } catch (e) {
-      debugPrint('Error calculating shipping cost: $e');
+      developer.log('Error calculating shipping cost: $e');
     }
+  }
+
+  void setDropdownValue(value) {
+    setState(() {
+      _courier = value;
+    });
+    developer.log(_courier!);
   }
 
   void _createParcelShipment() async {
@@ -121,10 +135,16 @@ class _ShipParcelsState extends State<ShipParcels> {
       ..quantity = _quantity.toInt()
       ..origin = _origin
       ..destination = _destination
-      ..departureDate = _departureDateController.text;
+      ..courierName = _courier
+      ..departureDate = _departureDateController.text
+      ..shippingCost = _shippingCost;
 
     try {
-      await _parcelController.createParcelShipment(_parcelShipment);
+      await _parcelController.makeParcelEcocashPayment(
+        _shippingCost,
+        _completePhoneNumber,
+      );
+      _parcelController.createParcelShipment(_parcelShipment);
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -133,7 +153,20 @@ class _ShipParcelsState extends State<ShipParcels> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context);
+      _nameController.clear();
+      _phoneNumberController.clear();
+      setState(() {
+        _origin = null;
+        _destination = null;
+      });
+      _courier = null;
+      _completePhoneNumber = '';
+      _length = 0.0;
+      _width = 0.0;
+      _height = 0.0;
+      _mass = 0.0;
+      _quantity = 0;
+      _departureDateController.clear();
     } on DioException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -158,7 +191,7 @@ class _ShipParcelsState extends State<ShipParcels> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final horizontalPadding = mediaQuery.size.width / 10;
+    final horizontalPadding = mediaQuery.size.width / 18;
     final topPadding = mediaQuery.size.width / 5;
 
     return Scaffold(
@@ -173,38 +206,29 @@ class _ShipParcelsState extends State<ShipParcels> {
             children: [
               const Center(
                 child: Text(
-                  'Send a parcel',
+                  'Send cargo',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
               MySizedBox(),
-              MyTextField(
-                controller: _nameController,
-                hintText: 'Name',
-                obscureText: false,
-                textInputType: TextInputType.text,
-              ),
+
+              // Parcel name
+              _buildParcelNameField(),
               MySizedBox(),
-              MyLocalAutocomplete(
-                onCitySelected:
-                    (city) => setState(() {
-                      _origin = city;
-                      _calculateShippingCost();
-                    }),
-                initialValue: _origin,
-                hintText: 'Origin',
-              ),
+              // Origin
+              _buildOriginTextField(),
               MySizedBox(),
-              MyLocalAutocomplete(
-                onCitySelected:
-                    (city) => setState(() {
-                      _destination = city;
-                      _calculateShippingCost();
-                    }),
-                initialValue: _destination,
-                hintText: 'Destination',
-              ),
+
+              // Destination
+              _buildDestinationTextField(),
               MySizedBox(),
+
+              // Courier selection
+              _buildCourierDropdown(),
+              MySizedBox(),
+
+              // Phone number field
+              _buildPhoneNumberField(),
 
               // Dimensions row
               _buildDimensionsRow(),
@@ -214,14 +238,8 @@ class _ShipParcelsState extends State<ShipParcels> {
               _buildMassQuantityRow(),
               MySizedBox(),
 
-              MyDatePicker(
-                helpText: 'Departure date',
-                fieldLabelText: 'Departure date',
-                labelText: 'Departure date',
-                controller: _departureDateController,
-                firstDate: DateTime.now(),
-                lastDate: DateTime(DateTime.now().year + 1),
-              ),
+              // Departure date
+              _buildDateField(),
               MySizedBox(),
 
               // Shipping cost card
@@ -239,6 +257,103 @@ class _ShipParcelsState extends State<ShipParcels> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildParcelNameField() {
+    return MyTextField(
+      controller: _nameController,
+      hintText: 'Parcel name',
+      obscureText: false,
+      textInputType: TextInputType.text,
+    );
+  }
+
+  Widget _buildOriginTextField() {
+    return MyLocalAutocomplete(
+      onCitySelected:
+          (city) => setState(() {
+            _origin = city;
+            _calculateShippingCost();
+          }),
+      initialValue: _origin,
+      hintText: 'Origin',
+    );
+  }
+
+  Widget _buildDestinationTextField() {
+    return MyLocalAutocomplete(
+      onCitySelected:
+          (city) => setState(() {
+            _destination = city;
+            _calculateShippingCost();
+          }),
+      initialValue: _destination,
+      hintText: 'Destination',
+    );
+  }
+
+  Widget _buildCourierDropdown() {
+    final List<String> courierList = ['DHL', 'FedEx', 'UPS', 'InDrive'];
+    final Map<String, String> couriers = {
+      'DHL': constants.returnCourierLogo('DHL')!,
+      'FedEx': constants.returnCourierLogo('FedEx')!,
+      'UPS': constants.returnCourierLogo('UPS')!,
+      'InDrive': constants.returnCourierLogo('InDrive')!,
+    };
+
+    return DropdownButton<String>(
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+      isExpanded: true,
+      hint: Text('Courier'),
+      items:
+          courierList.map((name) {
+            return DropdownMenuItem(
+              value: name,
+              child: Row(
+                children: [
+                  Image.asset(couriers[name]!, width: 40, height: 40),
+                  SizedBox(width: 10),
+                  Text(name),
+                ],
+              ),
+            );
+          }).toList(),
+      value: _courier,
+      onChanged: (newValue) => setDropdownValue(newValue),
+    );
+  }
+
+  Widget _buildPhoneNumberField() {
+    return IntlPhoneField(
+      controller: _phoneNumberController,
+      focusNode: focusNode,
+      decoration: const InputDecoration(
+        labelText: 'Phone Number',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+        ),
+      ),
+      initialCountryCode: 'ZW',
+      onChanged: (PhoneNumber phone) {
+        // Store the complete international number
+        _completePhoneNumber = phone.number;
+        developer.log('Complete phone number: $_completePhoneNumber');
+      },
+      onCountryChanged: (country) {
+        developer.log('Country changed to ${country.name}');
+      },
+    );
+  }
+
+  Widget _buildDateField() {
+    return MyDatePicker(
+      helpText: 'Departure date',
+      fieldLabelText: 'Departure date',
+      labelText: 'Departure date',
+      controller: _departureDateController,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 1),
     );
   }
 
@@ -370,7 +485,7 @@ class _ShipParcelsState extends State<ShipParcels> {
         decimals: 1,
         step: step,
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(vertical: 6),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: const BorderSide(color: Colors.black12, width: 2.5),

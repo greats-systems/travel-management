@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:dio/dio.dart';
 import 'package:travel_management_app_2/screens/parcels/models/parcel_shipment.dart';
@@ -6,9 +8,46 @@ import 'dart:developer';
 class ParcelController {
   Dio dio = Dio();
 
+  Future<void> makeParcelPayment(double cost) async {
+    const makeParcelPaymentURL = '${constants.apiRoot}/pay/parcel';
+    var params = {'total': cost};
+
+    await dio
+        .post(makeParcelPaymentURL, data: params)
+        .then((response) {
+          log(JsonEncoder.withIndent(' ').convert(response.data));
+        })
+        .catchError((e) {
+          if (e is DioException) {
+            log('makeParcelPayment DioException: ${e.response}');
+          } else {
+            log('makeParcelPayment error: $e');
+          }
+        });
+  }
+
+  Future<void> makeParcelEcocashPayment(double cost, String phoneNumber) async {
+    const makeParcelEcocashPaymentURL =
+        '${constants.apiRoot}/pay/parcel/ecocash';
+    var params = {'cost': cost, 'phoneNumber': '0$phoneNumber'};
+
+    await dio
+        .post(makeParcelEcocashPaymentURL, data: params)
+        .then((response) {
+          log(JsonEncoder.withIndent(' ').convert(response.data));
+        })
+        .catchError((e) {
+          if (e is DioException) {
+            log('makeParcelEcocashPayment DioException: ${e.response}');
+          } else {
+            log('makeParcelEcocashPayment error: $e');
+          }
+        });
+  }
+
   Future<void> createParcelShipment(ParcelShipment parcelShipment) async {
     const createParcelShipmentURL =
-        '${constants.apiRoot}/parcel-shipment/create';
+        '${constants.apiRoot}/parcel-shipments/create';
     var params = {
       'userID': parcelShipment.userId,
       'name': parcelShipment.name,
@@ -20,6 +59,7 @@ class ParcelController {
       'quantity': parcelShipment.quantity,
       'origin': parcelShipment.origin,
       'destination': parcelShipment.destination,
+      'courierName': parcelShipment.courierName,
       'departureDate': parcelShipment.departureDate,
       'shippingCost': parcelShipment.shippingCost,
     };
@@ -27,7 +67,7 @@ class ParcelController {
     await dio
         .post(createParcelShipmentURL, data: params)
         .then((response) {
-          return response.data;
+          log(response.data);
         })
         .catchError((e) {
           if (e is DioException) {
@@ -80,6 +120,9 @@ class ParcelController {
           final List<dynamic> json = response.data;
           parcelShipments =
               json.map((item) => ParcelShipment.fromMap(item)).toList();
+          log(
+            'parcelShipments ${JsonEncoder.withIndent(' ').convert(parcelShipments)}',
+          );
         })
         .catchError((e) {
           if (e is DioException) {

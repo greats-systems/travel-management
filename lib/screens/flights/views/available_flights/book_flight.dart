@@ -42,7 +42,6 @@ class _BookFlightState extends State<BookFlight> {
   final AuthService authService = AuthService();
   String? id;
 
-  // FocusNode focusNode = FocusNode();
   String _completePhoneNumber = '';
   String _countryCode = '';
 
