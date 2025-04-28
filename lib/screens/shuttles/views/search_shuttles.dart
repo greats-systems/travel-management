@@ -18,8 +18,6 @@ class SearchShuttles extends StatefulWidget {
 
 class _SearchShuttlesState extends State<SearchShuttles> {
   final AuthService _authService = AuthService();
-  final TextEditingController _originController = TextEditingController();
-  final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _departureDateController =
       TextEditingController();
   final ShuttleController _shuttleController = ShuttleController();
@@ -50,8 +48,8 @@ class _SearchShuttlesState extends State<SearchShuttles> {
   void search() async {
     try {
       await _shuttleController.createSearchInterest(
-        _originController.text,
-        _destinationController.text,
+        _origin!,
+        _destination!,
         _departureDateController.text,
         userID!,
       );

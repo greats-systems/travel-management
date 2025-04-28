@@ -192,7 +192,7 @@ class _ShipParcelsState extends State<ShipParcels> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final horizontalPadding = mediaQuery.size.width / 18;
-    final topPadding = mediaQuery.size.width / 5;
+    final topPadding = mediaQuery.size.width / 10;
 
     return Scaffold(
       body: SafeArea(

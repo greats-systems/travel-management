@@ -55,7 +55,7 @@ class ShuttleBooking {
         departureDate: json['departure_date'],
         departureTime: json['ShuttleRoutes']['departure_time'],
         arrivalTime: json['ShuttleRoutes']['arrival_time'],
-        amountPaid: (json['amount_paid'] as num).toDouble(),
+        amountPaid: (json['amount_paid']).toDouble(),
       );
       return shuttleBooking;
     } catch (e) {
@@ -81,7 +81,7 @@ class ShuttleBooking {
       'departureDate': departureDate,
       'departureTime': departureTime,
       'arrivalTime': arrivalTime,
-      'amountPaid': amountPaid,
+      'amount_paid': amountPaid,
     };
   }
 }

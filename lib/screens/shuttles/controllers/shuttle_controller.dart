@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'dart:developer';
 import 'package:travel_management_app_2/screens/shuttles/models/shuttle.dart';
@@ -111,11 +113,9 @@ class ShuttleController {
 
   Future<void> bookShuttle(ShuttleBooking shuttleBooking) async {
     const shuttleBookingURL = '${constants.apiRoot}/shuttle/booking/create';
-    const paynowURL = '${constants.apiRoot}/pay';
+    const paynowURL = '${constants.apiRoot}/pay/shuttle/ecocash';
     var params = {
-      'companyID': shuttleBooking.companyID,
       'userID': shuttleBooking.userID,
-      'routeID': shuttleBooking.routeID,
       'firstName': shuttleBooking.firstName,
       'lastName': shuttleBooking.lastName,
       'phoneNumber': shuttleBooking.phoneNumber,
@@ -127,13 +127,13 @@ class ShuttleController {
     };
     var paynowParams = {'busFare': shuttleBooking.amountPaid};
 
-    log('bookShuttle params.userID: ${shuttleBooking.userID}');
-
     // Post transactions into Paynow
     await dio
         .post(paynowURL, data: paynowParams)
         .then((response) {
-          log('Paynow response: ${response.data}');
+          log(
+            'Paynow response: ${JsonEncoder.withIndent(' ').convert(response.data)}',
+          );
           return response;
         })
         .catchError((e) {
@@ -150,15 +150,15 @@ class ShuttleController {
     await dio
         .post(shuttleBookingURL, data: params)
         .then((response) {
-          log('bookShuttle response: $response');
+          log('bookShuttle supabase response: $response');
           return response;
         })
         .catchError((e) {
           if (e is DioException) {
-            log('bookShuttle DioException: ${e.response}');
+            log('bookShuttle supabase DioException: ${e.response}');
             return e.response!;
           } else {
-            log('bookShuttle error: $e');
+            log('bookShuttle supabase error: $e');
             return e;
           }
         });
