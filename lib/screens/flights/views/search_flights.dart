@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
@@ -13,7 +14,8 @@ import 'package:travel_management_app_2/screens/flights/views/available_flights/
 enum TripType { oneWay, roundTrip }
 
 class SearchFlights extends StatefulWidget {
-  const SearchFlights({super.key});
+  final Position position;
+  const SearchFlights({super.key, required this.position});
 
   @override
   State<SearchFlights> createState() => _SearchFlightsState();
@@ -26,6 +28,7 @@ class _SearchFlightsState extends State<SearchFlights> {
   final AuthService authService = AuthService();
   TripType _tripType = TripType.oneWay;
   String? id;
+  String? role;
   String? _origin;
   String? _destination;
 
@@ -34,8 +37,9 @@ class _SearchFlightsState extends State<SearchFlights> {
   void getUserID() async {
     setState(() {
       id = authService.getCurrentUserID();
+      role = authService.getCurrentUserRole();
     });
-    log('User ID from search_flights: $id');
+    log('User ID from search_flights:\t$id');
   }
 
   @override
@@ -53,22 +57,26 @@ class _SearchFlightsState extends State<SearchFlights> {
     try {
       _tripType == TripType.oneWay
           ? _flightController.createSearchInterest(
-            _origin!,
-            _destination!,
-            _departureDateController.text,
-            true,
-            null,
-            int.parse(_currentSliderValue.round().toString()),
-            id,
+            origin: _origin!,
+            destination: _destination!,
+            departureDate: _departureDateController.text,
+            oneWay: true,
+            returnDate: null,
+            adults: int.parse(_currentSliderValue.round().toString()),
+            userID: id,
+            currentLocationLat: widget.position.latitude,
+            currentLocationLong: widget.position.longitude,
           )
           : _flightController.createSearchInterest(
-            _origin!,
-            _destination!,
-            _departureDateController.text,
-            false,
-            _returnDateController.text,
-            int.parse(_currentSliderValue.round().toString()),
-            id,
+            origin: _origin!,
+            destination: _destination!,
+            departureDate: _departureDateController.text,
+            oneWay: false,
+            returnDate: _returnDateController.text,
+            adults: int.parse(_currentSliderValue.round().toString()),
+            userID: id,
+            currentLocationLat: widget.position.latitude,
+            currentLocationLong: widget.position.longitude,
           );
       Navigator.push(
         context,

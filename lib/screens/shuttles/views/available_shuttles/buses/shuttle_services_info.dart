@@ -6,7 +6,7 @@ import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
 import 'package:travel_management_app_2/screens/shuttles/models/shuttle_route.dart';
-import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/book_shuttle.dart';
+import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/buses/book_shuttle.dart';
 
 class ShuttleServicesInfo extends StatefulWidget {
   final String departureDate;

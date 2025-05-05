@@ -43,11 +43,11 @@ class _AvailableFlightsState extends State<AvailableFlights> {
 
     try {
       final flights = await flightController.getFlightPrices(
-        widget.origin,
-        widget.destination,
-        widget.departureDate,
-        widget.returnDate,
-        widget.adults,
+        origin: widget.origin,
+        destination: widget.destination,
+        departureDate: widget.departureDate,
+        returnDate: widget.returnDate,
+        adults: widget.adults,
       );
 
       if (mounted) {

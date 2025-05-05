@@ -36,7 +36,10 @@ class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
         _isloading = true;
       });
       await shuttleController
-          .getShuttleRoutes(widget.origin, widget.destination)
+          .getShuttleRoutes(
+            origin: widget.origin,
+            destination: widget.destination,
+          )
           .then((data) {
             setState(() {
               _shuttleRoutes = data;

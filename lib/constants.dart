@@ -135,6 +135,9 @@ String? returnCarrierLogo(String carrierCode) {
     "HU": "$airlineAssetsRoot/hainian_airlines.png",
     "OD": "$airlineAssetsRoot/malindo_air.png",
     "3U": "$airlineAssetsRoot/sichuan.png",
+    "ZH": "$airlineAssetsRoot/shenzhen.png",
+    "JD": "$airlineAssetsRoot/beijing_capital_airlines.png",
+    "RJ": "$airlineAssetsRoot/royal_jordanian.png",
     "nologo": "$airlineAssetsRoot/not_found.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -236,6 +239,9 @@ String returnCarrierName(String carrierCode) {
     "HU": "Hainan Airlines",
     "OD": "Malindo Airways",
     "3U": "Sichuan Airlines",
+    "ZH": "Shenzhen Airlines",
+    "JD": "Beijing Capital Airlines",
+    "RJ": "Royal Jordanian Airlines",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -314,6 +320,8 @@ String returnAirportCode(String location) {
     "Haikou": "HAK",
     "Boston": "BOS",
     "Orlando": "MCO",
+    "Nanjing": "NKG",
+    "Amman": "AMM",
   };
   return locationMap[location] ?? location;
 }
@@ -399,6 +407,9 @@ String returnAirportName(String airportCode) {
     "BOS": "Edward L. Logan Intl Boston",
     "LAS": "Harry Reid Intl. Las Vegas",
     "MCO": "Orlando",
+    "NKG": "Nanjing",
+    "AMM": "Queen Alia Intl",
+    "RUH": "King Khalid Intl",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
@@ -476,6 +487,8 @@ List<String> cities = [
   "Boston",
   "Las Vegas",
   "Orlando",
+  "Amman",
+  "Riyadh",
 ];
 
 // Local city list (for shuttle autocomplete)
@@ -489,6 +502,16 @@ List<String> localCities = [
   "Ruaspe",
   "Masvingo",
   "Victoria Falls",
+  "Pretoria",
+  "Johannesburg",
+  "Durban",
+  "Cape Town",
+  "Lusaka",
+  "Gaborone",
+  "Francistown",
+  "Maputo",
+  "Beira",
+  "Tete",
 ];
 
 // City mapping
@@ -573,6 +596,9 @@ String returnLocation(String airportCode) {
     "BOS": "Boston",
     "LAS": "Las Vegas",
     "MCO": "Orlando",
+    "NKG": "Nanjing",
+    "AMM": "Amman",
+    "RUH": "Riyadh",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }
@@ -601,7 +627,7 @@ String calculateDuration(String departure, String arrival) {
     final start = DateTime.parse(departure);
     final end = DateTime.parse(arrival);
     final duration = end.difference(start);
-    return '${duration.inHours}f ${duration.inMinutes.remainder(60)}m';
+    return '${duration.inHours}h ${duration.inMinutes.remainder(60)}m';
   } catch (e) {
     return '';
   }

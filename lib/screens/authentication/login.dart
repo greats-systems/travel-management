@@ -14,7 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // final wildEncounterLogoURL = 'assets/logos/companies/wild_encounter.png';
   final authService = AuthService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -65,17 +64,15 @@ class _LoginPageState extends State<LoginPage> {
               MySizedBox(),
 
               // email field
-              MyTextField(
-                textInputType: TextInputType.text,
+              _buildTextField(
                 controller: _emailController,
                 hintText: 'Email',
-                obscureText: false,
+                keyboardType: TextInputType.emailAddress,
               ),
               MySizedBox(),
 
               // password field
-              MyTextField(
-                textInputType: TextInputType.text,
+              _buildTextField(
                 controller: _passwordController,
                 hintText: 'Password',
                 obscureText: true,
@@ -106,6 +103,20 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    TextInputType keyboardType = TextInputType.text,
+    bool obscureText = false,
+  }) {
+    return MyTextField(
+      controller: controller,
+      hintText: hintText,
+      textInputType: keyboardType,
+      obscureText: obscureText,
     );
   }
 }

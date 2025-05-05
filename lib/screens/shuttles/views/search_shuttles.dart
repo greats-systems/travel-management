@@ -1,16 +1,18 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_local_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
-import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/available_shuttle_services.dart';
+import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/buses/available_shuttle_services.dart';
 
 class SearchShuttles extends StatefulWidget {
-  const SearchShuttles({super.key});
+  final Position position;
+  const SearchShuttles({super.key, required this.position});
 
   @override
   State<SearchShuttles> createState() => _SearchShuttlesState();
@@ -48,10 +50,12 @@ class _SearchShuttlesState extends State<SearchShuttles> {
   void search() async {
     try {
       await _shuttleController.createSearchInterest(
-        _origin!,
-        _destination!,
-        _departureDateController.text,
-        userID!,
+        origin: _origin!,
+        destination: _destination!,
+        departureDate: _departureDateController.text,
+        userID: userID!,
+        currentLocationLat: widget.position.latitude,
+        currentLocationLong: widget.position.longitude,
       );
       if (mounted) {
         Navigator.push(

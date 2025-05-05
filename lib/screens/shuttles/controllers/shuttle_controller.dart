@@ -1,120 +1,134 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'dart:developer';
+
+import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:travel_management_app_2/screens/shuttles/models/shuttle.dart';
 import 'package:travel_management_app_2/screens/shuttles/models/shuttle_booking.dart';
 import 'package:travel_management_app_2/screens/shuttles/models/shuttle_route.dart';
-import 'package:travel_management_app_2/constants.dart' as constants;
 
 class ShuttleController {
-  Dio dio = Dio();
+  final Dio _dio = Dio();
 
-  Future<void> createSearchInterest(
-    String origin,
-    String destination,
-    String departureDate,
-    String userID,
-  ) async {
-    const createSearchInterestURL =
-        '${constants.apiRoot}/profile/shuttle-interest/create';
-    var params = {
-      'origin': origin,
-      'destination': destination,
-      'departureDate': departureDate,
-      'userID': userID,
-    };
-    await dio
-        .post(createSearchInterestURL, data: params)
-        .then((response) {
-          log('createSearchInterest data: ${response.data}');
-        })
-        .catchError((error) {
-          if (error is DioException) {
-            log('createSearchInterest DioException: ${error.response}');
-          } else {
-            log('createSearchInterest error: $error');
-          }
-        });
-  }
+  Future<void> createSearchInterest({
+    required String origin,
+    required String destination,
+    required String departureDate,
+    required String userID,
+    required double currentLocationLat,
+    required double currentLocationLong,
+  }) async {
+    const url = '${constants.apiRoot}/profile/shuttle-interest/create';
 
-  Future<List<Shuttle>?> getShuttleCompanies() async {
-    const shuttleCompaniesURL = '${constants.apiRoot}/shuttles';
-    List<Shuttle>? shuttles;
     try {
-      await dio
-          .get(shuttleCompaniesURL)
-          .then((response) {
-            final List<dynamic> json = response.data;
-            shuttles = json.map((item) => Shuttle.fromMap(item)).toList();
-          })
-          .catchError((e) {
-            if (e is DioException) {
-              log('getShuttleCompanies DioException: $e');
-            } else {
-              log('getShuttleCompanies error: $e');
-            }
-          });
+      final response = await _dio.post(
+        url,
+        data: {
+          'origin': origin,
+          'destination': destination,
+          'departureDate': departureDate,
+          'userID': userID,
+          'currentLocationLat': currentLocationLat,
+          'currentLocationLong': currentLocationLong,
+        },
+      );
+      log('Search interest created: ${response.data}');
+    } on DioException catch (e) {
+      log('Failed to create search interest: ${e.response?.data}');
+      rethrow;
     } catch (e) {
-      log(e.toString());
+      log('Unexpected error creating search interest: $e');
+      rethrow;
     }
-    return shuttles;
   }
 
-  Future<List<ShuttleRoute>?> getShuttleRoutes(
-    String origin,
-    String destination,
-  ) async {
-    var params = {'origin': origin, 'destination': destination};
-    log(params.toString());
-    const shuttleRoutesURL = '${constants.apiRoot}/shuttle/routes';
-    List<ShuttleRoute>? shuttleRoutes;
+  Future<List<Shuttle>> getShuttleCompanies() async {
+    const url = '${constants.apiRoot}/shuttles';
+
     try {
-      await dio
-          .get(shuttleRoutesURL, data: params)
-          .then((response) {
-            final List<dynamic> json = response.data;
-            shuttleRoutes =
-                json.map((item) => ShuttleRoute.fromMap(item)).toList();
-          })
-          .catchError((e) {
-            if (e is DioException) {
-              log('getShuttleRoutes DioException: $e');
-            } else {
-              log('getShuttleRoutes error: $e');
-            }
-          });
+      final response = await _dio.get(url);
+      if (response.data is List) {
+        return (response.data as List)
+            .map((item) => Shuttle.fromMap(item))
+            .toList();
+      }
+      throw FormatException(
+        'Expected List but got ${response.data.runtimeType}',
+      );
+    } on DioException catch (e) {
+      log('Failed to fetch shuttle companies: ${e.response?.data}');
+      rethrow;
     } catch (e) {
-      log(e.toString());
+      log('Unexpected error fetching shuttle companies: $e');
+      rethrow;
     }
-    return shuttleRoutes;
   }
 
-  Future<List<ShuttleBooking>?> getBookingsFromSupabase(String userId) async {
-    var params = {'userID': userId};
-    const bookingsURL = '${constants.apiRoot}/shuttle/bookings';
-    List<ShuttleBooking> bookings = [];
+  Future<List<ShuttleRoute>> getShuttleRoutes({
+    required String origin,
+    required String destination,
+  }) async {
+    const url = '${constants.apiRoot}/shuttle/routes';
 
-    await dio
-        .get(bookingsURL, data: params)
-        .then((response) {
-          final List<dynamic> json = response.data;
-          bookings = json.map((item) => ShuttleBooking.fromMap(item)).toList();
-        })
-        .catchError((e) {
-          if (e is DioException) {
-            log('getBookingsFromSupabase DioException: ${e.response}');
-          } else {
-            log('getBookingsFromSupabase error: $e');
-          }
-        });
-    return bookings;
+    try {
+      final response = await _dio.get(
+        url,
+        data: {'origin': origin, 'destination': destination},
+      );
+      if (response.data is List) {
+        return (response.data as List)
+            .map((item) => ShuttleRoute.fromMap(item))
+            .toList();
+      }
+      throw FormatException(
+        'Expected List but got ${response.data.runtimeType}',
+      );
+    } on DioException catch (e) {
+      log('Failed to fetch shuttle routes: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      log('Unexpected error fetching shuttle routes: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<ShuttleBooking>> getBookingsFromSupabase(String userId) async {
+    const url = '${constants.apiRoot}/shuttle/bookings';
+
+    try {
+      final response = await _dio.get(url, data: {'userID': userId});
+
+      // Handle case when no bookings exist (returns String)
+      if (response.data is String) {
+        log('No bookings found: ${response.data}');
+        return [];
+      }
+
+      // Handle normal case with List response
+      if (response.data is List) {
+        return (response.data as List)
+            .map((item) => ShuttleBooking.fromMap(item))
+            .toList();
+      }
+
+      throw FormatException(
+        'Unexpected response type: ${response.data.runtimeType}',
+      );
+    } on DioException catch (e) {
+      log('Failed to fetch bookings: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      log('Unexpected error fetching bookings: $e');
+      rethrow;
+    }
   }
 
   Future<void> bookShuttle(ShuttleBooking shuttleBooking) async {
-    const shuttleBookingURL = '${constants.apiRoot}/shuttle/booking/create';
-    const paynowURL = '${constants.apiRoot}/pay/shuttle/ecocash';
-    var params = {
+    const bookingUrl = '${constants.apiRoot}/shuttle/booking/create';
+    const paymentUrl = '${constants.apiRoot}/pay/shuttle/ecocash';
+
+    final bookingData = {
       'userID': shuttleBooking.userID,
       'firstName': shuttleBooking.firstName,
       'lastName': shuttleBooking.lastName,
@@ -125,42 +139,23 @@ class ShuttleController {
       'departureDate': shuttleBooking.departureDate,
       'amountPaid': shuttleBooking.amountPaid,
     };
-    var paynowParams = {'busFare': shuttleBooking.amountPaid};
 
-    // Post transactions into Paynow
-    await dio
-        .post(paynowURL, data: paynowParams)
-        .then((response) {
-          log(
-            'Paynow response: ${JsonEncoder.withIndent(' ').convert(response.data)}',
-          );
-          return response;
-        })
-        .catchError((e) {
-          if (e is DioException) {
-            log('bookShuttle DioException: ${e.response}');
-            return e.response!;
-          } else {
-            log('bookShuttle error: $e');
-            return e;
-          }
-        });
+    final paymentData = {'busFare': shuttleBooking.amountPaid};
 
-    // Post transaction into Supabase
-    await dio
-        .post(shuttleBookingURL, data: params)
-        .then((response) {
-          log('bookShuttle supabase response: $response');
-          return response;
-        })
-        .catchError((e) {
-          if (e is DioException) {
-            log('bookShuttle supabase DioException: ${e.response}');
-            return e.response!;
-          } else {
-            log('bookShuttle supabase error: $e');
-            return e;
-          }
-        });
+    try {
+      // Process payment first
+      final paymentResponse = await _dio.post(paymentUrl, data: paymentData);
+      log('Payment processed: ${jsonEncode(paymentResponse.data)}');
+
+      // Then create booking
+      final bookingResponse = await _dio.post(bookingUrl, data: bookingData);
+      log('Booking created: ${jsonEncode(bookingResponse.data)}');
+    } on DioException catch (e) {
+      log('Failed to book shuttle: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      log('Unexpected error booking shuttle: $e');
+      rethrow;
+    }
   }
 }

@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 // import 'package:travel_management_app_2/screens/shuttles/models/shuttle.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:travel_management_app_2/screens/shuttles/models/shuttle_route.dart';
-import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/shuttle_services_info.dart';
+import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/buses/shuttle_services_info.dart';
 
 class AvailableShuttleServicesListTile extends StatelessWidget {
-  // final String companyId;
   final String departureDate;
   final List<ShuttleRoute>? shuttleRoutes;
 
   const AvailableShuttleServicesListTile({
     super.key,
-    // required this.companyId,
     required this.shuttleRoutes,
     required this.departureDate,
   });

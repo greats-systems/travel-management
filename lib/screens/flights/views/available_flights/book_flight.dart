@@ -80,15 +80,15 @@ class _BookFlightState extends State<BookFlight> {
               .toList();
 
       await controller.bookFlight(
-        id!,
-        widget.origin,
-        widget.destination,
-        widget.departureDate,
-        widget.returnDate,
-        widget.adults,
-        passengerList,
-        widget.flight,
-        _countryCode,
+        userId: id!,
+        origin: widget.origin,
+        destination: widget.destination,
+        departureDate: widget.departureDate,
+        returnDate: widget.returnDate,
+        adults: widget.adults,
+        passengers: passengerList,
+        flight: widget.flight,
+        callingCode: _countryCode,
       );
       if (!mounted) return;
       setState(() {
