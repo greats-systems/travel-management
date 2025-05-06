@@ -80,9 +80,9 @@ class _LandingPageState extends State<LandingPage> {
     // Common pages for all users
     _pages = [
       SearchFlights(position: position!),
-      SearchShuttles(position: position!),
+      SearchShuttles(position: position!, userId: userId!),
       ParcelLogistics(userId: userId!),
-      const MyItineraries(),
+      MyItineraries(),
     ];
 
     // Common navigation items
@@ -115,7 +115,7 @@ class _LandingPageState extends State<LandingPage> {
       _navItems.add(
         const BottomNavigationBarItem(
           icon: Icon(Icons.drive_eta),
-          label: 'Driver',
+          label: 'Drive',
         ),
       );
     }

@@ -74,22 +74,45 @@ class ShuttleController {
     try {
       final response = await _dio.get(
         url,
-        data: {'origin': origin, 'destination': destination},
+        data: {
+          // Changed from 'data' to 'queryParameters' for GET requests
+          'origin': origin,
+          'destination': destination,
+        },
       );
-      if (response.data is List) {
-        return (response.data as List)
-            .map((item) => ShuttleRoute.fromMap(item))
-            .toList();
+
+      // Handle empty or null response
+      if (response.data == null) {
+        return [];
       }
-      throw FormatException(
-        'Expected List but got ${response.data.runtimeType}',
-      );
+
+      // Handle list response
+      if (response.data is List) {
+        if (response.data != null) {
+          final routes =
+              (response.data as List)
+                  .map((item) => ShuttleRoute.fromMap(item))
+                  .toList();
+          return routes;
+        } else {
+          return [];
+        }
+      }
+
+      // Handle unexpected format
+      log('Unexpected response format: ${response.data.runtimeType}');
+      return [];
     } on DioException catch (e) {
-      log('Failed to fetch shuttle routes: ${e.response?.data}');
-      rethrow;
+      log('Failed to fetch shuttle routes: ${e}');
+      if (e.response != null) {
+        log('Response status: ${e.response?.statusCode}');
+        log('Response data: ${e.response?.data}');
+        return [];
+      }
+      return [];
     } catch (e) {
       log('Unexpected error fetching shuttle routes: $e');
-      rethrow;
+      return [];
     }
   }
 

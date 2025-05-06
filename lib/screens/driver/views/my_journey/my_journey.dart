@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_management_app_2/screens/driver/models/journey.dart';
 import 'package:travel_management_app_2/screens/driver/widgets/journey_map.dart';
 import 'package:travel_management_app_2/services/journey_service.dart';
 
@@ -20,10 +21,20 @@ class _MyJourneyState extends State<MyJourney> {
   }
 
   Future<void> _loadJourney() async {
-    // Delay slightly to ensure build is complete
-    await Future.delayed(Duration.zero);
+    await Future.delayed(Duration.zero); // Ensure build is complete
     final journeyService = Provider.of<JourneyService>(context, listen: false);
     await journeyService.fetchUserJourney(widget.userId);
+  }
+
+  // Helper method to check if a journey is actually active
+  bool _isJourneyActive(Journey? journey) {
+    if (journey == null) return false;
+
+    return journey.userID != null &&
+        journey.origin != null &&
+        journey.destination != null &&
+        journey.currentLocationLat != null &&
+        journey.currentLocationLong != null;
   }
 
   @override
@@ -34,7 +45,7 @@ class _MyJourneyState extends State<MyJourney> {
   }
 
   Widget _buildBody(JourneyService journeyService) {
-    if (journeyService.isLoading) {
+    if (journeyService.isLoading || !journeyService.hasCheckedForJourney) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -42,11 +53,7 @@ class _MyJourneyState extends State<MyJourney> {
       return Center(child: Text('Error: ${journeyService.error}'));
     }
 
-    if (!journeyService.hasCheckedForJourney) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (journeyService.currentJourney == null) {
+    if (!_isJourneyActive(journeyService.currentJourney)) {
       return const Center(child: Text('No active journeys found'));
     }
 

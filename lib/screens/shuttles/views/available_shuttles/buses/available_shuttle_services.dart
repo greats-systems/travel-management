@@ -61,7 +61,7 @@ class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
       return Center(child: CircularProgressIndicator());
     }
     if (_shuttleRoutes!.isEmpty || _shuttleRoutes == null) {
-      return Center(child: Text('No shuttles available'));
+      return Center(child: Text('No shuttles available at this time'));
     }
     return SafeArea(
       child: AvailableShuttleServicesListTile(

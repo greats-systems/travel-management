@@ -1,6 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/ride_controller.dart';
-import 'package:travel_management_app_2/screens/shuttles/models/ride_route.dart';
+import 'package:travel_management_app_2/screens/shuttles/models/ride.dart';
 import 'package:travel_management_app_2/screens/shuttles/widgets/available_rides_map.dart';
 
 class AvailableRides extends StatefulWidget {
@@ -19,46 +21,71 @@ class AvailableRides extends StatefulWidget {
 }
 
 class _AvailableRidesState extends State<AvailableRides> {
-  bool _isloading = false;
-  List<RideRoute>? _routes;
+  bool _isLoading = false;
+  List<Ride> _rides = [];
+  String? _error;
   final RideController _rideController = RideController();
-  /*
-  Future<void> fetchData() async {
-    if (mounted) {
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final rides = await _rideController.getRides(
+        widget.origin,
+        widget.destination,
+      );
+
+      if (!mounted) return;
+
       setState(() {
-        _isloading = true;
+        _rides = rides;
+        _isLoading = false;
       });
-      await _rideController
-          .getRideRoutes(widget.origin, widget.destination)
-          .then((data) {
-            setState(() {
-              _routes = data;
-              _isloading = false;
-            });
-          });
+
+      log('Fetched ${_rides.length} rides');
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+        _error = 'Failed to load rides';
+      });
+
+      log('Error fetching rides: $e');
     }
   }
-  */
 
   Widget _buildBody() {
-    /*
-    if (_isloading) {
-      return Center(child: CircularProgressIndicator());
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
-    if (_routes!.isEmpty || _routes == null) {
-      return Center(child: Text('No rides available'));
+
+    if (_error != null) {
+      return Center(child: Text(_error!));
     }
-    return SafeArea(
-      child: AvailableRidesMap(route: _routes!, userId: widget.userId),
-    );
-    */
-    return Center(child: Text('Available rides'));
+
+    if (_rides.isEmpty) {
+      return const Center(child: Text('No rides available at this time'));
+    }
+
+    return AvailableRidesMap(rides: _rides, userId: widget.userId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Available Rides')),
+      appBar: AppBar(title: const Text('Available Rides')),
       body: _buildBody(),
     );
   }

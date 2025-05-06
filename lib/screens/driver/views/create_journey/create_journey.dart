@@ -65,10 +65,6 @@ class _CreateJourneyState extends State<CreateJourney> {
               _buildOriginField(),
               MySizedBox(),
               _buildDestinationField(),
-              /*
-              MySizedBox(),
-              _buildDatePicker(),
-              */
               MySizedBox(),
               _buildSubmitButton(),
             ],
@@ -98,19 +94,6 @@ class _CreateJourneyState extends State<CreateJourney> {
     );
   }
 
-  /*
-  Widget _buildDatePicker() {
-    return MyDatePicker(
-      helpText: 'Departure date',
-      fieldLabelText: 'Departure date',
-      labelText: 'Departure date',
-      controller: _departureDateController,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 1),
-    );
-  }
-  */
-
   Widget _buildSubmitButton() {
     return MyButton(
       onTap: confirm,
@@ -124,7 +107,6 @@ class _CreateJourneyState extends State<CreateJourney> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
-      return;
     }
 
     log('Creating journey from $_origin to $_destination');
@@ -140,6 +122,16 @@ class _CreateJourneyState extends State<CreateJourney> {
 
       final response = await _driverController.createJourney(journey);
       log('Journey created successfully: ${response.data['success']}');
+      _origin = '';
+      _destination = '';
+      /*
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyJourney(userId: widget.userId),
+        ),
+      );
+      */
       if (response.data['success'] != true) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

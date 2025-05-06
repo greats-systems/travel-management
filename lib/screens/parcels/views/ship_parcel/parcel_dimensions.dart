@@ -108,6 +108,7 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
       ..height = _height
       ..mass = _mass
       ..quantity = _quantity.toInt()
+      ..departureDate = _departureDateController.text.trim()
       ..shippingCost = _shippingCost;
     developer.log(JsonEncoder.withIndent(' ').convert(widget.parcelShipment));
 

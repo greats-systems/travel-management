@@ -3,38 +3,48 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'dart:developer';
 import 'package:travel_management_app_2/constants.dart' as constants;
+import 'package:travel_management_app_2/screens/shuttles/models/ride.dart';
 import 'package:travel_management_app_2/screens/shuttles/models/ride_booking.dart';
-import 'package:travel_management_app_2/screens/shuttles/models/ride_route.dart';
 
 class RideController {
   Dio dio = Dio();
 
-  Future<List<RideRoute>?> getRideRoutes(
-    String origin,
-    String destination,
-  ) async {
-    var params = {'origin': origin, 'destination': destination};
-    log(params.toString());
-    const rideRoutesURL = '${constants.apiRoot}/rides';
-    List<RideRoute>? rideRoutes;
+  Future<List<Ride>> getRides(String origin, String destination) async {
+    const ridesURL = '${constants.apiRoot}/rides';
+
     try {
-      await dio
-          .get(rideRoutesURL, data: params)
-          .then((response) {
-            final List<dynamic> json = response.data;
-            rideRoutes = json.map((item) => RideRoute.fromMap(item)).toList();
-          })
-          .catchError((e) {
-            if (e is DioException) {
-              log('getRideRoutes DioException: $e');
-            } else {
-              log('getRideRoutes error: $e');
-            }
-          });
+      final response = await dio.get(
+        ridesURL,
+        data: {'origin': origin, 'destination': destination},
+      );
+
+      log('API Response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+
+        if (data['data'] != null) {
+          final ridesList = data['data'] as List;
+          return ridesList.map((rideJson) => Ride.fromMap(rideJson)).toList();
+        } else {
+          log('No rides data found in response');
+          return [];
+        }
+      } else {
+        log('API Error: ${response.statusCode} - ${response.statusMessage}');
+        return [];
+      }
+    } on DioException catch (e) {
+      log('Dio Error: ${e.message}');
+      if (e.response != null) {
+        log('Response data: ${e.response?.data}');
+        log('Status code: ${e.response?.statusCode}');
+      }
+      return [];
     } catch (e) {
-      log(e.toString());
+      log('Unexpected Error: $e');
+      return [];
     }
-    return rideRoutes;
   }
 
   Future<List<RideBooking>?> getBookingsFromSupabase(String userId) async {

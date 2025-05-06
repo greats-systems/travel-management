@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_local_autocomplete.dart';
@@ -11,34 +10,24 @@ import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_con
 import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles_landing_page.dart';
 
 class SearchShuttles extends StatefulWidget {
+  final String userId;
   final Position position;
-  const SearchShuttles({super.key, required this.position});
+  const SearchShuttles({
+    super.key,
+    required this.userId,
+    required this.position,
+  });
 
   @override
   State<SearchShuttles> createState() => _SearchShuttlesState();
 }
 
 class _SearchShuttlesState extends State<SearchShuttles> {
-  final AuthService _authService = AuthService();
   final TextEditingController _departureDateController =
       TextEditingController();
   final ShuttleController _shuttleController = ShuttleController();
-  String? userID;
   String? _origin;
   String? _destination;
-
-  void getUserID() {
-    setState(() {
-      userID = _authService.getCurrentUserID();
-    });
-    log('User ID from SearchShuttles: $userID');
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getUserID();
-  }
 
   @override
   void dispose() {
@@ -53,7 +42,7 @@ class _SearchShuttlesState extends State<SearchShuttles> {
         origin: _origin!,
         destination: _destination!,
         departureDate: _departureDateController.text,
-        userID: userID!,
+        userID: widget.userId,
         currentLocationLat: widget.position.latitude,
         currentLocationLong: widget.position.longitude,
       );
@@ -63,7 +52,7 @@ class _SearchShuttlesState extends State<SearchShuttles> {
           MaterialPageRoute(
             builder:
                 (context) => AvailableShuttlesLandingPage(
-                  userId: userID!,
+                  userId: widget.userId,
                   origin: _origin!,
                   destination: _destination!,
                   departureDate: _departureDateController.text,
