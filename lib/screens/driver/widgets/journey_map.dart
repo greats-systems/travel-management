@@ -20,16 +20,25 @@ class _JourneyMapState extends State<JourneyMap> {
   List<Location>? geocodedDestination;
   final List<Marker> _markers = [];
   List<LatLng> _routePoints = [];
-  LatLng? _mapCenter; // Dynamic center based on route
+  LatLng? _mapCenter;
+  bool _isDisposed = false;
 
   TileLayer get osmTileLayer => TileLayer(
     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     userAgentPackageName: 'com.example.app',
   );
 
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
   Future<void> _fetchRoute(LatLng origin, LatLng destination) async {
     try {
       final route = await DriverController().getRoute(origin, destination);
+
+      if (_isDisposed) return;
 
       if (route != null) {
         final coordinates = route.geometry['coordinates'] as List;
@@ -43,28 +52,35 @@ class _JourneyMapState extends State<JourneyMap> {
                 )
                 .toList();
 
-        setState(() {
-          _routePoints = routePoints;
-          // Set center point between origin and destination
-          _mapCenter = LatLng(
-            (origin.latitude + destination.latitude) / 2,
-            (origin.longitude + destination.longitude) / 2,
-          );
-        });
+        if (mounted) {
+          setState(() {
+            _routePoints = routePoints;
+            _mapCenter = LatLng(
+              (origin.latitude + destination.latitude) / 2,
+              (origin.longitude + destination.longitude) / 2,
+            );
+          });
+        }
       }
     } catch (e) {
       log('Error fetching route: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to load route')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to load route')));
+      }
     }
   }
 
   Future<void> createMarkers() async {
-    if (widget.journey!.origin == null || widget.journey!.destination == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Journey data is incomplete')),
-      );
+    if (widget.journey == null ||
+        widget.journey!.origin == null ||
+        widget.journey!.destination == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Journey data is incomplete')),
+        );
+      }
       return;
     }
 
@@ -73,6 +89,8 @@ class _JourneyMapState extends State<JourneyMap> {
       geocodedDestination = await locationFromAddress(
         widget.journey!.destination!,
       );
+
+      if (_isDisposed) return;
 
       if (geocodedOrigin == null ||
           geocodedOrigin!.isEmpty ||
@@ -90,30 +108,32 @@ class _JourneyMapState extends State<JourneyMap> {
         geocodedDestination![0].longitude,
       );
 
-      setState(() {
-        _markers.addAll([
-          Marker(
-            point: originLatLng,
-            width: 40,
-            height: 40,
-            child: Icon(
-              Icons.location_pin,
-              size: 40,
-              color: Colors.red.shade500,
+      if (mounted) {
+        setState(() {
+          _markers.addAll([
+            Marker(
+              point: originLatLng,
+              width: 40,
+              height: 40,
+              child: Icon(
+                Icons.location_pin,
+                size: 40,
+                color: Colors.red.shade500,
+              ),
             ),
-          ),
-          Marker(
-            point: destLatLng,
-            width: 40,
-            height: 40,
-            child: Icon(
-              Icons.location_pin,
-              size: 40,
-              color: Colors.red.shade500,
+            Marker(
+              point: destLatLng,
+              width: 40,
+              height: 40,
+              child: Icon(
+                Icons.location_pin,
+                size: 40,
+                color: Colors.red.shade500,
+              ),
             ),
-          ),
-        ]);
-      });
+          ]);
+        });
+      }
 
       await _fetchRoute(originLatLng, destLatLng);
     } catch (e) {
@@ -130,7 +150,9 @@ class _JourneyMapState extends State<JourneyMap> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      createMarkers();
+      if (mounted) {
+        createMarkers();
+      }
     });
   }
 

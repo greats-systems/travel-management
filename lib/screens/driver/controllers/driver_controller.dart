@@ -31,9 +31,6 @@ class DriverController {
         ),
       );
 
-      // Debug log the raw response
-      log('Raw API response: ${response.data}');
-
       // Validate basic response structure
       if (response.data == null) {
         log('Null response received');
@@ -157,17 +154,20 @@ Route request failed:
         '${constants.apiRoot}/journeys/$userID',
         queryParameters: {'user_id': userID},
       );
-      log('getJourneyFromSupabase data: $response');
+      log(
+        'getJourneyFromSupabase data: ${JsonEncoder.withIndent(' ').convert(response.data)}',
+      );
 
       // Validate response structure
-      if (response.data == null) return null;
-
-      if (response.data is Map<String, dynamic>) {
+      if (response.data == null) {
+        return null;
+      } else if (response.data is Map<String, dynamic> &&
+          response.data['data'].length > 0) {
         return Journey.fromMap(response.data);
+      } else {
+        log('Unexpected response format: ${response.data.runtimeType}');
+        return null;
       }
-
-      log('Unexpected response format');
-      return null;
     } on DioException catch (e) {
       log('Error fetching journey: ${e.response?.data ?? e.message}');
       return null;

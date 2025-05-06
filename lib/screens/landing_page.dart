@@ -9,7 +9,8 @@ import 'package:travel_management_app_2/screens/driver/models/journey.dart';
 import 'package:travel_management_app_2/screens/driver/views/driver.dart';
 import 'package:travel_management_app_2/screens/flights/views/search_flights.dart';
 import 'package:travel_management_app_2/screens/my_itineraries.dart';
-import 'package:travel_management_app_2/screens/parcels/views/ship_parcels.dart';
+import 'package:travel_management_app_2/screens/parcels/views/ship_parcel/parcel_logistics.dart';
+// import 'package:travel_management_app_2/screens/parcels/views/ship_parcels.dart';
 import 'package:travel_management_app_2/screens/shuttles/views/search_shuttles.dart';
 
 class LandingPage extends StatefulWidget {
@@ -80,7 +81,7 @@ class _LandingPageState extends State<LandingPage> {
     _pages = [
       SearchFlights(position: position!),
       SearchShuttles(position: position!),
-      const ShipParcels(),
+      ParcelLogistics(userId: userId!),
       const MyItineraries(),
     ];
 

@@ -49,12 +49,12 @@ class ShuttleBooking {
         phoneNumber: json['phone_number'],
         email: json['email'],
         companyID: json['company_id'],
-        companyName: json['ShuttleServiceCompany']['name'],
-        origin: json['ShuttleRoutes']['origin'],
-        destination: json['ShuttleRoutes']['destination'],
-        departureDate: json['departure_date'],
-        departureTime: json['ShuttleRoutes']['departure_time'],
-        arrivalTime: json['ShuttleRoutes']['arrival_time'],
+        companyName: json['company_name'],
+        origin: json['origin'],
+        destination: json['destination'],
+        departureDate: json['departure_date'] ?? '',
+        departureTime: json['departure_time'] ?? '',
+        arrivalTime: json['arrival_time'] ?? '',
         amountPaid: (json['amount_paid']).toDouble(),
       );
       return shuttleBooking;

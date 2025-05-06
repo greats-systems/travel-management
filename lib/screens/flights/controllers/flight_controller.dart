@@ -86,7 +86,7 @@ class FlightController {
       final response = await _dio.get(
         _flightPricesUrl,
         data: params,
-        options: Options(receiveTimeout: const Duration(seconds: 15)),
+        options: Options(receiveTimeout: const Duration(seconds: 30)),
       );
 
       if (response.data is! List) {
@@ -131,7 +131,10 @@ class FlightController {
 
   Future<List<FlightBooking>> getBookingsFromSupabase(String userId) async {
     try {
-      final response = await _dio.get(_bookingsUrl, data: {'userID': userId});
+      final response = await _dio.get(
+        '$_bookingsUrl/$userId',
+        queryParameters: {'userID': userId},
+      );
 
       if (response.data is! List) {
         if (response.data is String) {

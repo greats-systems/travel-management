@@ -8,7 +8,7 @@ import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_local_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
-import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/buses/available_shuttle_services.dart';
+import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles_landing_page.dart';
 
 class SearchShuttles extends StatefulWidget {
   final Position position;
@@ -62,7 +62,8 @@ class _SearchShuttlesState extends State<SearchShuttles> {
           context,
           MaterialPageRoute(
             builder:
-                (context) => AvailableShuttleServices(
+                (context) => AvailableShuttlesLandingPage(
+                  userId: userID!,
                   origin: _origin!,
                   destination: _destination!,
                   departureDate: _departureDateController.text,

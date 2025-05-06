@@ -1,12 +1,16 @@
 import 'dart:developer';
 
 class RideRoute {
+  String? driverID;
+  String? status;
   double? driverPositionLat;
   double? driverPositionLong;
   String? origin;
   String? destination;
 
   RideRoute({
+    this.driverID,
+    this.status,
     this.driverPositionLat,
     this.driverPositionLong,
     this.origin,
@@ -16,8 +20,9 @@ class RideRoute {
   factory RideRoute.fromMap(Map<String, dynamic> json) {
     try {
       RideRoute journey = RideRoute(
-        driverPositionLat: json['DriverProfiles']['current_location_lat'],
-        driverPositionLong: json['DriverProfiles']['current_location_long'],
+        driverID: json['user_id'],
+        driverPositionLat: json['current_location_lat'],
+        driverPositionLong: json['current_location_long'],
         origin: json['origin'],
         destination: json['destination'],
       );

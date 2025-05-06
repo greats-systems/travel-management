@@ -2,6 +2,7 @@ import 'dart:developer';
 
 class ShuttleRoute {
   String? companyID;
+  String? companyName;
   String? routeID;
   String? origin;
   String? destination;
@@ -13,6 +14,7 @@ class ShuttleRoute {
 
   ShuttleRoute({
     this.companyID,
+    this.companyName,
     this.routeID,
     this.origin,
     this.destination,
@@ -27,6 +29,7 @@ class ShuttleRoute {
     try {
       ShuttleRoute route = ShuttleRoute(
         companyID: json['company_id'],
+        companyName: json['ShuttleServiceCompany']['name'],
         routeID: json['route_id'],
         origin: json['origin'],
         destination: json['destination'],
@@ -47,6 +50,7 @@ class ShuttleRoute {
   Map<String, dynamic> toJson() {
     return {
       'companyID': companyID,
+      'companyName': companyName,
       'routeID': routeID,
       'origin': origin,
       'destination': destination,

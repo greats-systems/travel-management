@@ -9,7 +9,7 @@ const logoURL = 'assets/logos/companies/lighttraveller2.png';
 const apiRoot = 'http://10.0.2.2:5000';
 
 // Shuttle logo mapping
-String? returnShuttleCompanyLogo(String companyName) {
+String? returnShuttleCompanyLogo(String? companyName) {
   final String shuttleCompanyAssetsRoot =
       'assets/logos/companies/shuttle_services';
   final Map<String, String> assetURLMap = {
@@ -138,6 +138,8 @@ String? returnCarrierLogo(String carrierCode) {
     "ZH": "$airlineAssetsRoot/shenzhen.png",
     "JD": "$airlineAssetsRoot/beijing_capital_airlines.png",
     "RJ": "$airlineAssetsRoot/royal_jordanian.png",
+    "PC": "$airlineAssetsRoot/pegasus.png",
+    "ZN": "$airlineAssetsRoot/zambia_airways.png",
     "nologo": "$airlineAssetsRoot/not_found.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -242,6 +244,9 @@ String returnCarrierName(String carrierCode) {
     "ZH": "Shenzhen Airlines",
     "JD": "Beijing Capital Airlines",
     "RJ": "Royal Jordanian Airlines",
+    "PC": "Pegasus Airlines",
+    "FZ": "FlyDubai",
+    "ZN": "Zambia Airways",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -322,6 +327,8 @@ String returnAirportCode(String location) {
     "Orlando": "MCO",
     "Nanjing": "NKG",
     "Amman": "AMM",
+    "Istanbul": "SAW",
+    "Zagreb": "ZAG",
   };
   return locationMap[location] ?? location;
 }
@@ -410,6 +417,8 @@ String returnAirportName(String airportCode) {
     "NKG": "Nanjing",
     "AMM": "Queen Alia Intl",
     "RUH": "King Khalid Intl",
+    "SAW": "Sabiha Gokcen",
+    "ZAG": "Franjo Tudman",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
@@ -489,6 +498,8 @@ List<String> cities = [
   "Orlando",
   "Amman",
   "Riyadh",
+  "Istanbul",
+  "Zagreb",
 ];
 
 // Local city list (for shuttle autocomplete)
@@ -540,7 +551,6 @@ String returnLocation(String airportCode) {
     "YUL": "Montreal",
     "GRU": "S\u00E3o Paulo",
     "YYZ": "Toronto",
-    "YTZ": "Toronto Billy Bishop City",
     "ZRH": "Zurich",
     "CAI": "Cairo",
     "SHO": "Manzini",
@@ -599,6 +609,8 @@ String returnLocation(String airportCode) {
     "NKG": "Nanjing",
     "AMM": "Amman",
     "RUH": "Riyadh",
+    "SAW": "Istanbul",
+    "ZAG": "Zagreb",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }

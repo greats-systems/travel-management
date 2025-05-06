@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
-
+// import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
@@ -9,10 +10,12 @@ import 'package:travel_management_app_2/screens/shuttles/models/shuttle_route.da
 import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/buses/book_shuttle.dart';
 
 class ShuttleServicesInfo extends StatefulWidget {
+  final String userId;
   final String departureDate;
   final ShuttleRoute shuttleRoute;
   const ShuttleServicesInfo({
     super.key,
+    required this.userId,
     required this.shuttleRoute,
     required this.departureDate,
   });
@@ -23,26 +26,30 @@ class ShuttleServicesInfo extends StatefulWidget {
 
 class _ShuttleServicesInfoState extends State<ShuttleServicesInfo> {
   final AuthService authService = AuthService();
-  String? userId;
   final ShuttleController shuttleController = ShuttleController();
 
   @override
   void initState() {
     super.initState();
-    fetchID();
+    // fetchID();
   }
 
+  /*
   void fetchID() {
     userId = authService.getCurrentUserID();
     log(userId!);
   }
+  */
 
   book(
     String companyId,
+    String companyName,
     String routeId,
     String origin,
     String destination,
     String departureDate,
+    String departureTime,
+    String arrivlTime,
     double amountPaid,
   ) async {
     Navigator.push(
@@ -51,11 +58,14 @@ class _ShuttleServicesInfoState extends State<ShuttleServicesInfo> {
         builder:
             (context) => BookShuttle(
               companyId: companyId,
+              companyName: companyName,
               routeId: routeId,
-              userId: userId,
+              userId: widget.userId,
               origin: origin,
               destination: destination,
               departureDate: departureDate,
+              departureTime: departureTime,
+              arrivalTime: arrivlTime,
               amountPaid: amountPaid,
             ),
       ),
@@ -63,6 +73,7 @@ class _ShuttleServicesInfoState extends State<ShuttleServicesInfo> {
   }
 
   Widget _buildRouteSegment(ShuttleRoute shuttleRoute) {
+    log(JsonEncoder.withIndent(' ').convert(shuttleRoute.busStops));
     return Column(
       children: [
         Card(
@@ -88,6 +99,15 @@ class _ShuttleServicesInfoState extends State<ShuttleServicesInfo> {
                       ],
                     ),
                     const Icon(Icons.directions_bus, size: 24),
+                    /*
+                    Image.asset(
+                      constants.returnShuttleCompanyLogo(
+                        shuttleRoute.companyName!,
+                      )!,
+                      width: 40,
+                      height: 40,
+                    ),
+                    */
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -128,12 +148,16 @@ class _ShuttleServicesInfoState extends State<ShuttleServicesInfo> {
         MySizedBox(),
         MyButton(
           onTap: () {
+            log(shuttleRoute.shuttleServiceCompany!['name']);
             book(
               shuttleRoute.companyID!,
+              shuttleRoute.shuttleServiceCompany!['name'],
               shuttleRoute.routeID!,
               shuttleRoute.origin!,
               shuttleRoute.destination!,
               widget.departureDate,
+              shuttleRoute.departureTime!,
+              shuttleRoute.arrivalTime!,
               shuttleRoute.price!,
             );
           },

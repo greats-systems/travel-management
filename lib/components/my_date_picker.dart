@@ -1,16 +1,16 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
+// MyDatePicker updated version
 class MyDatePicker extends StatelessWidget {
-  String helpText;
-  String labelText;
-  String fieldLabelText;
-  DateTime firstDate;
-  DateTime lastDate;
-  TextEditingController controller = TextEditingController();
+  final String helpText;
+  final String labelText;
+  final String fieldLabelText;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final TextEditingController controller;
+  final FormFieldValidator<String>? validator;
   DateTime _selectedDate = DateTime.now();
 
   MyDatePicker({
@@ -21,10 +21,12 @@ class MyDatePicker extends StatelessWidget {
     required this.controller,
     required this.firstDate,
     required this.lastDate,
+    this.validator,
   });
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
+      currentDate: _selectedDate,
       context: context,
       firstDate: firstDate,
       lastDate: lastDate,
@@ -36,11 +38,11 @@ class MyDatePicker extends StatelessWidget {
     );
 
     if (pickedDate != null) {
-      log('my_date_picker pickedDate: $pickedDate');
       _selectedDate = pickedDate;
-      log(_selectedDate.toString());
       controller.text = pickedDate.toString().substring(0, 10);
-      log(controller.text);
+      if (validator != null) {
+        validator!(controller.text);
+      }
     }
   }
 
@@ -58,9 +60,11 @@ class MyDatePicker extends StatelessWidget {
           icon: Icon(Icons.edit),
           onPressed: () => _selectDate(context),
         ),
+        errorText: validator != null ? validator!(controller.text) : null,
       ),
       readOnly: true,
       onTap: () => _selectDate(context),
+      validator: validator,
     );
   }
 }

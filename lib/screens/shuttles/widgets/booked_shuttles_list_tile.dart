@@ -28,7 +28,7 @@ class BookedShuttlesListTile extends StatelessWidget {
         );
       },
       leading: Image.asset(
-        constants.returnShuttleCompanyLogo(shuttleBooking.companyName!)!,
+        constants.returnShuttleCompanyLogo(shuttleBooking.companyName)!,
         width: 40,
         height: 40,
       ),

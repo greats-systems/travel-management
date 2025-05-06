@@ -44,12 +44,12 @@ class _BookFlightState extends State<BookFlight> {
 
   String _completePhoneNumber = '';
   String _countryCode = '';
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     fetchID();
-    // Initialize form data for each passenger
     passengers = List.generate(widget.adults, (index) => PassengerFormData());
   }
 
@@ -60,11 +60,14 @@ class _BookFlightState extends State<BookFlight> {
   }
 
   void bookFlight() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     log(_completePhoneNumber.toString().substring(1, 4));
     setState(() => _isLoading = true);
 
     try {
-      // Convert all passenger form data to Passenger objects
       final passengerList =
           passengers
               .map(
@@ -90,6 +93,7 @@ class _BookFlightState extends State<BookFlight> {
         flight: widget.flight,
         callingCode: _countryCode,
       );
+
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -144,6 +148,12 @@ class _BookFlightState extends State<BookFlight> {
           controller: formData.dobController,
           firstDate: DateTime(DateTime.now().year - 60),
           lastDate: DateTime.now(),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter date of birth';
+            }
+            return null;
+          },
         ),
         MySizedBox(),
         MyTextField(
@@ -151,6 +161,12 @@ class _BookFlightState extends State<BookFlight> {
           hintText: 'First name',
           obscureText: false,
           textInputType: TextInputType.text,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter first name';
+            }
+            return null;
+          },
         ),
         MySizedBox(),
         MyTextField(
@@ -158,6 +174,12 @@ class _BookFlightState extends State<BookFlight> {
           hintText: 'Last name',
           obscureText: false,
           textInputType: TextInputType.text,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter last name';
+            }
+            return null;
+          },
         ),
         MySizedBox(),
         MyDropdown(
@@ -170,6 +192,12 @@ class _BookFlightState extends State<BookFlight> {
           onChanged: (value) => setState(() => formData.selectedGender = value),
           prefixIcon: Icons.person,
           isRequired: true,
+          validator: (value) {
+            if (value == null) {
+              return 'Please select gender';
+            }
+            return null;
+          },
         ),
         MySizedBox(),
         IntlPhoneField(
@@ -182,8 +210,13 @@ class _BookFlightState extends State<BookFlight> {
             ),
           ),
           initialCountryCode: 'ZW',
+          validator: (phone) {
+            if (phone == null || phone.number.isEmpty) {
+              return 'Please enter phone number';
+            }
+            return null;
+          },
           onChanged: (PhoneNumber phone) {
-            // Store the complete international number
             _completePhoneNumber = phone.completeNumber;
             _countryCode = phone.countryCode;
             log(_countryCode.substring(1));
@@ -199,6 +232,15 @@ class _BookFlightState extends State<BookFlight> {
           hintText: 'Email',
           obscureText: false,
           textInputType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter email';
+            }
+            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+              return 'Please enter a valid email';
+            }
+            return null;
+          },
         ),
         MySizedBox(),
         if (index < widget.adults - 1) Divider(thickness: 2),
@@ -211,31 +253,36 @@ class _BookFlightState extends State<BookFlight> {
     return Scaffold(
       appBar: AppBar(title: Text('Book a flight')),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.width / 5,
-            left: MediaQuery.of(context).size.width / 10,
-            right: MediaQuery.of(context).size.width / 10,
-          ),
-          child: ListView(
-            children: [
-              Center(
-                child: Text('Book flight', style: TextStyle(fontSize: 24)),
-              ),
-              MySizedBox(),
-              ...List.generate(
-                widget.adults,
-                (index) => buildPassengerForm(index),
-              ),
-              MySizedBox(),
-              _isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : MyButton(
-                    onTap: bookFlight,
-                    text: 'Book',
-                    color: Colors.blue.shade400,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.width / 5,
+              left: MediaQuery.of(context).size.width / 10,
+              right: MediaQuery.of(context).size.width / 10,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Center(
+                    child: Text('Book flight', style: TextStyle(fontSize: 24)),
                   ),
-            ],
+                  MySizedBox(),
+                  ...List.generate(
+                    widget.adults,
+                    (index) => buildPassengerForm(index),
+                  ),
+                  MySizedBox(),
+                  _isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : MyButton(
+                        onTap: bookFlight,
+                        text: 'Book',
+                        color: Colors.blue.shade400,
+                      ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

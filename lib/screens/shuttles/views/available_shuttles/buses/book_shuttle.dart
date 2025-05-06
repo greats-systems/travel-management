@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -9,21 +11,28 @@ import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_con
 import 'package:travel_management_app_2/screens/shuttles/models/shuttle_booking.dart';
 
 class BookShuttle extends StatefulWidget {
-  final String? companyId;
-  final String? routeId;
-  final String? userId;
-  final String? origin;
-  final String? destination;
-  final String? departureDate;
+  final String companyId;
+  final String companyName;
+  final String routeId;
+  final String userId;
+  final String origin;
+  final String destination;
+  final String departureDate;
+  final String departureTime;
+  final String arrivalTime;
   final double amountPaid;
+
   const BookShuttle({
     super.key,
     required this.companyId,
+    required this.companyName,
     required this.routeId,
     required this.userId,
     required this.origin,
     required this.destination,
     required this.departureDate,
+    required this.departureTime,
+    required this.arrivalTime,
     required this.amountPaid,
   });
 
@@ -32,48 +41,56 @@ class BookShuttle extends StatefulWidget {
 }
 
 class _BookShuttleState extends State<BookShuttle> {
-  bool _isLoading = false;
   final ShuttleController _shuttleController = ShuttleController();
-  FocusNode focusNode = FocusNode();
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  // Text controllers
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  String _completePhoneNumber = '';
   final TextEditingController _emailController = TextEditingController();
-  final ShuttleBooking _shuttleBooking = ShuttleBooking();
+  String _completePhoneNumber = '';
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  // Focus nodes
+  final FocusNode _phoneFocusNode = FocusNode();
 
   @override
   void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneNumberController.dispose();
+    _emailController.dispose();
+    _phoneFocusNode.dispose();
     super.dispose();
   }
 
-  void bookShuttle() async {
-    setState(() {
-      _isLoading = true;
-    });
-    _shuttleBooking.userID = widget.userId;
-    _shuttleBooking.companyID = widget.companyId;
-    _shuttleBooking.routeID = widget.routeId;
-    _shuttleBooking.firstName = _firstNameController.text;
-    _shuttleBooking.lastName = _lastNameController.text;
-    _shuttleBooking.email = _emailController.text;
-    _shuttleBooking.phoneNumber = _completePhoneNumber;
-    _shuttleBooking.origin = widget.origin;
-    _shuttleBooking.destination = widget.destination;
-    _shuttleBooking.departureDate = widget.departureDate;
-    _shuttleBooking.amountPaid = widget.amountPaid;
+  Future<void> _bookShuttle() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    final booking =
+        ShuttleBooking()
+          ..userID = widget.userId
+          ..companyID = widget.companyId
+          ..routeID = widget.routeId
+          ..firstName = _firstNameController.text.trim()
+          ..lastName = _lastNameController.text.trim()
+          ..email = _emailController.text.trim()
+          ..phoneNumber = _completePhoneNumber
+          ..origin = widget.origin
+          ..destination = widget.destination
+          ..departureDate = widget.departureDate
+          ..departureTime = widget.departureTime
+          ..arrivalTime = widget.arrivalTime
+          ..amountPaid = widget.amountPaid
+          ..companyName = widget.companyName;
 
     try {
-      await _shuttleController.bookShuttle(_shuttleBooking);
+      await _shuttleController.bookShuttle(booking);
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Booking successful!'),
@@ -81,98 +98,106 @@ class _BookShuttleState extends State<BookShuttle> {
         ),
       );
       Navigator.pop(context);
+    } on DioException catch (e) {
+      if (!mounted) return;
+
+      final errorMessage =
+          e.response?.statusCode == 404
+              ? 'Service not available'
+              : 'Error: ${e.message}';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+      );
     } catch (e) {
       if (!mounted) return;
-      if (e is DioException && e.response?.statusCode == 404) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.response.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An unexpected error occurred'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      log('Booking error: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  Widget buildPassengerForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        MyTextField(
-          controller: _firstNameController,
-          hintText: 'First name',
-          obscureText: false,
-          textInputType: TextInputType.text,
-        ),
-        MySizedBox(),
-        MyTextField(
-          controller: _lastNameController,
-          hintText: 'Last name',
-          obscureText: false,
-          textInputType: TextInputType.text,
-        ),
-        MySizedBox(),
-        IntlPhoneField(
-          controller: _phoneNumberController,
-          focusNode: focusNode,
-          decoration: const InputDecoration(
-            labelText: 'Phone number',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
+  Widget _buildPassengerForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MyTextField(
+            controller: _firstNameController,
+            hintText: 'First name',
+            obscureText: false,
+            textInputType: TextInputType.name,
+          ),
+          MySizedBox(),
+          MyTextField(
+            controller: _lastNameController,
+            hintText: 'Last name',
+            obscureText: false,
+            textInputType: TextInputType.name,
+          ),
+          MySizedBox(),
+          IntlPhoneField(
+            initialCountryCode: 'ZW',
+            onChanged: (PhoneNumber phoneNumber) {
+              _completePhoneNumber = phoneNumber.completeNumber;
+            },
+            controller: _phoneNumberController,
+            focusNode: _phoneFocusNode,
+            decoration: const InputDecoration(
+              labelText: 'Phone number',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+              ),
             ),
           ),
-          initialCountryCode: 'ZW',
-          onChanged: (PhoneNumber phoneNumber) {
-            _completePhoneNumber = phoneNumber.completeNumber;
-          },
-        ),
-        MySizedBox(),
-        MyTextField(
-          controller: _emailController,
-          hintText: 'Email',
-          obscureText: false,
-          textInputType: TextInputType.text,
-        ),
-        MySizedBox(),
-      ],
+          MySizedBox(),
+          MyTextField(
+            controller: _emailController,
+            hintText: 'Email',
+            obscureText: false,
+            textInputType: TextInputType.emailAddress,
+          ),
+          MySizedBox(),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = MediaQuery.of(context).size.width / 10;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Book shuttle')),
+      appBar: AppBar(title: const Text('Book Shuttle')),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
             top: MediaQuery.of(context).size.width / 5,
-            left: MediaQuery.of(context).size.width / 10,
-            right: MediaQuery.of(context).size.width / 10,
+            left: horizontalPadding,
+            right: horizontalPadding,
           ),
           child: ListView(
             children: [
-              Center(
+              const Center(
                 child: Text(
-                  'Book shuttle',
+                  'Book Shuttle',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
               MySizedBox(),
-              buildPassengerForm(),
+              _buildPassengerForm(),
               MySizedBox(height: 15),
               _isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : MyButton(
-                    onTap: bookShuttle,
+                    onTap: _bookShuttle,
                     text: 'Pay',
                     color: Colors.green.shade300,
                   ),

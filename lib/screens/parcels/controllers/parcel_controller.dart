@@ -64,6 +64,8 @@ class ParcelController {
       'shippingCost': parcelShipment.shippingCost,
     };
 
+    log(JsonEncoder.withIndent(' ').convert(params));
+
     await dio
         .post(createParcelShipmentURL, data: params)
         .then((response) {

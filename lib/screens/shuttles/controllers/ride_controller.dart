@@ -15,7 +15,7 @@ class RideController {
   ) async {
     var params = {'origin': origin, 'destination': destination};
     log(params.toString());
-    const rideRoutesURL = '${constants.apiRoot}/ride/routes';
+    const rideRoutesURL = '${constants.apiRoot}/rides';
     List<RideRoute>? rideRoutes;
     try {
       await dio

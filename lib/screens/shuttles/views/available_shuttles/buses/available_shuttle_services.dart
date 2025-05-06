@@ -4,11 +4,13 @@ import 'package:travel_management_app_2/screens/shuttles/models/shuttle_route.da
 import 'package:travel_management_app_2/screens/shuttles/widgets/available_shuttle_services_list_tile.dart';
 
 class AvailableShuttleServices extends StatefulWidget {
+  final String userId;
   final String origin;
   final String destination;
   final String departureDate;
   const AvailableShuttleServices({
     super.key,
+    required this.userId,
     required this.origin,
     required this.destination,
     required this.departureDate,
@@ -63,6 +65,7 @@ class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
     }
     return SafeArea(
       child: AvailableShuttleServicesListTile(
+        userId: widget.userId,
         shuttleRoutes: _shuttleRoutes,
         departureDate: widget.departureDate,
       ),

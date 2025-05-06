@@ -94,10 +94,12 @@ class ShuttleController {
   }
 
   Future<List<ShuttleBooking>> getBookingsFromSupabase(String userId) async {
-    const url = '${constants.apiRoot}/shuttle/bookings';
+    log(userId);
+    final url = '${constants.apiRoot}/shuttle/bookings/$userId';
 
     try {
-      final response = await _dio.get(url, data: {'userID': userId});
+      final response = await _dio.get(url, queryParameters: {'userID': userId});
+      log(JsonEncoder.withIndent(' ').convert(response.data));
 
       // Handle case when no bookings exist (returns String)
       if (response.data is String) {
@@ -137,7 +139,10 @@ class ShuttleController {
       'origin': shuttleBooking.origin,
       'destination': shuttleBooking.destination,
       'departureDate': shuttleBooking.departureDate,
+      'departureTime': shuttleBooking.departureTime,
+      'arrivalTime': shuttleBooking.arrivalTime,
       'amountPaid': shuttleBooking.amountPaid,
+      'companyName': shuttleBooking.companyName,
     };
 
     final paymentData = {'busFare': shuttleBooking.amountPaid};

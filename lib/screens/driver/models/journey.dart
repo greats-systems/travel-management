@@ -17,14 +17,23 @@ class Journey {
 
   factory Journey.fromMap(Map<String, dynamic> json) {
     try {
-      Journey journey = Journey(
-        userID: json['data'][0]['user_id'],
-        origin: json['data'][0]['origin'],
-        destination: json['data'][0]['destination'],
-        currentLocationLat: json['data'][0]['current_location_lat'],
-        currentLocationLong: json['data'][0]['current_location_long'],
-      );
-      return journey;
+      if (json['data']['activeRideJourney'] != null) {
+        Journey journey = Journey(
+          userID: json['data']['activeRideJourney']['user_id'] ?? '',
+          origin: json['data']['activeRideJourney']['origin'] ?? '',
+          destination: json['data']['activeRideJourney']['destination'] ?? '',
+          currentLocationLat:
+              (json['data']['activeRideJourney']['current_location_lat'] as num)
+                  .toDouble(),
+          currentLocationLong:
+              (json['data']['activeRideJourney']['current_location_long']
+                      as num)
+                  .toDouble(),
+        );
+        return journey;
+      } else {
+        return Journey();
+      }
     } catch (e) {
       log('Journey.fromMap error $e');
       if (e is RangeError) {
