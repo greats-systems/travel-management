@@ -12,7 +12,7 @@ if not authenticated => LoginPage
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/screens/landing_page.dart';
-import 'package:travel_management_app_2/screens/authentication/login.dart';
+import 'package:travel_management_app_2/screens/authentication/login/login.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});

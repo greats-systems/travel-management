@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:travel_management_app_2/screens/driver/controllers/driver_controller.dart';
 import 'package:travel_management_app_2/screens/shuttles/models/ride.dart';
 
 class AvailableRidesMap extends StatefulWidget {
@@ -18,7 +22,15 @@ class AvailableRidesMap extends StatefulWidget {
 
 class _AvailableRidesMapState extends State<AvailableRidesMap> {
   late List<Marker> _markers = [];
+  List<Location>? geocodedOrigin;
+  List<Location>? geocodedDestination;
   bool _isDisposed = false;
+  List<LatLng> _routePoints = [];
+  LatLng? _mapCenter;
+  TileLayer get osmTileLayer => TileLayer(
+    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    userAgentPackageName: 'com.example.app',
+  );
 
   @override
   void initState() {
@@ -42,40 +54,116 @@ class _AvailableRidesMapState extends State<AvailableRidesMap> {
         coordinate <= 180;
   }
 
-  void _initializeMarkers() {
+  Future<void> _fetchRoute(LatLng origin, LatLng destination) async {
+    try {
+      final route = await DriverController().getRoute(origin, destination);
+
+      if (_isDisposed) return;
+
+      if (route != null) {
+        final coordinates = route.geometry['coordinates'] as List;
+        final routePoints =
+            coordinates
+                .map(
+                  (coord) => LatLng(
+                    (coord[1] as num).toDouble(),
+                    (coord[0] as num).toDouble(),
+                  ),
+                )
+                .toList();
+
+        if (mounted) {
+          setState(() {
+            _routePoints = routePoints;
+            _mapCenter = LatLng(
+              (origin.latitude + destination.latitude) / 2,
+              (origin.longitude + destination.longitude) / 2,
+            );
+          });
+        }
+      }
+    } catch (e) {
+      log('Error fetching route: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to load route')));
+      }
+    }
+  }
+
+  void _initializeMarkers() async {
     if (_isDisposed) return;
 
     final newMarkers = <Marker>[];
+    try {
+      for (final ride in widget.rides) {
+        // Skip if coordinates are invalid
+        if (!_isValidCoordinate(ride.driverPositionLat) ||
+            !_isValidCoordinate(ride.driverPositionLong)) {
+          debugPrint('Skipping invalid coordinates for ride ${ride.driverID}');
+          continue;
+        }
 
-    for (final ride in widget.rides) {
-      // Skip if coordinates are invalid
-      if (!_isValidCoordinate(ride.driverPositionLat) ||
-          !_isValidCoordinate(ride.driverPositionLong)) {
-        debugPrint('Skipping invalid coordinates for ride ${ride.driverID}');
-        continue;
-      }
+        final location = LatLng(
+          ride.driverPositionLat!,
+          ride.driverPositionLong!,
+        );
 
-      final location = LatLng(
-        ride.driverPositionLat!,
-        ride.driverPositionLong!,
-      );
+        geocodedOrigin = await locationFromAddress(ride.origin!);
+        geocodedDestination = await locationFromAddress(ride.destination!);
 
-      newMarkers.add(
-        Marker(
-          point: location,
-          width: 40,
-          height: 40,
-          child: Icon(
-            Icons.directions_car,
-            size: 30,
-            color: Colors.blue.shade500,
+        if (geocodedOrigin == null ||
+            geocodedOrigin!.isEmpty ||
+            geocodedDestination == null ||
+            geocodedDestination!.isEmpty) {
+          throw Exception('Could not geocode addresses');
+        }
+
+        final originLatLng = LatLng(
+          geocodedOrigin![0].latitude,
+          geocodedOrigin![0].longitude,
+        );
+        final destLatLng = LatLng(
+          geocodedDestination![0].latitude,
+          geocodedDestination![0].longitude,
+        );
+
+        newMarkers.addAll([
+          Marker(
+            point: originLatLng,
+            width: 40,
+            height: 40,
+            child: Icon(
+              Icons.location_pin,
+              size: 40,
+              color: Colors.red.shade500,
+            ),
           ),
-        ),
-      );
-    }
-
-    if (mounted) {
-      setState(() => _markers = newMarkers);
+          Marker(
+            point: destLatLng,
+            width: 40,
+            height: 40,
+            child: Icon(
+              Icons.location_pin,
+              size: 40,
+              color: Colors.red.shade500,
+            ),
+          ),
+          Marker(
+            point: location,
+            width: 40,
+            height: 40,
+            child: Icon(Icons.directions_car),
+          ),
+        ]);
+        await _fetchRoute(originLatLng, destLatLng);
+        if (mounted) {
+          setState(() => _markers = newMarkers);
+        }
+      }
+    } catch (e) {
+      log('Error creating markers: $e');
     }
   }
 
@@ -83,19 +171,21 @@ class _AvailableRidesMapState extends State<AvailableRidesMap> {
   Widget build(BuildContext context) {
     return FlutterMap(
       options: MapOptions(
-        initialCenter: const LatLng(
-          -19.58498215,
-          29.002645954,
-        ), // Default center
-        initialZoom: 6.0,
+        initialCenter: _mapCenter ?? const LatLng(-19.58498215, 29.002645954),
+        initialZoom: _mapCenter != null ? 10 : 6,
       ),
       children: [
-        TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.example.app',
-          maxZoom: 19,
-          minZoom: 1,
-        ),
+        osmTileLayer,
+        if (_routePoints.isNotEmpty)
+          PolylineLayer(
+            polylines: [
+              Polyline(
+                points: _routePoints,
+                color: Colors.blue.shade500,
+                strokeWidth: 4,
+              ),
+            ],
+          ),
         MarkerLayer(markers: _markers),
       ],
     );

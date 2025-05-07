@@ -9,6 +9,7 @@ import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:travel_management_app_2/screens/flights/views/available_flights/book_flight.dart';
 
 class FlightInfo extends StatefulWidget {
+  final String userId;
   final Flight flight;
   final String origin;
   final String destination;
@@ -18,6 +19,7 @@ class FlightInfo extends StatefulWidget {
 
   const FlightInfo({
     super.key,
+    required this.userId,
     required this.flight,
     required this.origin,
     required this.destination,
@@ -43,6 +45,7 @@ class _FlightInfoState extends State<FlightInfo> {
       MaterialPageRoute(
         builder:
             (context) => BookFlight(
+              userId: widget.userId,
               flight: widget.flight,
               origin: widget.origin,
               destination: widget.destination,

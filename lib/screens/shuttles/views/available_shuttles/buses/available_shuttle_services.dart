@@ -61,7 +61,7 @@ class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
       return Center(child: CircularProgressIndicator());
     }
     if (_shuttleRoutes!.isEmpty || _shuttleRoutes == null) {
-      return Center(child: Text('No shuttles available at this time'));
+      return Center(child: Text('No buses available at this time'));
     }
     return SafeArea(
       child: AvailableShuttleServicesListTile(
@@ -75,7 +75,7 @@ class _AvailableShuttleServicesState extends State<AvailableShuttleServices> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Available Shuttles')),
+      appBar: AppBar(title: Text('Available Buses')),
       body: _buildBody(),
     );
   }

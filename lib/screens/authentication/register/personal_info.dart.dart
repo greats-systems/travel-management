@@ -40,7 +40,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final horizontalPadding = mediaQuery.size.width / 10;
-    final topPadding = mediaQuery.size.width / 3;
+    final topPadding = mediaQuery.size.width / 10;
 
     return Scaffold(
       body: SafeArea(

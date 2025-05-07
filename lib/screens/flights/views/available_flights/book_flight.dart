@@ -14,6 +14,7 @@ import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/screens/flights/models/passenger.dart';
 
 class BookFlight extends StatefulWidget {
+  final String userId;
   final Flight flight;
   final String origin;
   final String destination;
@@ -23,6 +24,7 @@ class BookFlight extends StatefulWidget {
 
   const BookFlight({
     super.key,
+    required this.userId,
     required this.flight,
     required this.origin,
     required this.destination,
@@ -40,7 +42,6 @@ class _BookFlightState extends State<BookFlight> {
   final controller = FlightController();
   late List<PassengerFormData> passengers;
   final AuthService authService = AuthService();
-  String? id;
 
   String _completePhoneNumber = '';
   String _countryCode = '';
@@ -49,14 +50,7 @@ class _BookFlightState extends State<BookFlight> {
   @override
   void initState() {
     super.initState();
-    fetchID();
     passengers = List.generate(widget.adults, (index) => PassengerFormData());
-  }
-
-  void fetchID() {
-    setState(() {
-      id = authService.getCurrentUserID();
-    });
   }
 
   void bookFlight() async {
@@ -76,14 +70,14 @@ class _BookFlightState extends State<BookFlight> {
                   firstName: formData.firstNameController.text,
                   lastName: formData.lastNameController.text,
                   gender: formData.selectedGender!,
-                  phoneNumber: formData.phoneNumberController.text,
+                  phoneNumber: _completePhoneNumber,
                   email: formData.emailController.text,
                 ),
               )
               .toList();
 
       await controller.bookFlight(
-        userId: id!,
+        userId: widget.userId,
         origin: widget.origin,
         destination: widget.destination,
         departureDate: widget.departureDate,
@@ -106,7 +100,7 @@ class _BookFlightState extends State<BookFlight> {
         ),
       );
       Navigator.pop(context);
-    } catch (e) {
+    } catch (e, s) {
       if (!mounted) return;
       if (e is DioException && e.response?.statusCode == 404) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,6 +110,7 @@ class _BookFlightState extends State<BookFlight> {
           ),
         );
       } else {
+        log('${e.toString()}, ${s.toString()}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
@@ -148,12 +143,6 @@ class _BookFlightState extends State<BookFlight> {
           controller: formData.dobController,
           firstDate: DateTime(DateTime.now().year - 60),
           lastDate: DateTime.now(),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter date of birth';
-            }
-            return null;
-          },
         ),
         MySizedBox(),
         MyTextField(
@@ -220,10 +209,10 @@ class _BookFlightState extends State<BookFlight> {
             _completePhoneNumber = phone.completeNumber;
             _countryCode = phone.countryCode;
             log(_countryCode.substring(1));
-            debugPrint('Complete phone number: $_completePhoneNumber');
+            log('Complete phone number: $_completePhoneNumber');
           },
           onCountryChanged: (country) {
-            debugPrint('Country changed to ${country.name}');
+            log('Country changed to ${country.name}');
           },
         ),
         MySizedBox(),

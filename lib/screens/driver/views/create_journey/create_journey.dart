@@ -49,7 +49,7 @@ class _CreateJourneyState extends State<CreateJourney> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final padding = EdgeInsets.only(
-      top: screenWidth / 5,
+      top: screenWidth / 8,
       left: screenWidth / 10,
       right: screenWidth / 10,
     );

@@ -75,43 +75,47 @@ class ShuttleController {
       final response = await _dio.get(
         url,
         data: {
-          // Changed from 'data' to 'queryParameters' for GET requests
+          // Correct for GET requests
           'origin': origin,
           'destination': destination,
         },
+        options: Options(
+          validateStatus:
+              (status) => status! < 500, // Don't throw for server errors
+        ),
       );
 
-      // Handle empty or null response
+      // Handle empty responses
       if (response.data == null) {
         return [];
       }
 
-      // Handle list response
-      if (response.data is List) {
-        if (response.data != null) {
-          final routes =
-              (response.data as List)
-                  .map((item) => ShuttleRoute.fromMap(item))
-                  .toList();
-          return routes;
-        } else {
-          return [];
-        }
+      // Handle successful but empty responses
+      if (response.statusCode == 200 &&
+          (response.data == null || response.data.isEmpty)) {
+        return [];
       }
 
-      // Handle unexpected format
+      // Handle server errors gracefully
+      if (response.statusCode! >= 500) {
+        log('Server error but treating as empty response');
+        return [];
+      }
+
+      // Parse successful responses
+      if (response.data is List) {
+        return (response.data as List)
+            .map((item) => ShuttleRoute.fromMap(item))
+            .toList();
+      }
+
       log('Unexpected response format: ${response.data.runtimeType}');
       return [];
     } on DioException catch (e) {
-      log('Failed to fetch shuttle routes: ${e}');
-      if (e.response != null) {
-        log('Response status: ${e.response?.statusCode}');
-        log('Response data: ${e.response?.data}');
-        return [];
-      }
+      log('Network error: ${e.type} - ${e}');
       return [];
     } catch (e) {
-      log('Unexpected error fetching shuttle routes: $e');
+      log('Unexpected error: $e');
       return [];
     }
   }

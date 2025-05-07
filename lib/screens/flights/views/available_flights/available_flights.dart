@@ -6,6 +6,7 @@ import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/screens/flights/widgets/available_flights_list_tile.dart';
 
 class AvailableFlights extends StatefulWidget {
+  final String userId;
   final String origin;
   final String destination;
   final String departureDate;
@@ -14,6 +15,7 @@ class AvailableFlights extends StatefulWidget {
 
   const AvailableFlights({
     super.key,
+    required this.userId,
     required this.origin,
     required this.destination,
     required this.departureDate,
@@ -78,6 +80,7 @@ class _AvailableFlightsState extends State<AvailableFlights> {
 
     return SafeArea(
       child: AvailableFlightsListTile(
+        userId: widget.userId,
         flights: _flights!,
         origin: widget.origin,
         destination: widget.destination,

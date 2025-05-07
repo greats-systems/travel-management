@@ -97,7 +97,7 @@ class _BookShuttleState extends State<BookShuttle> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context);
+      Navigator.popAndPushNamed(context, '/landing-page');
     } on DioException catch (e) {
       if (!mounted) return;
 

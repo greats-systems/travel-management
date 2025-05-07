@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/screens/authentication/register/personal_info.dart.dart';
 import 'package:travel_management_app_2/screens/home/home.dart';
 import 'package:travel_management_app_2/screens/landing_page.dart';
-import 'package:travel_management_app_2/screens/authentication/login.dart';
+import 'package:travel_management_app_2/screens/authentication/login/login.dart';
 import 'package:travel_management_app_2/services/journey_service.dart';
 import 'auth/auth_gate.dart';
 import 'package:provider/provider.dart';

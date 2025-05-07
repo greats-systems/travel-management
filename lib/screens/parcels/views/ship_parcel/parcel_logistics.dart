@@ -29,7 +29,7 @@ class _ParcelLogisticsState extends State<ParcelLogistics> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final horizontalPadding = mediaQuery.size.width / 10;
-    final topPadding = mediaQuery.size.width / 3;
+    final topPadding = mediaQuery.size.width / 5;
 
     return Scaffold(
       body: SafeArea(
@@ -159,10 +159,20 @@ class _ParcelLogisticsState extends State<ParcelLogistics> {
           Navigator.push(
             context,
             MaterialPageRoute(
+              fullscreenDialog: false,
               builder:
-                  (context) => ParcelDimensions(
-                    parcelShipment: parcelShipment,
-                    userId: widget.userId,
+                  (context) => Scaffold(
+                    appBar: AppBar(
+                      title: Text('Parcel Dimensions'),
+                      leading: IconButton(
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    body: ParcelDimensions(
+                      parcelShipment: parcelShipment,
+                      userId: widget.userId,
+                    ),
                   ),
             ),
           );

@@ -2,40 +2,55 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-// import 'package:flutter_map/flutter_map.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
-import 'package:travel_management_app_2/screens/driver/controllers/driver_controller.dart';
-import 'package:travel_management_app_2/screens/driver/models/journey.dart';
 import 'package:travel_management_app_2/screens/driver/views/driver.dart';
 import 'package:travel_management_app_2/screens/flights/views/search_flights.dart';
 import 'package:travel_management_app_2/screens/my_itineraries.dart';
 import 'package:travel_management_app_2/screens/parcels/views/ship_parcel/parcel_logistics.dart';
-// import 'package:travel_management_app_2/screens/parcels/views/ship_parcels.dart';
 import 'package:travel_management_app_2/screens/shuttles/views/search_shuttles.dart';
 
-class LandingPage extends StatefulWidget {
-  const LandingPage({super.key});
+class MyBottomNavBar extends StatefulWidget {
+  /*
+  final String userId;
+  final String role;
+  final Position position;
+  int currentIndex;
+  */
+  const MyBottomNavBar({
+    super.key,
+    // required this.userId,
+    // required this.role,
+    // required this.position,
+  });
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  State<MyBottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _LandingPageState extends State<LandingPage> {
-  Journey? _journey;
+class _BottomNavBarState extends State<MyBottomNavBar> {
+  late List<Widget> _pages;
+  late List<BottomNavigationBarItem> _navItems;
   int _currentIndex = 0;
   String? email;
   String? userId;
   String? role;
   bool _isLoading = true;
   final AuthService _authService = AuthService();
-  late List<Widget> _pages;
-  late List<BottomNavigationBarItem> _navItems;
   Position? position;
 
   @override
   void initState() {
     super.initState();
     _initializeApp();
+    log(_currentIndex.toString());
+  }
+
+  Future<void> _initializeApp() async {
+    position = await _determinePosition();
+    log(position.toString());
+    await _fetchData();
+    _buildPagesAndNavItems();
+    setState(() => _isLoading = false);
   }
 
   Future<Position> _determinePosition() async {
@@ -60,20 +75,10 @@ class _LandingPageState extends State<LandingPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-  Future<void> _initializeApp() async {
-    position = await _determinePosition();
-    log(position.toString());
-    await _fetchData();
-    _buildPagesAndNavItems();
-    setState(() => _isLoading = false);
-  }
-
   Future<void> _fetchData() async {
-    final DriverController controller = DriverController();
     email = _authService.getCurrentUserEmail();
     userId = _authService.getCurrentUserID();
     role = _authService.getCurrentUserRole();
-    _journey = await controller.getJourneyFromSupabase(userId!);
   }
 
   void _buildPagesAndNavItems() {
@@ -104,14 +109,7 @@ class _LandingPageState extends State<LandingPage> {
 
     // Add driver-specific items if needed
     if (role == 'driver') {
-      _pages.add(
-        Driver(
-          role: role!,
-          userId: userId!,
-          journey: _journey,
-          position: position!,
-        ),
-      );
+      _pages.add(Driver(role: role!, userId: userId!, position: position!));
       _navItems.add(
         const BottomNavigationBarItem(
           icon: Icon(Icons.drive_eta),
@@ -127,6 +125,18 @@ class _LandingPageState extends State<LandingPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap:
+          (index) => setState(() {
+            _currentIndex = index;
+          }),
+      items: _navItems,
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+    );
+
+    /*
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(Icons.person),
@@ -141,11 +151,16 @@ class _LandingPageState extends State<LandingPage> {
       body: SafeArea(child: _pages[_currentIndex]),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap:
+            (index) => setState(() {
+              _currentIndex = index;
+            }),
         items: _navItems,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
       ),
+      
     );
+    */
   }
 }

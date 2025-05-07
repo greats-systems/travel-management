@@ -5,7 +5,8 @@ import 'package:travel_management_app_2/screens/parcels/views/itinerary/my_parce
 import 'package:travel_management_app_2/screens/shuttles/views/itinerary/my_shuttle_itineraries.dart';
 
 class MyItineraries extends StatefulWidget {
-  const MyItineraries({super.key});
+  final String userId;
+  const MyItineraries({super.key, required this.userId});
 
   @override
   State<MyItineraries> createState() => _MyItinerariesState();

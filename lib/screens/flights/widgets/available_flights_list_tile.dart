@@ -4,6 +4,7 @@ import 'package:travel_management_app_2/screens/flights/models/flight.dart';
 import 'package:travel_management_app_2/screens/flights/views/available_flights/flight_info.dart';
 
 class AvailableFlightsListTile extends StatelessWidget {
+  final String userId;
   final List<Flight>? flights;
   final String origin;
   final String destination;
@@ -13,6 +14,7 @@ class AvailableFlightsListTile extends StatelessWidget {
 
   const AvailableFlightsListTile({
     super.key,
+    required this.userId,
     required this.flights,
     required this.origin,
     required this.destination,
@@ -87,6 +89,7 @@ class AvailableFlightsListTile extends StatelessWidget {
           MaterialPageRoute(
             builder:
                 (context) => FlightInfo(
+                  userId: userId,
                   flight: flight,
                   origin: origin,
                   destination: destination,

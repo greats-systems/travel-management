@@ -14,8 +14,13 @@ import 'package:travel_management_app_2/screens/flights/views/available_flights/
 enum TripType { oneWay, roundTrip }
 
 class SearchFlights extends StatefulWidget {
+  final String userId;
   final Position position;
-  const SearchFlights({super.key, required this.position});
+  const SearchFlights({
+    super.key,
+    required this.userId,
+    required this.position,
+  });
 
   @override
   State<SearchFlights> createState() => _SearchFlightsState();
@@ -34,20 +39,6 @@ class _SearchFlightsState extends State<SearchFlights> {
 
   final FlightController _flightController = FlightController();
 
-  void getUserID() async {
-    setState(() {
-      id = authService.getCurrentUserID();
-      role = authService.getCurrentUserRole();
-    });
-    log('User ID from search_flights:\t$id');
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getUserID();
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -63,7 +54,7 @@ class _SearchFlightsState extends State<SearchFlights> {
             oneWay: true,
             returnDate: null,
             adults: int.parse(_currentSliderValue.round().toString()),
-            userID: id,
+            userID: widget.userId,
             currentLocationLat: widget.position.latitude,
             currentLocationLong: widget.position.longitude,
           )
@@ -84,6 +75,7 @@ class _SearchFlightsState extends State<SearchFlights> {
           builder:
               _tripType == TripType.oneWay
                   ? (context) => AvailableFlights(
+                    userId: widget.userId,
                     origin: constants.returnAirportCode(_origin!),
                     destination: constants.returnAirportCode(_destination!),
                     departureDate: _departureDateController.text,
@@ -91,6 +83,7 @@ class _SearchFlightsState extends State<SearchFlights> {
                     adults: int.parse(_currentSliderValue.round().toString()),
                   )
                   : (context) => AvailableFlights(
+                    userId: widget.userId,
                     origin: constants.returnAirportCode(_origin!),
                     destination: constants.returnAirportCode(_destination!),
                     departureDate: _departureDateController.text,
