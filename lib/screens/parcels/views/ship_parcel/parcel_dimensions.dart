@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:travel_management_app_2/components/my_snack_bar.dart';
 import 'package:travel_management_app_2/screens/parcels/models/parcel_shipment.dart';
 import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
@@ -31,6 +32,7 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
   final _phoneNumberController = TextEditingController();
   final FocusNode focusNode = FocusNode();
   String _completePhoneNumber = '';
+
   // Constants for shipping calculation
   static const _baseCost = 5.00;
   static const _weightFactor = 0.50;
@@ -119,12 +121,10 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
       );
       await _parcelController.createParcelShipment(widget.parcelShipment);
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Shipment request successful!'),
-          backgroundColor: Colors.green,
-        ),
+      MySnackBar.showSnackBar(
+        context,
+        'Your cargo request was submitted successfully!',
+        Colors.green,
       );
       _phoneNumberController.clear();
       _completePhoneNumber = '';
@@ -137,20 +137,14 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
       Navigator.popAndPushNamed(context, '/landing-page');
     } on DioException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.response?.toString() ?? 'Network error'),
-          backgroundColor: Colors.orange,
-        ),
+      MySnackBar.showSnackBar(
+        context,
+        e.response?.toString() ?? 'Network error',
+        Colors.yellow,
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      MySnackBar.showSnackBar(context, 'Error: ${e.toString()}', Colors.red);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

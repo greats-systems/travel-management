@@ -32,16 +32,17 @@ class FlightController {
   }
 
   Future<void> createSearchInterest({
+    required String userID,
     required String origin,
     required String destination,
     required String departureDate,
     required bool oneWay,
     required int adults,
     String? returnDate,
-    String? userID,
     double? currentLocationLat,
     double? currentLocationLong,
   }) async {
+    log('createSearchInterest userId: $userID');
     try {
       final response = await _dio.post(
         _createSearchInterestUrl,
@@ -86,7 +87,7 @@ class FlightController {
       final response = await _dio.get(
         _flightPricesUrl,
         data: params,
-        options: Options(receiveTimeout: const Duration(seconds: 30)),
+        options: Options(receiveTimeout: const Duration(seconds: 60)),
       );
 
       if (response.data is! List) {

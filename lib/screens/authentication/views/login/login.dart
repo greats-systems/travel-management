@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
+import 'package:travel_management_app_2/components/my_snack_bar.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 
@@ -14,56 +15,62 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final authService = AuthService();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  void login() async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-
-    try {
-      await authService.signInWithEmailAndPassword(email, password);
-    } catch (e) {
-      if (mounted) {
-        if (e.runtimeType == AuthApiException) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(e.toString())));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("${e.toString()}\n${e.runtimeType.toString()}"),
-            ),
-          );
-        }
-      }
-    }
-  }
+  final AuthService _authService = AuthService();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    try {
+      await _authService.signInWithEmailAndPassword(
+        _emailController.text,
+        _passwordController.text,
+      );
+    } on AuthApiException catch (e) {
+      if (!mounted) return;
+      MySnackBar.showSnackBar(context, e.toString(), Colors.red);
+    } catch (e) {
+      if (!mounted) return;
+      MySnackBar.showSnackBar(
+        context,
+        'An unexpected error occurred: ${e.runtimeType}',
+        Colors.red,
+      );
+    }
+  }
+
+  void _navigateToRegister() {
+    if (!mounted) return;
+    Navigator.pop(context);
+    Navigator.pushNamed(context, '/register');
   }
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = MediaQuery.of(context).size.width / 10;
+    final topPadding = MediaQuery.of(context).size.width / 5;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.width / 5,
-            left: MediaQuery.of(context).size.width / 10,
-            right: MediaQuery.of(context).size.width / 10,
+            top: topPadding,
+            left: horizontalPadding,
+            right: horizontalPadding,
           ),
           child: ListView(
             children: [
-              // logo
+              // Logo
               Center(child: Image.asset(constants.logoURL)),
               MySizedBox(),
 
-              // email field
+              // Email field
               _buildTextField(
                 controller: _emailController,
                 hintText: 'Email',
@@ -71,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               MySizedBox(),
 
-              // password field
+              // Password field
               _buildTextField(
                 controller: _passwordController,
                 hintText: 'Password',
@@ -79,23 +86,18 @@ class _LoginPageState extends State<LoginPage> {
               ),
               MySizedBox(),
 
-              // login button
+              // Login button
               MyButton(
-                onTap: login,
+                onTap: _login,
                 text: 'Login',
                 color: Colors.blue.shade700,
               ),
               MySizedBox(),
 
-              // sign up hyperlink
+              // Sign up link
               Center(
                 child: GestureDetector(
-                  onTap: () {
-                    if (mounted) {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, '/register');
-                    }
-                  },
+                  onTap: _navigateToRegister,
                   child: Text('Sign Up', style: TextStyle(color: Colors.blue)),
                 ),
               ),

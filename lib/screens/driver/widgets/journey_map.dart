@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:travel_management_app_2/components/my_snack_bar.dart';
 import 'package:travel_management_app_2/screens/driver/controllers/driver_controller.dart';
 import 'package:travel_management_app_2/screens/driver/models/journey.dart';
 
@@ -77,8 +78,10 @@ class _JourneyMapState extends State<JourneyMap> {
         widget.journey!.origin == null ||
         widget.journey!.destination == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Journey data is incomplete')),
+        MySnackBar.showSnackBar(
+          context,
+          'Journey data is incomplete',
+          Colors.yellow,
         );
       }
       return;

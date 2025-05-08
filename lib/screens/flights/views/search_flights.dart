@@ -32,7 +32,6 @@ class _SearchFlightsState extends State<SearchFlights> {
   double _currentSliderValue = 1;
   final AuthService authService = AuthService();
   TripType _tripType = TripType.oneWay;
-  String? id;
   String? role;
   String? _origin;
   String? _destination;
@@ -42,6 +41,12 @@ class _SearchFlightsState extends State<SearchFlights> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    log(widget.userId);
   }
 
   void search() {
@@ -65,7 +70,7 @@ class _SearchFlightsState extends State<SearchFlights> {
             oneWay: false,
             returnDate: _returnDateController.text,
             adults: int.parse(_currentSliderValue.round().toString()),
-            userID: id,
+            userID: widget.userId,
             currentLocationLat: widget.position.latitude,
             currentLocationLong: widget.position.longitude,
           );

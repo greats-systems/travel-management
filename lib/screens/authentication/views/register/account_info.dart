@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
+import 'package:travel_management_app_2/components/my_snack_bar.dart';
 import 'package:travel_management_app_2/screens/authentication/models/mobile_user.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
@@ -219,14 +220,8 @@ class _AccountInfoState extends State<AccountInfo> {
           'Your password should have at least 6 characters',
         _ => 'An unexpected error occurred',
       };
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          duration: const Duration(seconds: 5),
-        ),
-      );
-      debugPrint('Sign up error: $e');
+      MySnackBar.showSnackBar(context, errorMessage, Colors.red);
+      log('Sign up error: $e');
     }
   }
 }

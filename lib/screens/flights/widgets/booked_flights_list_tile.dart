@@ -1,3 +1,4 @@
+import 'package:travel_management_app_2/components/my_snack_bar.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:flutter/material.dart';
 import 'package:travel_management_app_2/screens/flights/models/booking.dart';
@@ -82,12 +83,16 @@ class BookedFlightsListTile extends StatelessWidget {
     try {
       final file = await PdfGenerator.generateFlightItineraryPdf(booking);
       await PdfGenerator.openFile(file);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Itinerary downloaded successfully!')),
+      MySnackBar.showSnackBar(
+        context,
+        'Itinerary downloaded successfully!',
+        Colors.green,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to download itinerary: $e')),
+      MySnackBar.showSnackBar(
+        context,
+        'Failed to download itinerary: $e',
+        Colors.red,
       );
     }
   }

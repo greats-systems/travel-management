@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
-import 'package:travel_management_app_2/auth/models/mobile_user.dart';
+import 'package:travel_management_app_2/screens/authentication/models/mobile_user.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
-import 'package:travel_management_app_2/screens/authentication/register/account_info.dart';
+import 'package:travel_management_app_2/screens/authentication/views/register/account_info.dart';
 
 class PersonalInfo extends StatefulWidget {
   const PersonalInfo({super.key});

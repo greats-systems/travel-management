@@ -6,6 +6,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
+import 'package:travel_management_app_2/components/my_snack_bar.dart';
 import 'package:travel_management_app_2/components/my_text_field.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
 import 'package:travel_management_app_2/screens/shuttles/models/shuttle_booking.dart';
@@ -90,13 +91,7 @@ class _BookShuttleState extends State<BookShuttle> {
     try {
       await _shuttleController.bookShuttle(booking);
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Booking successful!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      MySnackBar.showSnackBar(context, 'Booking successful!', Colors.green);
       Navigator.popAndPushNamed(context, '/landing-page');
     } on DioException catch (e) {
       if (!mounted) return;
@@ -105,17 +100,13 @@ class _BookShuttleState extends State<BookShuttle> {
           e.response?.statusCode == 404
               ? 'Service not available'
               : 'Error: ${e.message}';
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-      );
+      MySnackBar.showSnackBar(context, errorMessage, Colors.yellow);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('An unexpected error occurred'),
-          backgroundColor: Colors.red,
-        ),
+      MySnackBar.showSnackBar(
+        context,
+        'An unexpected error occurred: $e',
+        Colors.red,
       );
       log('Booking error: $e');
     } finally {

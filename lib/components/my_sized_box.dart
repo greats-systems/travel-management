@@ -1,15 +1,14 @@
-// ignore_for_file: must_be_immutable
 import 'package:flutter/material.dart';
 
 class MySizedBox extends StatelessWidget {
-  double? width;
-  double? height;
-  MySizedBox({super.key, this.width, this.height});
+  final double? height;
+  final double? width;
+  final Widget? child;
+
+  const MySizedBox({super.key, this.height = 20, this.width, this.child});
 
   @override
   Widget build(BuildContext context) {
-    return height == null && width == null
-        ? SizedBox(height: 20)
-        : SizedBox(height: height);
+    return SizedBox(height: height, width: width, child: child);
   }
 }

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_local_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
+import 'package:travel_management_app_2/components/my_snack_bar.dart';
 import 'package:travel_management_app_2/screens/driver/controllers/driver_controller.dart';
 import 'package:travel_management_app_2/screens/driver/models/journey.dart';
 import 'package:travel_management_app_2/services/journey_service.dart';
@@ -124,40 +125,36 @@ class _CreateJourneyState extends State<CreateJourney> {
       log('Journey created successfully: ${response.data['success']}');
       _origin = '';
       _destination = '';
-      /*
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyJourney(userId: widget.userId),
-        ),
-      );
-      */
-      if (response.data['success'] != true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Failed to create journey: ${response.data['message'].toString()}',
-            ),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Journey added successfully!')));
-        _origin = '';
-        _destination = '';
+      if (mounted) {
+        if (response.data['success'] != true) {
+          MySnackBar.showSnackBar(
+            context,
+            response.data['message'].toString(),
+            Colors.red,
+          );
+        } else {
+          MySnackBar.showSnackBar(
+            context,
+            'Journey added successfully!',
+            Colors.green,
+          );
+          // After successfully creating a journey:
+          final journeyService = Provider.of<JourneyService>(
+            context,
+            listen: false,
+          );
+          await journeyService.fetchUserJourney(widget.userId);
+        }
       }
-      // After successfully creating a journey:
-      final journeyService = Provider.of<JourneyService>(
-        context,
-        listen: false,
-      );
-      await journeyService.fetchUserJourney(widget.userId);
     } catch (e) {
-      log('Error creating journey: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create journey: ${e.toString()}')),
-      );
+      if (mounted) {
+        log('Error creating journey: $e');
+        MySnackBar.showSnackBar(
+          context,
+          'Failed to create journey: ${e.toString()}',
+          Colors.red,
+        );
+      }
     }
   }
 }
