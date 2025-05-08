@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_management_app_2/auth/auth_service.dart';
-import 'package:travel_management_app_2/auth/models/mobile_user.dart';
+import 'package:travel_management_app_2/screens/authentication/models/mobile_user.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';

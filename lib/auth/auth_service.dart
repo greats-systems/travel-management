@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_management_app_2/auth/models/mobile_user.dart';
+import 'package:travel_management_app_2/screens/authentication/models/mobile_user.dart';
 
 class AuthService {
   static const createProfileURL = '${constants.apiRoot}/profile/create';
