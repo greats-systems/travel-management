@@ -7,11 +7,12 @@ import 'package:travel_management_app_2/components/my_date_picker.dart';
 import 'package:travel_management_app_2/components/my_local_autocomplete.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
-import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles_landing_page.dart';
+import 'package:travel_management_app_2/screens/shuttles/views/available_shuttles/available_shuttles_landing_page.dart';
 
 class SearchShuttles extends StatefulWidget {
   final String userId;
   final Position position;
+
   const SearchShuttles({
     super.key,
     required this.userId,
@@ -23,6 +24,7 @@ class SearchShuttles extends StatefulWidget {
 }
 
 class _SearchShuttlesState extends State<SearchShuttles> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _departureDateController =
       TextEditingController();
   final ShuttleController _shuttleController = ShuttleController();
@@ -31,12 +33,37 @@ class _SearchShuttlesState extends State<SearchShuttles> {
 
   @override
   void dispose() {
-    if (mounted) {
-      super.dispose();
-    }
+    _departureDateController.dispose();
+    super.dispose();
   }
 
-  void search() async {
+  bool _validateFields() {
+    if (_origin == null || _origin!.isEmpty) {
+      _showErrorSnackbar('Please select an origin');
+      return false;
+    }
+    if (_destination == null || _destination!.isEmpty) {
+      _showErrorSnackbar('Please select a destination');
+      return false;
+    }
+    if (_departureDateController.text.isEmpty) {
+      _showErrorSnackbar('Please select a departure date');
+      return false;
+    }
+    return true;
+  }
+
+  void _showErrorSnackbar(String message) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  Future<void> _searchShuttles() async {
+    if (!_validateFields()) return;
+
     try {
       await _shuttleController.createSearchInterest(
         origin: _origin!,
@@ -46,79 +73,93 @@ class _SearchShuttlesState extends State<SearchShuttles> {
         currentLocationLat: widget.position.latitude,
         currentLocationLong: widget.position.longitude,
       );
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => AvailableShuttlesLandingPage(
-                  userId: widget.userId,
-                  origin: _origin!,
-                  destination: _destination!,
-                  departureDate: _departureDateController.text,
-                ),
-          ),
-        );
-      }
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => AvailableShuttlesLandingPage(
+                userId: widget.userId,
+                origin: _origin!,
+                destination: _destination!,
+                departureDate: _departureDateController.text,
+              ),
+        ),
+      );
     } catch (e) {
-      log('Error on search $e');
+      log('Error searching for shuttles: $e');
+      _showErrorSnackbar('Failed to search for shuttles. Please try again.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.width / 5,
-            left: MediaQuery.of(context).size.width / 10,
-            right: MediaQuery.of(context).size.width / 10,
+            top: screenWidth / 5,
+            left: screenWidth / 10,
+            right: screenWidth / 10,
           ),
-          child: ListView(
-            children: [
-              Center(
-                child: Text(
-                  'Look for a shuttle',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                const Center(
+                  child: Text(
+                    'Look for a shuttle',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              MySizedBox(),
-              MyLocalAutocomplete(
-                onCitySelected: (city) {
-                  setState(() {
-                    _origin = city;
-                  });
-                },
-                initialValue: _origin,
-                hintText: 'Origin',
-              ),
-              MySizedBox(),
-              MyLocalAutocomplete(
-                onCitySelected: (city) {
-                  setState(() {
-                    _destination = city;
-                  });
-                },
-                initialValue: _destination,
-                hintText: 'Destination',
-              ),
-              MySizedBox(),
-              MyDatePicker(
-                helpText: 'Departure date',
-                fieldLabelText: 'Departure date',
-                labelText: 'Departure date',
-                controller: _departureDateController,
-                firstDate: DateTime.now(),
-                lastDate: DateTime(DateTime.now().year + 1),
-              ),
-              MySizedBox(),
-              MyButton(
-                onTap: search,
-                text: 'Search',
-                color: Colors.blue.shade300,
-              ),
-            ],
+                const MySizedBox(),
+                MyLocalAutocomplete(
+                  onCitySelected: (city) => setState(() => _origin = city),
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Please select an origin'
+                              : null,
+                  initialValue: _origin,
+                  hintText: 'Origin',
+                ),
+                const MySizedBox(),
+                MyLocalAutocomplete(
+                  onCitySelected: (city) => setState(() => _destination = city),
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Please select a destination'
+                              : null,
+                  initialValue: _destination,
+                  hintText: 'Destination',
+                ),
+                const MySizedBox(),
+                MyDatePicker(
+                  helpText: 'Departure date',
+                  fieldLabelText: 'Departure date',
+                  labelText: 'Departure date',
+                  controller: _departureDateController,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Please select a date'
+                              : null,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime(DateTime.now().year + 1),
+                ),
+                const MySizedBox(),
+                MyButton(
+                  onTap: _searchShuttles,
+                  text: 'Search',
+                  color: Colors.blue.shade300,
+                ),
+              ],
+            ),
           ),
         ),
       ),

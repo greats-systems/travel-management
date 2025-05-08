@@ -3,10 +3,12 @@ import 'package:travel_management_app_2/constants.dart' as constants;
 
 class MyLocalAutocomplete extends StatelessWidget {
   final ValueChanged<String> onCitySelected;
+  final FormFieldValidator validator;
   final String? initialValue;
   final String hintText;
   const MyLocalAutocomplete({
     super.key,
+    required this.validator,
     required this.onCitySelected,
     required this.initialValue,
     required this.hintText,
@@ -27,6 +29,7 @@ class MyLocalAutocomplete extends StatelessWidget {
         return TextFormField(
           controller: controller,
           focusNode: focusNode,
+          validator: validator,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)),

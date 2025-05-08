@@ -206,17 +206,6 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
                     text: 'Confirm',
                     color: Colors.blue.shade300,
                   ),
-
-              // Previous page
-              Center(
-                child: TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Back',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ),
             ],
           ),
         ),

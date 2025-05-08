@@ -84,6 +84,9 @@ class _CreateJourneyState extends State<CreateJourney> {
       onCitySelected: (city) => setState(() => _origin = city),
       initialValue: _origin,
       hintText: 'Origin',
+      validator:
+          (value) =>
+              value == null || value.isEmpty ? 'Please select an origin' : null,
     );
   }
 
@@ -92,6 +95,11 @@ class _CreateJourneyState extends State<CreateJourney> {
       onCitySelected: (city) => setState(() => _destination = city),
       initialValue: _destination,
       hintText: 'Destination',
+      validator:
+          (value) =>
+              value == null || value.isEmpty
+                  ? 'Please select a destination'
+                  : null,
     );
   }
 

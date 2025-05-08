@@ -52,6 +52,7 @@ class _ParcelLogisticsState extends State<ParcelLogistics> {
               // Parcel name
               _buildParcelNameField(),
               MySizedBox(),
+
               // Origin
               _buildOriginTextField(),
               MySizedBox(),
@@ -91,6 +92,9 @@ class _ParcelLogisticsState extends State<ParcelLogistics> {
           }),
       initialValue: _origin,
       hintText: 'Origin',
+      validator:
+          (value) =>
+              value == null || value.isEmpty ? 'Please select an origin' : null,
     );
   }
 
@@ -99,10 +103,14 @@ class _ParcelLogisticsState extends State<ParcelLogistics> {
       onCitySelected:
           (city) => setState(() {
             _destination = city;
-            // _calculateShippingCost();
           }),
       initialValue: _destination,
       hintText: 'Destination',
+      validator:
+          (value) =>
+              value == null || value.isEmpty
+                  ? 'Please select a destination'
+                  : null,
     );
   }
 

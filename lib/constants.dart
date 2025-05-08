@@ -141,6 +141,7 @@ String? returnCarrierLogo(String carrierCode) {
     "RJ": "$airlineAssetsRoot/royal_jordanian.png",
     "PC": "$airlineAssetsRoot/pegasus.png",
     "ZN": "$airlineAssetsRoot/zambia_airways.png",
+    "P0": "$airlineAssetsRoot/proflight.png",
     "nologo": "$airlineAssetsRoot/not_found.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -248,6 +249,7 @@ String returnCarrierName(String carrierCode) {
     "PC": "Pegasus Airlines",
     "FZ": "FlyDubai",
     "ZN": "Zambia Airways",
+    "P0": "Proflight Zambia",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }

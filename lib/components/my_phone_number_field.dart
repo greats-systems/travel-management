@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
@@ -53,7 +55,7 @@ class _MyPhoneNumberFieldState extends State<MyPhoneNumberField> {
         widget.onChanged?.call(_completeNumber);
       },
       onCountryChanged: (country) {
-        debugPrint('Country changed to ${country.name}');
+        log('Country changed to ${country.name}');
       },
     );
   }

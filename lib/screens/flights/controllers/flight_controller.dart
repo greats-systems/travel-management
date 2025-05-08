@@ -70,7 +70,8 @@ class FlightController {
     required String destination,
     required String departureDate,
     String? returnDate,
-    int? adults,
+    int adults = 1, // Default value
+    String? travelClass,
   }) async {
     try {
       await _checkInternetConnection();
@@ -79,26 +80,29 @@ class FlightController {
         'origin': origin,
         'destination': destination,
         'departureDate': departureDate,
-        'returnDate': returnDate,
+        if (returnDate != null) 'returnDate': returnDate,
         'adults': adults,
+        if (travelClass != null) 'travelClass': travelClass,
       };
 
       log('Fetching flight prices with params: $params');
-      final response = await _dio.get(
+
+      final response = await _dio.post(
+        // Changed to POST
         _flightPricesUrl,
         data: params,
-        options: Options(receiveTimeout: const Duration(seconds: 60)),
+        options: Options(
+          receiveTimeout: const Duration(seconds: 60),
+          headers: {'Content-Type': 'application/json'},
+        ),
       );
 
-      if (response.data is! List) {
-        throw FormatException(
-          'Expected List but got ${response.data.runtimeType}',
-        );
+      final data = response.data;
+      if (data is! List) {
+        throw FormatException('Expected List but got ${data.runtimeType}');
       }
 
-      return (response.data as List)
-          .map((item) => Flight.fromMap(item))
-          .toList();
+      return data.map((item) => Flight.fromMap(item)).toList();
     } on DioException catch (e) {
       log('Failed to get flight prices: ${e.response?.data ?? e.message}');
       rethrow;
@@ -110,20 +114,22 @@ class FlightController {
     required String id,
     required String departureDate,
   }) async {
+    final params = {
+      'amadeusID': amadeusResponse['booking']['id'],
+      'userID': id,
+      'queueingOfficeId': amadeusResponse['booking']['queuingOfficeId'],
+      'itineraries':
+          amadeusResponse['booking']['flightOffers'][0]['itineraries'],
+      'travelers': amadeusResponse['booking']['travelers'],
+      'price': amadeusResponse['booking']['flightOffers'][0]['price'],
+      'departureDate': departureDate,
+    };
     try {
-      final response = await _dio.post(
-        _createBookingUrl,
-        data: {
-          'amadeusID': amadeusResponse['id'],
-          'userID': id,
-          'queueingOfficeId': amadeusResponse['queuingOfficeId'],
-          'itineraries': amadeusResponse['flightOffers'][0]['itineraries'],
-          'travelers': amadeusResponse['travelers'],
-          'price': amadeusResponse['flightOffers'][0]['price'],
-          'departureDate': departureDate,
-        },
+      final response = await _dio.post(_createBookingUrl, data: params);
+      log(
+        'Booking created in Supabase: ${JsonEncoder.withIndent(' ').convert(response.data)}',
       );
-      log('Booking created in Supabase: ${response.data}');
+      // return response.data;
     } on DioException catch (e) {
       log('Failed to create booking: ${e.response?.data ?? e.message}');
       rethrow;
@@ -215,14 +221,14 @@ class FlightController {
         if (returnDate != null) 'returnDate': returnDate,
       };
 
-      log(
-        'Flight booking request: ${JsonEncoder.withIndent('  ').convert(payload)}',
-      );
-
       final response = await _dio.post(_flightBookingUrl, data: payload);
       final responseData = response.data;
+      log(
+        'Amadeus response: ${JsonEncoder.withIndent(' ').convert(responseData)}',
+      );
 
       // Save booking to Supabase
+
       await createBookingInSupabase(
         amadeusResponse: responseData,
         id: userId,

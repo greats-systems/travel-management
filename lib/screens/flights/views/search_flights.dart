@@ -51,50 +51,33 @@ class _SearchFlightsState extends State<SearchFlights> {
 
   void search() {
     try {
-      _tripType == TripType.oneWay
-          ? _flightController.createSearchInterest(
-            origin: _origin!,
-            destination: _destination!,
-            departureDate: _departureDateController.text,
-            oneWay: true,
-            returnDate: null,
-            adults: int.parse(_currentSliderValue.round().toString()),
-            userID: widget.userId,
-            currentLocationLat: widget.position.latitude,
-            currentLocationLong: widget.position.longitude,
-          )
-          : _flightController.createSearchInterest(
-            origin: _origin!,
-            destination: _destination!,
-            departureDate: _departureDateController.text,
-            oneWay: false,
-            returnDate: _returnDateController.text,
-            adults: int.parse(_currentSliderValue.round().toString()),
-            userID: widget.userId,
-            currentLocationLat: widget.position.latitude,
-            currentLocationLong: widget.position.longitude,
-          );
+      _flightController.createSearchInterest(
+        origin: _origin!,
+        destination: _destination!,
+        departureDate: _departureDateController.text,
+        oneWay: true,
+        returnDate:
+            _tripType == TripType.oneWay ? null : _returnDateController.text,
+        adults: int.parse(_currentSliderValue.round().toString()),
+        userID: widget.userId,
+        currentLocationLat: widget.position.latitude,
+        currentLocationLong: widget.position.longitude,
+      );
       Navigator.push(
         context,
         MaterialPageRoute(
           builder:
-              _tripType == TripType.oneWay
-                  ? (context) => AvailableFlights(
-                    userId: widget.userId,
-                    origin: constants.returnAirportCode(_origin!),
-                    destination: constants.returnAirportCode(_destination!),
-                    departureDate: _departureDateController.text,
-                    returnDate: null,
-                    adults: int.parse(_currentSliderValue.round().toString()),
-                  )
-                  : (context) => AvailableFlights(
-                    userId: widget.userId,
-                    origin: constants.returnAirportCode(_origin!),
-                    destination: constants.returnAirportCode(_destination!),
-                    departureDate: _departureDateController.text,
-                    returnDate: _returnDateController.text,
-                    adults: int.parse(_currentSliderValue.round().toString()),
-                  ),
+              (context) => AvailableFlights(
+                userId: widget.userId,
+                origin: constants.returnAirportCode(_origin!),
+                destination: constants.returnAirportCode(_destination!),
+                departureDate: _departureDateController.text,
+                returnDate:
+                    _tripType == TripType.oneWay
+                        ? null
+                        : _returnDateController.text,
+                adults: int.parse(_currentSliderValue.round().toString()),
+              ),
         ),
       );
     } catch (e, s) {
