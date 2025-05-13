@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:travel_management_app_2/auth/auth_service.dart';
 import 'package:travel_management_app_2/components/my_button.dart';
 import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/screens/shuttles/controllers/shuttle_controller.dart';
@@ -24,7 +22,6 @@ class ShuttleServicesInfo extends StatefulWidget {
 }
 
 class _ShuttleServicesInfoState extends State<ShuttleServicesInfo> {
-  final AuthService authService = AuthService();
   final ShuttleController shuttleController = ShuttleController();
 
   @override
@@ -64,7 +61,6 @@ class _ShuttleServicesInfoState extends State<ShuttleServicesInfo> {
   }
 
   Widget _buildRouteSegment(ShuttleRoute shuttleRoute) {
-    log(JsonEncoder.withIndent(' ').convert(shuttleRoute.busStops));
     return Column(
       children: [
         Card(
@@ -90,15 +86,6 @@ class _ShuttleServicesInfoState extends State<ShuttleServicesInfo> {
                       ],
                     ),
                     const Icon(Icons.directions_bus, size: 24),
-                    /*
-                    Image.asset(
-                      constants.returnShuttleCompanyLogo(
-                        shuttleRoute.companyName!,
-                      )!,
-                      width: 40,
-                      height: 40,
-                    ),
-                    */
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [

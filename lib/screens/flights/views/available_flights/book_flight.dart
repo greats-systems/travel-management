@@ -87,7 +87,7 @@ class _BookFlightState extends State<BookFlight> {
         'Flight booking successful!',
         Colors.green,
       );
-      Navigator.popAndPushNamed(context, '/landing-page');
+      Navigator.pop(context);
     } on DioException catch (e) {
       if (!mounted) return;
       _handleDioError(e);
@@ -112,7 +112,7 @@ class _BookFlightState extends State<BookFlight> {
 
   void _handleDioError(DioException e) {
     if (e.response?.statusCode == 404) {
-      MySnackBar.showSnackBar(context, 'Flight not found', Colors.yellow);
+      MySnackBar.showSnackBar(context, 'Flight not found', Colors.orange);
     } else {
       MySnackBar.showSnackBar(
         context,
@@ -248,7 +248,7 @@ class _BookFlightState extends State<BookFlight> {
     final topPadding = MediaQuery.of(context).size.width / 5;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Book a flight')),
+      appBar: AppBar(title: Text('Book a flight')),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -261,7 +261,10 @@ class _BookFlightState extends State<BookFlight> {
               key: _formKey,
               child: Column(
                 children: [
-                  const Text('Book flight', style: TextStyle(fontSize: 24)),
+                  const Text(
+                    'Book flight',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                   const MySizedBox(),
                   ...List.generate(widget.adults, _buildPassengerForm),
                   const MySizedBox(),

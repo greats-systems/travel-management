@@ -52,8 +52,8 @@ class _ParcelItineraryInfoState extends State<ParcelItineraryInfo> {
                       label: Text(widget.parcel.status!.toUpperCase()),
                       backgroundColor:
                           widget.parcel.status == 'In transit'
-                              ? Colors.yellow.shade300
-                              : Colors.green.shade300,
+                              ? Colors.yellow
+                              : Colors.green,
                     ),
                   ],
                 ),

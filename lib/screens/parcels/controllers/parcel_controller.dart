@@ -1,138 +1,152 @@
 import 'dart:convert';
-
-import 'package:travel_management_app_2/constants.dart' as constants;
-import 'package:dio/dio.dart';
-import 'package:travel_management_app_2/screens/parcels/models/parcel_shipment.dart';
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:travel_management_app_2/constants.dart' as constants;
+import 'package:travel_management_app_2/screens/parcels/models/parcel_shipment.dart';
+
 class ParcelController {
-  Dio dio = Dio();
+  final Dio _dio = Dio();
 
+  // Payment Methods
   Future<void> makeParcelPayment(double cost) async {
-    const makeParcelPaymentURL = '${constants.apiRoot}/pay/parcel';
-    var params = {'total': cost};
+    const url = '${constants.apiRoot}/pay/parcel';
+    final params = {'total': cost};
 
-    await dio
-        .post(makeParcelPaymentURL, data: params)
-        .then((response) {
-          log(JsonEncoder.withIndent(' ').convert(response.data));
-        })
-        .catchError((e) {
-          if (e is DioException) {
-            log('makeParcelPayment DioException: ${e.response}');
-          } else {
-            log('makeParcelPayment error: $e');
-          }
-        });
+    try {
+      final response = await _dio.post(url, data: params);
+      log(
+        'Payment Response: ${JsonEncoder.withIndent(' ').convert(response.data)}',
+      );
+    } on DioException catch (e) {
+      log('Payment Error: ${e.response?.data ?? e.message}', error: e);
+      rethrow;
+    }
   }
 
   Future<void> makeParcelEcocashPayment(double cost, String phoneNumber) async {
-    const makeParcelEcocashPaymentURL =
-        '${constants.apiRoot}/pay/parcel/ecocash';
-    var params = {'cost': cost, 'phoneNumber': '0$phoneNumber'};
-
-    await dio
-        .post(makeParcelEcocashPaymentURL, data: params)
-        .then((response) {
-          log(JsonEncoder.withIndent(' ').convert(response.data));
-        })
-        .catchError((e) {
-          if (e is DioException) {
-            log('makeParcelEcocashPayment DioException: ${e.response}');
-          } else {
-            log('makeParcelEcocashPayment error: $e');
-          }
-        });
-  }
-
-  Future<void> createParcelShipment(ParcelShipment parcelShipment) async {
-    const createParcelShipmentURL =
-        '${constants.apiRoot}/parcel-shipments/create';
-    var params = {
-      'userID': parcelShipment.userId,
-      'name': parcelShipment.name,
-      'description': parcelShipment.description,
-      'length': parcelShipment.length,
-      'width': parcelShipment.width,
-      'height': parcelShipment.height,
-      'mass': parcelShipment.mass,
-      'quantity': parcelShipment.quantity,
-      'origin': parcelShipment.origin,
-      'destination': parcelShipment.destination,
-      'courierName': parcelShipment.courierName,
-      'departureDate': parcelShipment.departureDate,
-      'shippingCost': parcelShipment.shippingCost,
+    const url = '${constants.apiRoot}/pay/parcel/ecocash';
+    final params = {
+      'cost': cost,
+      'phoneNumber':
+          phoneNumber.startsWith('0') ? phoneNumber : '0$phoneNumber',
     };
 
-    log(JsonEncoder.withIndent(' ').convert(params));
-
-    await dio
-        .post(createParcelShipmentURL, data: params)
-        .then((response) {
-          log(response.data);
-        })
-        .catchError((e) {
-          if (e is DioException) {
-            log('createParcelShipment DioException: ${e.response}');
-          } else {
-            log('createParcelShipment error: $e');
-          }
-        });
+    try {
+      final response = await _dio.post(url, data: params);
+      log(
+        'Ecocash Payment Response: ${JsonEncoder.withIndent(' ').convert(response.data)}',
+      );
+    } on DioException catch (e) {
+      log('Ecocash Payment Error: ${e.response?.data ?? e.message}', error: e);
+      rethrow;
+    }
   }
 
-  Future<double> calculateDistance(
-    double originLat,
-    double originLong,
-    double destinationLat,
-    double destinationLong,
-  ) async {
-    const calculateDistanceURL = '${constants.apiRoot}/distance';
-    var params = {
+  // Shipment Methods
+  Future<void> createParcelShipment(ParcelShipment shipment) async {
+    const url = '${constants.apiRoot}/parcel-shipments/create';
+    final params = {
+      'userID': shipment.userId,
+      'name': shipment.name,
+      'description': shipment.description,
+      'length': shipment.length,
+      'width': shipment.width,
+      'height': shipment.height,
+      'mass': shipment.mass,
+      'quantity': shipment.quantity,
+      'origin': shipment.origin,
+      'destination': shipment.destination,
+      'courierName': shipment.courierName,
+      'departureDate': shipment.departureDate,
+      'shippingCost': shipment.shippingCost,
+    };
+
+    log('Creating Shipment: ${JsonEncoder.withIndent(' ').convert(params)}');
+
+    try {
+      final response = await _dio.post(url, data: params);
+      log('Shipment Created: ${response.data}');
+    } on DioException catch (e) {
+      log(
+        'Shipment Creation Error: ${e.response?.data ?? e.message}',
+        error: e,
+      );
+      rethrow;
+    }
+  }
+
+  // Calculation Methods
+  Future<double> calculateDistance({
+    required double originLat,
+    required double originLong,
+    required double destinationLat,
+    required double destinationLong,
+  }) async {
+    const url = '${constants.apiRoot}/parcel-shipments/distance';
+    final params = {
       'originLat': originLat,
       'originLong': originLong,
       'destinationLat': destinationLat,
       'destinationLong': destinationLong,
     };
-    late double distanceKm;
 
-    await dio
-        .get(calculateDistanceURL, data: params)
-        .then((response) {
-          final Map<String, dynamic> json = response.data;
-          distanceKm = json['distance']['kilometers'];
-        })
-        .catchError((e) {
-          if (e is DioException) {
-            log('calculateDistance DioException: ${e.response}');
-          } else {
-            log('calculateDistance error: $e');
-          }
-        });
-    return distanceKm;
+    try {
+      final response = await _dio.get(url, data: params);
+      return response.data['data']['distance']['kilometers'] as double;
+    } on DioException catch (e) {
+      log(
+        'Distance Calculation Error: ${e.response?.data ?? e.message}',
+        error: e,
+      );
+      rethrow;
+    }
   }
 
-  Future<List<ParcelShipment>?> viewParcelShipments(String userId) async {
-    const viewParcelShipmentsURL = '${constants.apiRoot}/parcel-shipments';
-    var params = {'userID': userId};
-    late List<ParcelShipment>? parcelShipments;
+  Future<double> calculateShippingCost({
+    required Location origin,
+    required Location destination,
+    required ParcelShipment shipment,
+    required double quantity,
+  }) async {
+    const url = '${constants.apiRoot}/parcel-shipments/cost';
+    final params = {
+      "length": shipment.length ?? 0.0,
+      "width": shipment.width ?? 0.0,
+      "height": shipment.height ?? 0.0,
+      "mass": shipment.mass ?? 0.0,
+      "quantity": quantity,
+      "originLat": origin.latitude,
+      "originLong": origin.longitude,
+      "destinationLat": destination.latitude,
+      "destinationLong": destination.longitude,
+    };
 
-    await dio
-        .get(viewParcelShipmentsURL, data: params)
-        .then((response) {
-          final List<dynamic> json = response.data;
-          parcelShipments =
-              json.map((item) => ParcelShipment.fromMap(item)).toList();
-          log(
-            'parcelShipments ${JsonEncoder.withIndent(' ').convert(parcelShipments)}',
-          );
-        })
-        .catchError((e) {
-          if (e is DioException) {
-            log('viewParcelShipment DioException: ${e.response}');
-          } else {
-            log('vParcelShipment error: $e');
-          }
-        });
-    return parcelShipments;
+    log('Calculating Cost: ${params.toString()}');
+
+    try {
+      final response = await _dio.post(url, data: params);
+      log(response.data.toString());
+      return response.data['data']['cost'] as double;
+    } on DioException catch (e) {
+      log('Cost Calculation Error: ${e.response?.data ?? e.message}', error: e);
+      return 0.0; // Fallback value
+    }
+  }
+
+  // Data Fetching
+  Future<List<ParcelShipment>> fetchParcelShipments(String userId) async {
+    const url = '${constants.apiRoot}/parcel-shipments';
+    final params = {'userID': userId};
+
+    try {
+      final response = await _dio.get(url, data: params);
+      final List<dynamic> jsonData = response.data;
+      return jsonData.map((item) => ParcelShipment.fromMap(item)).toList();
+    } on DioException catch (e) {
+      log('Fetch Shipments Error: ${e.response?.data ?? e.message}', error: e);
+      rethrow;
+    }
   }
 }

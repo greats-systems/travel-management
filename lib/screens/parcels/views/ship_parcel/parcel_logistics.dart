@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'dart:developer' as developer;
 import 'package:travel_management_app_2/constants.dart' as constants;
 import 'package:travel_management_app_2/components/my_local_autocomplete.dart';
@@ -163,27 +164,36 @@ class _ParcelLogisticsState extends State<ParcelLogistics> {
     log(JsonEncoder.withIndent(' ').convert(parcelShipment));
     return Center(
       child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              fullscreenDialog: false,
-              builder:
-                  (context) => Scaffold(
-                    appBar: AppBar(
-                      title: Text('Parcel Dimensions'),
-                      leading: IconButton(
-                        icon: Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.pop(context),
+        onPressed: () async {
+          final List<Location> origins = await constants.geocodeLocation(
+            _origin!,
+          );
+          final List<Location> destinations = await constants.geocodeLocation(
+            _destination!,
+          );
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                fullscreenDialog: false,
+                builder:
+                    (context) => Scaffold(
+                      appBar: AppBar(
+                        title: Text('Parcel Dimensions'),
+                        leading: IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      body: ParcelDimensions(
+                        geocodedOrigin: origins.first,
+                        geocodedDestination: destinations.first,
+                        parcelShipment: parcelShipment,
                       ),
                     ),
-                    body: ParcelDimensions(
-                      parcelShipment: parcelShipment,
-                      userId: widget.userId,
-                    ),
-                  ),
-            ),
-          );
+              ),
+            );
+          }
         },
         child: const Text('Next', style: TextStyle(color: Colors.blue)),
       ),

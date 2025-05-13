@@ -1,27 +1,26 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:travel_management_app_2/components/my_button.dart';
+import 'package:travel_management_app_2/components/my_date_picker.dart';
+import 'package:travel_management_app_2/components/my_sized_box.dart';
 import 'package:travel_management_app_2/components/my_snack_bar.dart';
+import 'package:travel_management_app_2/screens/parcels/controllers/parcel_controller.dart';
 import 'package:travel_management_app_2/screens/parcels/models/parcel_shipment.dart';
-import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
-import 'package:travel_management_app_2/components/my_button.dart';
-import 'package:travel_management_app_2/components/my_date_picker.dart';
-import 'package:travel_management_app_2/components/my_sized_box.dart';
-import 'package:travel_management_app_2/screens/parcels/controllers/parcel_controller.dart';
 
 class ParcelDimensions extends StatefulWidget {
-  final String userId;
   final ParcelShipment parcelShipment;
+  final Location geocodedOrigin;
+  final Location geocodedDestination;
+
   const ParcelDimensions({
     super.key,
     required this.parcelShipment,
-    required this.userId,
+    required this.geocodedOrigin,
+    required this.geocodedDestination,
   });
 
   @override
@@ -29,81 +28,37 @@ class ParcelDimensions extends StatefulWidget {
 }
 
 class _ParcelDimensionsState extends State<ParcelDimensions> {
+  // Controllers
   final _phoneNumberController = TextEditingController();
-  final FocusNode focusNode = FocusNode();
-  String _completePhoneNumber = '';
+  final FocusNode _phoneFocusNode = FocusNode();
+  final _departureDateController = TextEditingController();
 
-  // Constants for shipping calculation
-  static const _baseCost = 5.00;
-  static const _weightFactor = 0.50;
-  static const _distanceFactor = 0.10;
-  static const _volumeDivisor = 5000;
-  static const _maxDimension = 200.0;
+  // Form state
   double _length = 0.0;
   double _width = 0.0;
   double _height = 0.0;
   double _mass = 0.0;
-  double _quantity = 1.0;
+  double _quantity = 1;
   double _shippingCost = 0.0;
-
-  final _departureDateController = TextEditingController();
-
+  String _completePhoneNumber = '';
   bool _isLoading = false;
 
-  // Services
-  final ParcelController _parcelController = ParcelController();
+  // Constants
+  static const _maxDimension = 200.0;
+  final _parcelController = ParcelController();
 
-  Future<void> _calculateShippingCost() async {
-    final origin = widget.parcelShipment.origin;
-    final destination = widget.parcelShipment.destination;
-    if (origin == null || destination == null) return;
-
-    try {
-      // Calculate volumetric weight
-      final volume = _length * _width * _height;
-      final dimWeightKg = volume / _volumeDivisor;
-      final chargeableWeight = max(_mass, dimWeightKg);
-
-      // Get distance between locations
-      final origins = await locationFromAddress(origin);
-      final destinations = await locationFromAddress(destination);
-
-      final geocodedOrigin = origins.first;
-      final geocodedDestination = destinations.first;
-
-      developer.log(
-        'Origin: ${geocodedOrigin.latitude} ${geocodedOrigin.longitude}',
-      );
-      developer.log(
-        'Dstination: ${geocodedDestination.latitude} ${geocodedDestination.longitude}',
-      );
-
-      final distanceKm = await _parcelController.calculateDistance(
-        geocodedOrigin.latitude,
-        geocodedOrigin.longitude,
-        geocodedDestination.latitude,
-        geocodedDestination.longitude,
-      );
-      developer.log('distanceKm: $distanceKm');
-
-      // Calculate final cost
-      final cost =
-          (_baseCost +
-              (chargeableWeight * _weightFactor) +
-              (distanceKm * _distanceFactor)) *
-          _quantity;
-
-      if (mounted) {
-        setState(() => _shippingCost = cost);
-      }
-    } catch (e) {
-      developer.log('Error calculating shipping cost: $e');
-    }
+  @override
+  void dispose() {
+    _phoneNumberController.dispose();
+    _phoneFocusNode.dispose();
+    _departureDateController.dispose();
+    super.dispose();
   }
 
-  void _createParcelShipment() async {
+  Future<void> _createParcelShipment() async {
     setState(() => _isLoading = true);
 
+    // Update shipment details
     widget.parcelShipment
       ..length = _length
       ..width = _width
@@ -112,7 +67,6 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
       ..quantity = _quantity.toInt()
       ..departureDate = _departureDateController.text.trim()
       ..shippingCost = _shippingCost;
-    developer.log(JsonEncoder.withIndent(' ').convert(widget.parcelShipment));
 
     try {
       await _parcelController.makeParcelEcocashPayment(
@@ -120,27 +74,24 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
         _completePhoneNumber,
       );
       await _parcelController.createParcelShipment(widget.parcelShipment);
+
       if (!mounted) return;
+
       MySnackBar.showSnackBar(
         context,
         'Your cargo request was submitted successfully!',
         Colors.green,
       );
-      _phoneNumberController.clear();
-      _completePhoneNumber = '';
-      _length = 0.0;
-      _width = 0.0;
-      _height = 0.0;
-      _mass = 0.0;
-      _quantity = 0;
-      _departureDateController.clear();
-      Navigator.popAndPushNamed(context, '/landing-page');
+
+      // Reset form
+      _resetForm();
+      Navigator.pop(context);
     } on DioException catch (e) {
       if (!mounted) return;
       MySnackBar.showSnackBar(
         context,
         e.response?.toString() ?? 'Network error',
-        Colors.yellow,
+        Colors.orange,
       );
     } catch (e) {
       if (!mounted) return;
@@ -150,10 +101,26 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
     }
   }
 
-  @override
-  void dispose() {
-    _departureDateController.dispose();
-    super.dispose();
+  void _resetForm() {
+    _phoneNumberController.clear();
+    _departureDateController.clear();
+    _completePhoneNumber = '';
+    _length = 0.0;
+    _width = 0.0;
+    _height = 0.0;
+    _mass = 0.0;
+    _quantity = 1.0;
+    _shippingCost = 0.0;
+  }
+
+  Future<void> _updateShippingCost() async {
+    final cost = await _parcelController.calculateShippingCost(
+      origin: widget.geocodedOrigin,
+      destination: widget.geocodedDestination,
+      shipment: widget.parcelShipment,
+      quantity: _quantity,
+    );
+    if (mounted) setState(() => _shippingCost = cost);
   }
 
   @override
@@ -178,22 +145,22 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
-              MySizedBox(),
+              const MySizedBox(),
 
               // Phone number field
               _buildPhoneNumberField(),
 
               // Dimensions row
               _buildDimensionsRow(),
-              MySizedBox(),
+              const MySizedBox(),
 
               // Mass and quantity row
               _buildMassQuantityRow(),
-              MySizedBox(),
+              const MySizedBox(),
 
               // Departure date
               _buildDateField(),
-              MySizedBox(),
+              const MySizedBox(),
 
               // Shipping cost card
               _buildShippingCostCard(),
@@ -216,7 +183,7 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
   Widget _buildPhoneNumberField() {
     return IntlPhoneField(
       controller: _phoneNumberController,
-      focusNode: focusNode,
+      focusNode: _phoneFocusNode,
       decoration: const InputDecoration(
         labelText: 'Phone Number',
         border: OutlineInputBorder(
@@ -225,12 +192,7 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
       ),
       initialCountryCode: 'ZW',
       onChanged: (PhoneNumber phone) {
-        // Store the complete international number
         _completePhoneNumber = phone.number;
-        developer.log('Complete phone number: $_completePhoneNumber');
-      },
-      onCountryChanged: (country) {
-        developer.log('Country changed to ${country.name}');
       },
     );
   }
@@ -249,18 +211,15 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
   Widget _buildDimensionsRow() {
     return Column(
       children: [
-        // Labels
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: const [
+          children: [
             Text('Length (cm)', style: TextStyle(fontWeight: FontWeight.w500)),
             Text('Width (cm)', style: TextStyle(fontWeight: FontWeight.w500)),
             Text('Height (cm)', style: TextStyle(fontWeight: FontWeight.w500)),
           ],
         ),
         const SizedBox(height: 8),
-
-        // SpinBoxes
         Row(
           children: [
             _buildDimensionSpinBox(
@@ -269,7 +228,8 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
               onChanged:
                   (value) => setState(() {
                     _length = value;
-                    _calculateShippingCost();
+                    widget.parcelShipment.length = value;
+                    _updateShippingCost();
                   }),
             ),
             const SizedBox(width: 10),
@@ -279,7 +239,8 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
               onChanged:
                   (value) => setState(() {
                     _width = value;
-                    _calculateShippingCost();
+                    widget.parcelShipment.width = value;
+                    _updateShippingCost();
                   }),
             ),
             const SizedBox(width: 10),
@@ -289,7 +250,8 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
               onChanged:
                   (value) => setState(() {
                     _height = value;
-                    _calculateShippingCost();
+                    widget.parcelShipment.height = value;
+                    _updateShippingCost();
                   }),
             ),
           ],
@@ -301,17 +263,14 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
   Widget _buildMassQuantityRow() {
     return Column(
       children: [
-        // Labels
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: const [
+          children: [
             Text('Mass (kg)', style: TextStyle(fontWeight: FontWeight.w500)),
             Text('Units', style: TextStyle(fontWeight: FontWeight.w500)),
           ],
         ),
         const SizedBox(height: 8),
-
-        // SpinBoxes
         Row(
           children: [
             _buildDimensionSpinBox(
@@ -320,7 +279,8 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
               onChanged:
                   (value) => setState(() {
                     _mass = value;
-                    _calculateShippingCost();
+                    widget.parcelShipment.mass = value;
+                    _updateShippingCost();
                   }),
             ),
             const SizedBox(width: 10),
@@ -330,7 +290,7 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
               onChanged:
                   (value) => setState(() {
                     _quantity = value;
-                    _calculateShippingCost();
+                    _updateShippingCost();
                   }),
             ),
           ],
@@ -346,15 +306,12 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Center(
-              child: Text(
-                'Subtotal',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+            const Text(
+              'Subtotal',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            Center(child: Text('\$${_shippingCost.toStringAsFixed(2)}')),
+            Text('\$${_shippingCost.toStringAsFixed(2)}'),
           ],
         ),
       ),
@@ -363,8 +320,8 @@ class _ParcelDimensionsState extends State<ParcelDimensions> {
 
   Widget _buildDimensionSpinBox({
     required double value,
-    required ValueChanged<double> onChanged,
     required double step,
+    required ValueChanged<double> onChanged,
   }) {
     return Expanded(
       child: SpinBox(

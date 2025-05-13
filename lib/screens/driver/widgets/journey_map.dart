@@ -81,7 +81,7 @@ class _JourneyMapState extends State<JourneyMap> {
         MySnackBar.showSnackBar(
           context,
           'Journey data is incomplete',
-          Colors.yellow,
+          Colors.orange,
         );
       }
       return;

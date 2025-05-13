@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 
 // Logo
@@ -142,6 +143,13 @@ String? returnCarrierLogo(String carrierCode) {
     "PC": "$airlineAssetsRoot/pegasus.png",
     "ZN": "$airlineAssetsRoot/zambia_airways.png",
     "P0": "$airlineAssetsRoot/proflight.png",
+    "UX": "$airlineAssetsRoot/air_europa.png",
+    "DY": "$airlineAssetsRoot/norwegian.png",
+    "JU": "$airlineAssetsRoot/air_serbia.png",
+    "TR": "$airlineAssetsRoot/scoot.png",
+    "3K": "$airlineAssetsRoot/jetstar.png",
+    "BJ": "$airlineAssetsRoot/nouvelair.png",
+    "HC": "$airlineAssetsRoot/air_senegal.png",
     "nologo": "$airlineAssetsRoot/not_found.png",
   };
   return assetURLMap[carrierCode] ?? assetURLMap['nologo'];
@@ -250,6 +258,13 @@ String returnCarrierName(String carrierCode) {
     "FZ": "FlyDubai",
     "ZN": "Zambia Airways",
     "P0": "Proflight Zambia",
+    "UX": "Air Europa",
+    "DY": "Norwegian Air",
+    "JU": "Air Serbia",
+    "TR": "Scoot Airlines",
+    "3K": "Jetstar Asia Airways",
+    "BJ": "Nouvelair Tunisie",
+    "HC": "Air Senegal",
   };
   return carrierJson[carrierCode] ?? carrierCode;
 }
@@ -308,7 +323,7 @@ String returnAirportCode(String location) {
     "Abu Dhabi": "AUH",
     "Colombo": "CMB",
     "Muscat": "MCT",
-    "Taipei": "TPE",
+    "Taipei": "TSA",
     "Seoul": "ICN",
     "Manila": "MNL",
     "Halifax": "YHZ",
@@ -332,6 +347,12 @@ String returnAirportCode(String location) {
     "Amman": "AMM",
     "Istanbul": "SAW",
     "Zagreb": "ZAG",
+    "Barcelona": "BCN",
+    "Madrid": "MAD",
+    "Oslo": "OSL",
+    "Belgrade": "BEG",
+    "Tunis": "TUN",
+    "Dakar": "DSS",
   };
   return locationMap[location] ?? location;
 }
@@ -346,7 +367,6 @@ String returnAirportName(String airportCode) {
     "EBB": "Entebbe Intl.",
     "KGL": "Kigali Intl.",
     "JNB": "Johannesburg",
-    // "JNB": "Johannesburg OR Tambo",
     "HLA": "Johannesburg Lanseria",
     "DUR": "King Shaka Intl.",
     "LUN": "Lusaka Intl.",
@@ -394,7 +414,7 @@ String returnAirportName(String airportCode) {
     "KEF": "Keflavik International",
     "YXX": "Abbotsford Intl.",
     "MUC": "Munich Intl.",
-    "BCN": "Josep Tarradellas Barcelona",
+    "BCN": "Barcelona",
     "AUH": "Zayed Intl.",
     "CMB": "Bandaranaike Intl",
     "MCT": "Muscat Intl.",
@@ -422,12 +442,18 @@ String returnAirportName(String airportCode) {
     "RUH": "King Khalid Intl",
     "SAW": "Sabiha Gokcen",
     "ZAG": "Franjo Tudman",
+    "MAD": "Adolfo Suarez-Barajas",
+    "OSL": "Oslo",
+    "BEG": "Belgrade",
+    "TSA": "Taipei",
+    "TUN": "Tunis",
+    "DSS": "Dakar",
   };
   return airportNameMap[airportCode] ?? airportCode;
 }
 
 // City list (for autocomplete suggestion)
-List<String> cities = [
+Set<String> cities = {
   "Harare",
   "Bulawayo",
   "Nairobi",
@@ -474,7 +500,6 @@ List<String> cities = [
   "Bangkok",
   "Frankfurt",
   "Reykyavik",
-  "Vancouver",
   "Munich",
   "Barcelona",
   "Abu Dhabi",
@@ -503,10 +528,15 @@ List<String> cities = [
   "Riyadh",
   "Istanbul",
   "Zagreb",
-];
+  "Madrid",
+  "Oslo",
+  "Belgrade",
+  "Tunis",
+  "Dakar",
+};
 
 // Local city list (for shuttle autocomplete)
-List<String> localCities = [
+Set<String> localCities = {
   "Harare",
   "Bulawayo",
   "Mutare",
@@ -526,7 +556,7 @@ List<String> localCities = [
   "Maputo",
   "Beira",
   "Tete",
-];
+};
 
 // City mapping
 String returnLocation(String airportCode) {
@@ -548,6 +578,7 @@ String returnLocation(String airportCode) {
     "AMS": "Amsterdam",
     "LHR": "London",
     "SIN": "Singapore",
+    "XSP": "Singapore",
     "CPT": "Cape Town",
     "ATL": "Atlanta",
     "YQY": "Sydney",
@@ -594,6 +625,7 @@ String returnLocation(String airportCode) {
     "TFU": "Chengdu",
     "SZX": "Shenzhen",
     "KUL": "Kuala Lumpur",
+    "SZB": "Kuala Lumpur",
     "BAI": "Buenos Aires",
     "WAW": "Warsaw",
     "CAN": "Guangzhou",
@@ -614,6 +646,14 @@ String returnLocation(String airportCode) {
     "RUH": "Riyadh",
     "SAW": "Istanbul",
     "ZAG": "Zagreb",
+    "MAD": "Madrid",
+    "OSL": "Oslo",
+    "BEG": "Belgrade",
+    "TSA": "Taipei",
+    "XMN": "Xiamen",
+    "FOC": "Fuzhou",
+    "TUN": "Tunis",
+    "DSS": "Dakar",
   };
   return airportCodeMap[airportCode] ?? airportCode;
 }
@@ -722,4 +762,11 @@ String buildDurationText(List<dynamic> segments) {
   ).difference(DateTime.parse(firstDeparture));
 
   return 'Total: ${totalDuration.inHours}h ${totalDuration.inMinutes.remainder(60)}m';
+}
+
+Future<List<Location>> geocodeLocation(String location) async {
+  log('geocodeLocation location: $location');
+  final geocodedLocation = await locationFromAddress(location);
+  log(geocodedLocation.toString());
+  return geocodedLocation;
 }

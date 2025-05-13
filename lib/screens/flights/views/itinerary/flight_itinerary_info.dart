@@ -18,7 +18,6 @@ class _FlightItinerariesInfoState extends State<FlightItinerariesInfo> {
     return Column(
       children: [
         Card(
-          margin: const EdgeInsets.only(left: 5, bottom: 16),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Table(

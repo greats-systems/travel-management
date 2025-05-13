@@ -23,7 +23,7 @@ class _MyParcelItinerariesState extends State<MyParcelItineraries> {
       setState(() => _isLoading = true);
     }
     try {
-      final shipments = await _parcelController.viewParcelShipments(
+      final shipments = await _parcelController.fetchParcelShipments(
         widget.userId,
       );
       if (mounted) {

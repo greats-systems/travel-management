@@ -92,7 +92,7 @@ class _BookShuttleState extends State<BookShuttle> {
       await _shuttleController.bookShuttle(booking);
       if (!mounted) return;
       MySnackBar.showSnackBar(context, 'Booking successful!', Colors.green);
-      Navigator.popAndPushNamed(context, '/landing-page');
+      Navigator.pop(context);
     } on DioException catch (e) {
       if (!mounted) return;
 
@@ -100,7 +100,7 @@ class _BookShuttleState extends State<BookShuttle> {
           e.response?.statusCode == 404
               ? 'Service not available'
               : 'Error: ${e.message}';
-      MySnackBar.showSnackBar(context, errorMessage, Colors.yellow);
+      MySnackBar.showSnackBar(context, errorMessage, Colors.orange);
     } catch (e) {
       if (!mounted) return;
       MySnackBar.showSnackBar(
